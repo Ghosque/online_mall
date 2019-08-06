@@ -12,7 +12,7 @@ class FirstCategory(models.Model):
     )
 
     name = models.CharField(max_length=20, verbose_name='类别名')
-    status = models.PositiveIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -32,7 +32,7 @@ class SecondCategory(models.Model):
     )
 
     name = models.CharField(max_length=20, verbose_name='类别名')
-    status = models.PositiveIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -55,7 +55,7 @@ class Merchant(models.Model):
     )
 
     name = models.CharField(max_length=20, verbose_name='姓名')
-    gender = models.PositiveIntegerField(choices=GENDER_ITEMS, verbose_name='性别')
+    gender = models.SmallIntegerField(choices=GENDER_ITEMS, verbose_name='性别')
     age = models.IntegerField(verbose_name='年龄')
     phone = models.CharField(max_length=15, verbose_name='手机号码')
     id_card = models.CharField(max_length=20, verbose_name='身份证号码')
@@ -82,7 +82,7 @@ class Shop(models.Model):
     shop_id = models.CharField(default=GetId.getId(), verbose_name='商店ID')
     name = models.CharField(max_length=50, verbose_name='店名')
     star = models.SmallIntegerField(default=4, verbose_name='星级')
-    status = models.PositiveIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -110,7 +110,7 @@ class Commodity(models.Model):
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
     url = models.URLField(verbose_name='商品url')
     cover = models.ImageField(verbose_name='预览页封面', upload_to='commodity/cover/')
-    status = models.PositiveIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')

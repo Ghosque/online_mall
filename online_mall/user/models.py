@@ -30,7 +30,7 @@ class FollowCommodity(models.Model):
         (0, '删除'),
     )
 
-    status = models.PositiveIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -57,7 +57,7 @@ class ShoppingCart(models.Model):
 
 
 class Address(models.Model):
-    address = models.CharField(max_length=150, verbose_name='地址')
+    address = models.CharField(max_length=300, verbose_name='地址')
     contact = models.CharField(max_length=15, verbose_name='联系方式')
     addressee = models.CharField(max_length=15, verbose_name='收件人')
     is_default = models.SmallIntegerField(verbose_name='是否为默认地址')
