@@ -2,7 +2,7 @@ from django.db import models
 from django_mysql.models import JSONField
 
 from user.models import User, Address
-from online_mall.common import GetId
+from common import GetId
 
 
 # 订单
@@ -17,7 +17,7 @@ class Order(models.Model):
         (6, '确认收货'),
     )
 
-    order_id = models.CharField(default=GetId.getId(), verbose_name='订单ID')
+    order_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='订单ID')
     info = JSONField(verbose_name='订单内容')
     status = models.SmallIntegerField(default=2, choices=STATUS_ITEMS, verbose_name='状态')
 
@@ -26,3 +26,9 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
     address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name='地址')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '订单'
+
+    def __str__(self):
+        return self.order_id

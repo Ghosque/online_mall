@@ -1,7 +1,7 @@
 from django.db import models
 from django_mysql.models import JSONField, ListTextField
 
-from online_mall.common import GetId
+from common import GetId
 
 
 # 第一类别
@@ -79,7 +79,7 @@ class Shop(models.Model):
         (2, '审核中'),
     )
 
-    shop_id = models.CharField(default=GetId.getId(), verbose_name='商店ID')
+    shop_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商店ID')
     name = models.CharField(max_length=50, verbose_name='店名')
     star = models.SmallIntegerField(default=4, verbose_name='星级')
     status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
@@ -105,7 +105,7 @@ class Commodity(models.Model):
         (2, '审核中'),
     )
 
-    commodity_id = models.CharField(default=GetId.getId(), verbose_name='商品ID')
+    commodity_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商品ID')
     title = models.CharField(max_length=500, verbose_name='详情页标题')
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
     url = models.URLField(verbose_name='商品url')
@@ -130,7 +130,7 @@ class Commodity(models.Model):
 # 商品颜色（分类）
 class CommodityColor(models.Model):
     commodity_class = JSONField(verbose_name='分类')
-    size = ListTextField(base_field=models.CharField, size=50, verbose_name='尺寸')
+    size = ListTextField(base_field=models.CharField(max_length=20), size=50, verbose_name='尺寸')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')

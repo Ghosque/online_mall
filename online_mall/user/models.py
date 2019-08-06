@@ -1,12 +1,12 @@
 from django.db import models
 
 from merchant.models import Commodity
-from online_mall.common import GetId
+from common import GetId
 
 
 # 用户
 class User(models.Model):
-    user_id = models.CharField(default=GetId.getId(), verbose_name='用户ID')
+    user_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='用户ID')
     nickname = models.CharField(max_length=30, verbose_name='昵称')
     password = models.CharField(max_length=20, verbose_name='密码')
     phone = models.CharField(max_length=15, verbose_name='手机号码')
