@@ -8,7 +8,7 @@ from common import GetId
 class User(models.Model):
     user_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='用户ID')
     nickname = models.CharField(max_length=30, verbose_name='昵称')
-    password = models.CharField(max_length=20, verbose_name='密码')
+    password = models.CharField(max_length=50, verbose_name='密码')
     phone = models.CharField(max_length=15, verbose_name='手机号码')
     reward_points = models.IntegerField(default=0, verbose_name='积分')
 

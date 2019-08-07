@@ -1,7 +1,14 @@
+import hashlib
+import logging
 from django.db import models
 from django_mysql.models import JSONField, ListTextField
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
+from django.conf import settings
 
 from common import GetId
+
+logger = logging.getLogger('scripts')
 
 
 # 第一类别
@@ -54,22 +61,73 @@ class Merchant(models.Model):
         (2, '保密')
     )
 
+    merchant_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商家ID')
+    password = models.CharField(max_length=50, verbose_name='密码')
     name = models.CharField(max_length=20, verbose_name='姓名')
     gender = models.SmallIntegerField(choices=GENDER_ITEMS, verbose_name='性别')
     age = models.IntegerField(verbose_name='年龄')
-    phone = models.CharField(max_length=15, verbose_name='手机号码')
-    id_card = models.CharField(max_length=20, verbose_name='身份证号码')
+    phone = models.CharField(max_length=15, verbose_name='手机号码', unique=True)
+    id_card = models.CharField(max_length=20, verbose_name='身份证号码', unique=True)
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
     class Meta:
         verbose_name = verbose_name_plural = '商家'
-        unique_together = ('phone', 'id_card',)
 
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def password_md5(password):
+        m = hashlib.md5()
+        b = password.encode(encoding='utf-8')
+        m.update(b)
+        password_md5 = m.hexdigest()
+
+        return password_md5
+
+    @classmethod
+    def check_password(cls, phone, password):
+        password_md5 = cls.password_md5(password)
+        try:
+            merchant = cls.objects.get(phone=phone, password=password_md5)
+        except ObjectDoesNotExist:
+            logger.info('手机：{}，密码：{}，md5加密：{} 尝试登录失败'.format(phone, password, password_md5))
+            return 0
+        else:
+            return merchant
+
+    @classmethod
+    def check_data(cls, id_card, phone):
+        # 1、身份证前17位分别与 settings.COEFFICIENT_LIST 对应相乘再相加，结果对 11 求余，根据 settings.REMAINDER_DICT 得到余数对应的字符，即为身份证最后一位的字符
+        # 2、先后判断手机号与身份证号是否已被注册
+        top_17_list = [int(i) for i in id_card[:-1]]
+        remainder = sum([i * j for i, j in zip(top_17_list, settings.COEFFICIENT_LIST)]) % 11
+        if settings.REMAINDER_DICT.get(remainder) == id_card[-1]:
+            if cls.objects.filter(phone=phone):
+                result = {'code': 0, 'content': '该手机已被注册'}
+            elif cls.objects.filter(id_card=id_card):
+                result = {'code': 0, 'content': '该身份证已被注册'}
+            else:
+                result = {'code': 1}
+        else:
+            result = {'code': 0, 'content': '非法身份证'}
+
+        return result
+
+    @classmethod
+    def insert_data(cls, data_dict):
+        id_card = data_dict.get('id_card')
+        phone = data_dict.get('phone')
+        check_result = cls.check_data(id_card, phone)
+        if check_result.get('code'):
+            password_md5 = cls.password_md5(data_dict.get('password'))
+            data_dict['password'] = password_md5
+
+            cls.objects.create(**data_dict)
+
+        return check_result
 
 # 商店
 class Shop(models.Model):
