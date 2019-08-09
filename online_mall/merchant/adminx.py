@@ -43,6 +43,8 @@ class MerchantAdmin:
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
+    model_icon = 'fa fa-user'
+
 
 @xadmin.sites.register(Shop)
 class ShopAdmin:

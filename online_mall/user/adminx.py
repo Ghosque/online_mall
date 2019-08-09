@@ -25,6 +25,8 @@ class FollowCommodityAdmin:
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
+    model_icon = 'fa fa-heart'
+
 
 @xadmin.sites.register(ShoppingCart)
 class ShoppingCartAdmin:
@@ -33,6 +35,8 @@ class ShoppingCartAdmin:
     search_fields = ('user', 'commodity',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-shopping-cart'
 
 
 class ProvinceResource(resources.ModelResource):
@@ -51,6 +55,8 @@ class ProvinceCartAdmin:
     search_fields = ('province',)
     ordering = ('province_id',)
     readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-map-marker'
 
 
 class CityResource(resources.ModelResource):
@@ -74,6 +80,8 @@ class CityCartAdmin:
     ordering = ('city_id',)
     readonly_fields = ('create_time', 'update_time',)
 
+    model_icon = 'fa fa-map-marker'
+
 
 class AreaResource(resources.ModelResource):
     city_id = fields.Field(
@@ -95,6 +103,8 @@ class AreaCartAdmin:
     ordering = ('area_id',)
     readonly_fields = ('create_time', 'update_time',)
 
+    model_icon = 'fa fa-map-marker'
+
 
 @xadmin.sites.register(Address)
 class AddressCartAdmin:
@@ -103,3 +113,5 @@ class AddressCartAdmin:
     search_fields = ('user',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-address-card'
