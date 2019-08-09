@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'merchant',
     'user',
     'payment',
+    'xadmin',
+    'crispy_forms',
+    'reversion',
 ]
 
 MIDDLEWARE = [

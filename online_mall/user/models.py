@@ -60,7 +60,7 @@ class Address(models.Model):
     address = models.CharField(max_length=300, verbose_name='地址')
     contact = models.CharField(max_length=15, verbose_name='联系方式')
     addressee = models.CharField(max_length=15, verbose_name='收件人')
-    is_default = models.SmallIntegerField(verbose_name='是否为默认地址')
+    is_default = models.BooleanField(verbose_name='是否为默认地址')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
