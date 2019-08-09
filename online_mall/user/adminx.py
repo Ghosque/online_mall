@@ -1,5 +1,4 @@
 import xadmin
-from xadmin import views
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 
@@ -47,7 +46,7 @@ class ProvinceResource(resources.ModelResource):
 
 
 @xadmin.sites.register(Province)
-class ProvinceCartAdmin:
+class ProvinceAdmin:
     import_export_args = {'import_resource_class': ProvinceResource}
 
     list_display = ('id', 'province_id', 'province', 'create_time', 'update_time')
@@ -60,18 +59,18 @@ class ProvinceCartAdmin:
 
 
 class CityResource(resources.ModelResource):
-    province_id = fields.Field(
+    province = fields.Field(
         column_name='province',
         attribute='province',
         widget=ForeignKeyWidget(Province, 'province_id'))
 
     class Meta:
         model = City
-        fields = ('id', 'city_id', 'city', 'province_id',)
+        fields = ('id', 'city_id', 'city', 'province',)
 
 
 @xadmin.sites.register(City)
-class CityCartAdmin:
+class CityAdmin:
     import_export_args = {'import_resource_class': CityResource}
 
     list_display = ('id', 'city_id', 'city', 'province', 'create_time', 'update_time')
@@ -84,18 +83,18 @@ class CityCartAdmin:
 
 
 class AreaResource(resources.ModelResource):
-    city_id = fields.Field(
+    city = fields.Field(
         column_name='city',
         attribute='city',
         widget=ForeignKeyWidget(City, 'city_id'))
 
     class Meta:
         model = Area
-        fields = ('id', 'area_id', 'area', 'city_id',)
+        fields = ('id', 'area_id', 'area', 'city',)
 
 
 @xadmin.sites.register(Area)
-class AreaCartAdmin:
+class AreaAdmin:
     import_export_args = {'import_resource_class': AreaResource}
     list_display = ('id', 'area_id', 'area', 'city', 'create_time', 'update_time')
     list_filter = ('id',)

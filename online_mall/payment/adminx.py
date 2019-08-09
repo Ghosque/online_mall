@@ -1,5 +1,4 @@
 import xadmin
-from xadmin import views
 
 from .models import Order
 
@@ -11,3 +10,5 @@ class OrderAdmin:
     search_fields = ('order_id',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-tasks'

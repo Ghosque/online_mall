@@ -25,6 +25,8 @@ class FirstCategoryAdmin:
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
+    model_icon = 'fa fa-database'
+
 
 @xadmin.sites.register(SecondCategory)
 class SecondCategoryAdmin:
@@ -33,6 +35,8 @@ class SecondCategoryAdmin:
     search_fields = ('name',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-database'
 
 
 @xadmin.sites.register(Merchant)
@@ -54,6 +58,8 @@ class ShopAdmin:
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
+    model_icon = 'fa fa-home'
+
 
 @xadmin.sites.register(Commodity)
 class CommodityAdmin:
@@ -62,6 +68,8 @@ class CommodityAdmin:
     search_fields = ('title', 'category',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-gift'
 
 
 @xadmin.sites.register(CommodityColor)
@@ -72,6 +80,8 @@ class CommodityColorAdmin:
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
+    model_icon = 'fa fa-bars'
+
 
 @xadmin.sites.register(Specification)
 class Specification:
@@ -80,3 +90,5 @@ class Specification:
     search_fields = ('id', 'commodity',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-gift'
