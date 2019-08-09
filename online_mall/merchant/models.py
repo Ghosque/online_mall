@@ -30,6 +30,10 @@ class FirstCategory(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_all_data(cls):
+        pass
+
 
 # 第二类别
 class SecondCategory(models.Model):
