@@ -150,7 +150,7 @@ class Shop(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    merchant = models.ForeignKey(Merchant, on_delete=models.CASCADE, verbose_name='商家')
+    merchant = models.OneToOneField(Merchant, on_delete=models.CASCADE, verbose_name='商家')
 
     class Meta:
         verbose_name = verbose_name_plural = '商店'
@@ -158,6 +158,10 @@ class Shop(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_shop_info(cls, shop_id):
+        return cls.objects.get(shop_id=shop_id)
 
 
 # 商品
@@ -223,8 +227,23 @@ class Specification(models.Model):
         return self.infomation
 
 
-# 后台管理单元
-class BackStage(models.Model):
+# 后台管理单元大类
+class BackStageFirst(models.Model):
+
+    name = models.CharField(max_length=20, verbose_name='单元名称')
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '后台管理单元（大类）'
+
+    def __str__(self):
+        return self.name
+
+
+# 后台管理单元小类
+class BackStageSecond(models.Model):
 
     name = models.CharField(max_length=20, verbose_name='单元名称')
     status = models.BooleanField(default=True, verbose_name='状态')
@@ -232,8 +251,10 @@ class BackStage(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
+    first = models.ForeignKey(BackStageFirst, on_delete=models.CASCADE, verbose_name='大类')
+
     class Meta:
-        verbose_name = verbose_name_plural = '后台管理单元'
+        verbose_name = verbose_name_plural = '后台管理单元（小类）'
 
     def __str__(self):
         return self.name

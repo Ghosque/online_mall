@@ -1,7 +1,7 @@
 import xadmin
 from xadmin import views
 
-from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, CommodityColor, Specification, BackStage
+from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, CommodityColor, Specification, BackStageFirst, BackStageSecond
 
 
 @xadmin.sites.register(views.CommAdminView)
@@ -94,9 +94,20 @@ class SpecificationAdmin:
     model_icon = 'fa fa-gift'
 
 
-@xadmin.sites.register(BackStage)
-class BackStageAdmin:
-    list_display = ('id', 'name', 'status', 'create_time', 'update_time',)
+@xadmin.sites.register(BackStageFirst)
+class BackStageFirstAdmin:
+    list_display = ('id', 'name', 'create_time', 'update_time',)
+    list_filter = ('id',)
+    search_fields = ('id', 'name',)
+    ordering = ('id',)
+    readonly_fields = ('create_time', 'update_time',)
+
+    model_icon = 'fa fa-bars'
+
+
+@xadmin.sites.register(BackStageSecond)
+class BackStageSecondAdmin:
+    list_display = ('id', 'name', 'status', 'first', 'create_time', 'update_time',)
     list_filter = ('id', 'status',)
     search_fields = ('id', 'name',)
     ordering = ('id',)

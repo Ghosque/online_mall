@@ -8,5 +8,5 @@ urlpatterns = [
     path('getVerify/', views.MerchantView.as_view(), name='get_verify'),
     path('login/', views.MerchantView.as_view(), name='login'),
 
-    path('common/', views.CommonView.as_view(), name='common'),
+    path('backStage/', views.BackStageView.as_view(), name='back_stage'),
 ]

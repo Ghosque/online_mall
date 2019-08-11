@@ -4,26 +4,34 @@ import string
 from django.views.generic.base import View
 from django.http import HttpResponse
 
-from .models import Merchant, BackStage
+from .models import Merchant, BackStageSecond
 
 
 class CommonView(View):
 
-    def get(self, request):
-        context = self.get_navigation_data()
-
-        return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json,charset=utf-8")
-
     @classmethod
     def get_navigation_data(cls):
-        context = {'navigator': []}
-        navigation_data = BackStage.get_back_stage_data()
+        context = {'navigator': {}}
+        navigation_data = BackStageSecond.get_back_stage_data()
         for item in navigation_data:
-            context['navigator'].append({
-                'nav_id': item.id,
-                'nav_name': item.name,
-                'nav_status': item.status,
-            })
+            nav_first = item.first
+            if nav_first.id not in context['navigator'].keys():
+                context['navigator'][nav_first.id] = {
+                    'nav_first_id': nav_first.id,
+                    'nav_first_name': nav_first.name,
+                    'nav_second': [{
+                        'nav_second_id': item.id,
+                        'nav_second_name': item.name,
+                        'nav_second_status': item.status,
+                    }]
+                }
+
+            else:
+                context['navigator'][nav_first.id]['nav_second'].append({
+                    'nav_second_id': item.id,
+                    'nav_second_name': item.name,
+                    'nav_second_status': item.status,
+                })
 
         return context
 
@@ -39,18 +47,18 @@ class MerchantView(View):
         type = request.POST.get('type')
 
         if type == 'login':
-            content = self.do_login(request)
+            context = self.do_login(request)
 
         elif type == 'register':
-            content = self.do_register(request)
+            context = self.do_register(request)
 
         elif type == 'get_verify':
-            content = self.get_verify_code(request)
+            context = self.get_verify_code(request)
 
         else:
-            content = {'code': 2}
+            context = {'code': 2}
 
-        return HttpResponse(json.dumps(content, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
     @staticmethod
     def do_login(request):
@@ -61,11 +69,11 @@ class MerchantView(View):
         if check_result:
             merchant_id = check_result.merchant_id
             request.session['merchant'] = merchant_id
-            content = {'code': 1}
+            context = {'code': 1}
         else:
-            content = {'code': 0}
+            context = {'code': 0}
 
-        return content
+        return context
 
     @staticmethod
     def do_register(request):
@@ -98,3 +106,13 @@ class MerchantView(View):
         content = {'verify_code': verify_code}
 
         return content
+
+
+class BackStageView(CommonView):
+
+    def get(self, request):
+        context = self.get_navigation_data()
+
+        return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
