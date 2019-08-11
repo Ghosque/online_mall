@@ -11,6 +11,7 @@ class User(models.Model):
     password = models.CharField(max_length=50, verbose_name='密码')
     phone = models.CharField(max_length=15, verbose_name='手机号码')
     reward_points = models.IntegerField(default=0, verbose_name='积分')
+    head = models.ImageField(verbose_name='头像', upload_to='user/head/', null=True, blank=True)
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')

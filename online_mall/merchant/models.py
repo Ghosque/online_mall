@@ -133,6 +133,7 @@ class Merchant(models.Model):
 
         return check_result
 
+
 # 商店
 class Shop(models.Model):
     STATUS_ITEMS = (
@@ -221,3 +222,22 @@ class Specification(models.Model):
     def __str__(self):
         return self.infomation
 
+
+# 后台管理单元
+class BackStage(models.Model):
+
+    name = models.CharField(max_length=20, verbose_name='单元名称')
+    status = models.BooleanField(default=True, verbose_name='状态')
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '后台管理单元'
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def get_back_stage_data(cls):
+        return cls.objects.filter(status=True)

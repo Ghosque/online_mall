@@ -4,7 +4,28 @@ import string
 from django.views.generic.base import View
 from django.http import HttpResponse
 
-from .models import Merchant
+from .models import Merchant, BackStage
+
+
+class CommonView(View):
+
+    def get(self, request):
+        context = self.get_navigation_data()
+
+        return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+    @classmethod
+    def get_navigation_data(cls):
+        context = {'navigator': []}
+        navigation_data = BackStage.get_back_stage_data()
+        for item in navigation_data:
+            context['navigator'].append({
+                'nav_id': item.id,
+                'nav_name': item.name,
+                'nav_status': item.status,
+            })
+
+        return context
 
 
 class MerchantView(View):
@@ -31,7 +52,8 @@ class MerchantView(View):
 
         return HttpResponse(json.dumps(content, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
-    def do_login(self, request):
+    @staticmethod
+    def do_login(request):
         phone = request.POST.get('phone')
         password = request.POST.get('password')
 
@@ -45,7 +67,8 @@ class MerchantView(View):
 
         return content
 
-    def do_register(self, request):
+    @staticmethod
+    def do_register(request):
         password = request.POST.get('password')
         name = request.POST.get('name')
         gender = request.POST.get('gender')
@@ -65,7 +88,8 @@ class MerchantView(View):
 
         return content
 
-    def get_verify_code(self, request):
+    @staticmethod
+    def get_verify_code(request):
         verify_code = ''.join(random.sample(string.ascii_letters + string.digits, 6))
 
         request.session['verify_code'] = verify_code
