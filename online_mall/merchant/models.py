@@ -247,6 +247,7 @@ class BackStageSecond(models.Model):
 
     name = models.CharField(max_length=20, verbose_name='单元名称')
     status = models.BooleanField(default=True, verbose_name='状态')
+    url = models.URLField(verbose_name='路径')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')

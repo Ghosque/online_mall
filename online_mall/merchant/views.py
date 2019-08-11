@@ -11,6 +11,10 @@ class CommonView(View):
 
     @classmethod
     def get_navigation_data(cls):
+        """
+        导航栏单元内容获取
+        :return: 按大类返回JSON数据，大类中包含小类信息
+        """
         context = {'navigator': {}}
         navigation_data = BackStageSecond.get_back_stage_data()
         for item in navigation_data:
@@ -115,4 +119,8 @@ class BackStageView(CommonView):
 
         return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
+    def post(self, request):
+        type = request.POST.get('type')
+        context = self.get_navigation_data()
 
+        return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json,charset=utf-8")
