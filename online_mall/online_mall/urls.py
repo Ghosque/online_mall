@@ -15,8 +15,11 @@ Including another URLconf
 """
 import xadmin
 from django.urls import path, include
+from rest_framework.urlpatterns import format_suffix_patterns
+
 
 urlpatterns = [
     path('admin/', xadmin.site.urls, name='xadmin'),
-    path('merchant/', include('merchant.urls'), name='merchant'),
+    path('merchant/', include('merchant.urls')),
 ]
+urlpatterns = format_suffix_patterns(urlpatterns)

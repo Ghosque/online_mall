@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'reversion',
     'import_export',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

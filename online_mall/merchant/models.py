@@ -133,6 +133,19 @@ class Merchant(models.Model):
 
         return check_result
 
+    @classmethod
+    def get_merchant_info(cls, merchant_id):
+        return cls.objects.get(merchant_id=merchant_id)
+
+    @classmethod
+    def login_check(cls, phone, password):
+        try:
+            merchant = cls.objects.get(phone=phone, password=password)
+        except ObjectDoesNotExist:
+            return None
+        else:
+            return merchant
+
 
 # 商店
 class Shop(models.Model):
@@ -144,8 +157,8 @@ class Shop(models.Model):
 
     shop_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商店ID')
     name = models.CharField(max_length=50, verbose_name='店名')
-    star = models.SmallIntegerField(default=4, verbose_name='星级')
-    status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
+    star = models.DecimalField(default=4.0, max_digits=2, decimal_places=1, verbose_name='星级')
+    status = models.SmallIntegerField(default=2, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -247,7 +260,6 @@ class BackStageSecond(models.Model):
 
     name = models.CharField(max_length=20, verbose_name='单元名称')
     status = models.BooleanField(default=True, verbose_name='状态')
-    url = models.URLField(verbose_name='路径')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
