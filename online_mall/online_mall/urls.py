@@ -15,11 +15,15 @@ Including another URLconf
 """
 import xadmin
 from django.urls import path, include
-from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework import routers
+
+from merchant import views
+
+router = routers.DefaultRouter()
+router.register(r'merchants', views.MerchantsList, base_name='merchant_list')
 
 
 urlpatterns = [
     path('admin/', xadmin.site.urls, name='xadmin'),
-    path('merchant/', include('merchant.urls')),
+    path('api/', include(router.urls)),
 ]
-urlpatterns = format_suffix_patterns(urlpatterns)
