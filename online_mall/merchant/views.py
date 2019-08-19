@@ -61,7 +61,8 @@ class MerchantLoginViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': {
-                'token': token
+                'token': token,
+                'user_id': user.id
             },
             'message': '登录成功'
         }
