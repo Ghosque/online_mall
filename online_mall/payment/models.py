@@ -1,8 +1,8 @@
 from django.db import models
 from django_mysql.models import JSONField
 
-from user.models import User, Address
-from common import GetId
+from buyer.models import Buyer, Address
+from common_function import GetId
 
 
 # 订单
@@ -24,7 +24,7 @@ class Order(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
     address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name='地址')
 
     class Meta:

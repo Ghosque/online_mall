@@ -1,30 +1,28 @@
 from django.db import models
 
+from common.models import MallUser
 from merchant.models import Commodity
-from common import GetId
 
 
-# 用户
-class User(models.Model):
-    user_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='用户ID')
+# 买家
+class Buyer(models.Model):
     nickname = models.CharField(max_length=30, verbose_name='昵称')
-    password = models.CharField(max_length=50, verbose_name='密码')
-    phone = models.CharField(max_length=15, verbose_name='手机号码')
     reward_points = models.IntegerField(default=0, verbose_name='积分')
-    head = models.ImageField(verbose_name='头像', upload_to='user/head/', null=True, blank=True)
+    head = models.ImageField(verbose_name='头像', upload_to='buyer/head/', null=True, blank=True)
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
+    mall_user = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='mall_user')
+
     class Meta:
-        verbose_name = verbose_name_plural = '用户'
-        unique_together = ('user_id', 'phone',)
+        verbose_name = verbose_name_plural = '买家'
 
     def __str__(self):
         return self.nickname
 
 
-# 用户关注商品
+# 买家关注商品
 class FollowCommodity(models.Model):
     STATUS_ITEMS = (
         (1, '正常'),
@@ -36,7 +34,7 @@ class FollowCommodity(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
     commodity = models.ForeignKey(Commodity, on_delete=models.DO_NOTHING, verbose_name='商品')
 
     class Meta:
@@ -50,7 +48,7 @@ class ShoppingCart(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
     commodity = models.ForeignKey(Commodity, on_delete=models.DO_NOTHING, verbose_name='商品')
 
     class Meta:
@@ -120,7 +118,7 @@ class Address(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name='城市')
     area = models.ForeignKey(Area, on_delete=models.CASCADE, verbose_name='区县')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
 
     class Meta:
         verbose_name = verbose_name_plural = '地址'

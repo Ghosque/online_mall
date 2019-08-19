@@ -16,14 +16,22 @@ Including another URLconf
 import xadmin
 from django.urls import path, include
 from rest_framework import routers
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
-from merchant import views
+from common.views import PhoneCodeViewset
+from merchant.views import MerchantRegViewset, MerchantLoginViewset, MerchantViewset
+
 
 router = routers.DefaultRouter()
-router.register(r'merchants', views.MerchantsList, base_name='merchant_list')
+router.register(r'code', PhoneCodeViewset, base_name='verify_code')
+router.register(r'merchantReg', MerchantRegViewset, base_name='merchant_reg')
+router.register(r'merchantLogin', MerchantLoginViewset, base_name='merchant_login')
+router.register(r'merchant', MerchantViewset, base_name='merchant_login')
 
 
 urlpatterns = [
     path('admin/', xadmin.site.urls, name='xadmin'),
     path('api/', include(router.urls)),
+    path(r'api-token-auth/', obtain_jwt_token),
+    path(r'api-token-refresh/', refresh_jwt_token),
 ]
