@@ -30,8 +30,10 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',  # 设置请求头中的前缀
     'JWT_ALLOW_REFRESH': True,
 }
+# Token过期时间：两小时
+EXPIRE_SECONDS = 30
 # Token刷新有效期：七天（当Token已过期但不超过七天则刷新新Token）
-REFRESH_SECONDS = 15
+REFRESH_SECONDS = 60
 
 CACHES = {
     'default': {

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+from django.core.cache import cache
 
 from .models import Merchant
 from common.models import MallUser
@@ -103,7 +104,7 @@ class MerchantInfoSerializer(serializers.ModelSerializer):
         token_info = jwt_decode_handler(token)
         user_id = token_info['user_id']
         expire_date = datetime.fromtimestamp(token_info['exp'])
-        if (expire_date - datetime.now()).seconds > settings.REFRESH_SECONDS:
+        if settings.EXPIRE_SECONDS < (expire_date - datetime.now()).seconds < settings.REFRESH_SECONDS:
             user = User.objects.get(pk=user_id)
             payload = jwt_payload_handler(user)
             token = jwt_encode_handler(payload)
@@ -113,4 +114,3 @@ class MerchantInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Merchant
         fields = ('name', 'gender', 'phone', 'id_card', 'token', 'shop_name')
-

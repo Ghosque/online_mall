@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+from django.core.cache import cache
 
 from .serializers import MerchantRegCodeSerializer, MerchantLoginSerializer, MerchantInfoSerializer
 from .models import Merchant, Shop
@@ -69,6 +70,8 @@ class MerchantLoginViewset(viewsets.ViewSet):
         user = mall_user.user
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
+
+        cache.set('token', token, settings.REFRESH_SECONDS)
 
         result = {
             'code': 1,

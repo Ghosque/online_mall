@@ -1,5 +1,8 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.conf import settings
+from rest_framework_jwt.utils import jwt_decode_handler
+from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 import re
 from datetime import datetime, timedelta
 
@@ -29,3 +32,22 @@ class PhoneCodeSerializer(serializers.Serializer):
             raise serializers.ValidationError("距离上一次发送未超过60s")
 
         return phone
+
+
+# 验证Token是否过期，若过期且在安全期内则返回新的Token
+class TokenVerifySerializer(serializers.Serializer):
+    token = serializers.CharField(required=True)
+
+    def validate_token(self, token):
+        token_info = jwt_decode_handler(token)
+        user_id = token_info['user_id']
+        expire_date = datetime.fromtimestamp(token_info['exp'])
+        if settings.EXPIRE_SECONDS < (expire_date - datetime.now()).seconds < settings.REFRESH_SECONDS:
+            user = User.objects.get(pk=user_id)
+            payload = jwt_payload_handler(user)
+            token = jwt_encode_handler(payload)
+
+        else:
+            raise serializers.ValidationError("Token过期，请重新登录")
+
+        return token
