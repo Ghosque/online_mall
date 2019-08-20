@@ -19,17 +19,17 @@ class PhoneCodeSerializer(serializers.Serializer):
 
         # 手机是否注册
         if MallUser.objects.filter(phone=phone).count():
-            raise serializers.ValidationError("用户已经存在")
+            return serializers.ValidationError("用户已经存在")
 
         # 验证手机号码是否合法
         if not re.match(settings.REGEX_PHONE, phone):
-            raise serializers.ValidationError("手机号码非法")
+            return serializers.ValidationError("手机号码非法")
 
         # 验证码发送频率
         # 当前时间减去一分钟(倒退一分钟), 然后发送时间要大于这个时间, 表示还在一分钟内
         one_mintes_ago = datetime.now() - timedelta(hours=0, minutes=1, seconds=0)
         if VerifyCode.objects.filter(update_time__gt=one_mintes_ago, phone=phone).count():
-            raise serializers.ValidationError("距离上一次发送未超过60s")
+            return serializers.ValidationError("距离上一次发送未超过60s")
 
         return phone
 
@@ -54,6 +54,6 @@ class TokenVerifySerializer(serializers.Serializer):
             token = jwt_encode_handler(payload)
 
         else:
-            raise serializers.ValidationError("Token过期，请重新登录")
+            return serializers.ValidationError("Token过期，请重新登录")
 
         return token
