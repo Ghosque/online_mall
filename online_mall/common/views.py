@@ -38,6 +38,7 @@ class TokenVerifyViewset(viewsets.ViewSet):
 
     def create(self, request):
         serializer = TokenVerifySerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if serializer.is_valid(raise_exception=True):
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'code': 0}, status=status.HTTP_400_BAD_REQUEST)

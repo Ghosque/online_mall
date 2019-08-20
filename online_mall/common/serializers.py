@@ -42,6 +42,8 @@ class TokenVerifySerializer(serializers.Serializer):
         token_info = jwt_decode_handler(token)
         user_id = token_info['user_id']
         expire_date = datetime.fromtimestamp(token_info['exp'])
+        print(expire_date)
+        print((expire_date - datetime.now()).seconds)
         if settings.EXPIRE_SECONDS < (expire_date - datetime.now()).seconds < settings.REFRESH_SECONDS:
             user = User.objects.get(pk=user_id)
             payload = jwt_payload_handler(user)
