@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
-from django.core.cache import cache
 
 from .models import Merchant
 from common.models import MallUser
@@ -44,11 +43,11 @@ class MerchantRegCodeSerializer(serializers.Serializer):
         front_17_list = [i for i in id_card[:-1]]
         remainder = sum([int(i)*int(j) for i, j in zip(front_17_list, settings.COEFFICIENT_LIST)]) % 11
         if not settings.REMAINDER_DICT.get(remainder) == id_card[-1]:
-            raise serializers.ValidationError("身份证错误")
+            return serializers.ValidationError("身份证错误")
 
         merchant_info = MallUser.objects.filter(id_card=id_card)
         if merchant_info:
-            raise serializers.ValidationError("该身份证已被注册")
+            return serializers.ValidationError("该身份证已被注册")
 
     def validate_code(self, code):
         # 前端传过来的所有的数据都在, initial_data 字典里面, 如果是验证通过的数据则保存在 validated_data 字典中
@@ -62,10 +61,10 @@ class MerchantRegCodeSerializer(serializers.Serializer):
                 raise serializers.ValidationError("验证码过期")
             # 根据记录的 验证码 比对判断
             if last_record.code != code:
-                raise serializers.ValidationError("验证码错误")
-            # return code  # 没必要保存验证码记录, 仅仅是用作验证
+                return serializers.ValidationError("验证码错误")
+            return code  # 没必要保存验证码记录, 仅仅是用作验证
         else:
-            raise serializers.ValidationError("验证码错误")
+            return serializers.ValidationError("验证码错误")
 
     class Meta:
         model = Merchant
@@ -87,7 +86,7 @@ class MerchantLoginSerializer(serializers.Serializer):
             mall_user = MallUser_list[0]
             username = mall_user.user.username
             if not authenticate(username=username,password=password):
-                raise serializers.ValidationError("密码错误")
+                return serializers.ValidationError("密码错误")
             else:
                 return mall_user.user
 

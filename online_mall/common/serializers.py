@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
+from jwt import ExpiredSignatureError
 from rest_framework import serializers
 from django.conf import settings
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+from django.core.cache import cache
 import re
 from datetime import datetime, timedelta
 
@@ -39,21 +41,16 @@ class TokenVerifySerializer(serializers.Serializer):
     token = serializers.CharField(required=True)
 
     def validate_token(self, token):
-        token_info = jwt_decode_handler(token)
-        user_id = token_info['user_id']
-        expire_date = datetime.fromtimestamp(token_info['exp'])
-        created_date = expire_date - timedelta(seconds=settings.EXPIRE_SECONDS)
-        refresh_date = created_date + timedelta(seconds=settings.REFRESH_SECONDS)
+        try:
+            token_info = jwt_decode_handler(token)
+            print(token_info)
+            print(datetime.fromtimestamp(token_info['exp']))
 
-        if datetime.now() < expire_date:
-            pass
+        except ExpiredSignatureError:
+            if cache.get('token'):
+                token = cache.get('token')
+            else:
+                return serializers.ValidationError("Token过期，请重新登录")
 
-        elif datetime.now() < refresh_date:
-            user = User.objects.get(pk=user_id)
-            payload = jwt_payload_handler(user)
-            token = jwt_encode_handler(payload)
-
-        else:
-            return serializers.ValidationError("Token过期，请重新登录")
-
-        return token
+        finally:
+            return token
