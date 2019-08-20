@@ -27,17 +27,19 @@ REST_FRAMEWORK = {
     ]
 }
 
+# Token过期时间：两小时
+EXPIRE_SECONDS = 2 * 60 * 60
+# Token刷新有效期：七天（当Token已过期但不超过七天则刷新新Token）
+REFRESH_SECONDS = 7 * 24 * 60 * 60
+
 # 自定义token过期时间
 from _datetime import timedelta
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': timedelta(seconds=30),  # 过期时间：两小时
+    'JWT_EXPIRATION_DELTA': timedelta(seconds=EXPIRE_SECONDS),  # 过期时间：两小时
     'JWT_AUTH_HEADER_PREFIX': 'JWT',  # 设置请求头中的前缀
     'JWT_ALLOW_REFRESH': True,
 }
-# Token过期时间：两小时
-EXPIRE_SECONDS = 30
-# Token刷新有效期：七天（当Token已过期但不超过七天则刷新新Token）
-REFRESH_SECONDS = 60
+
 
 CACHES = {
     'default': {

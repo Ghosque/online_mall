@@ -19,6 +19,7 @@ class PhoneCodeViewset(viewsets.ViewSet):
         return "".join(random_str)
 
     def create(self, request):
+        print(request.data)
         serializer = PhoneCodeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # 验证后即可取出数据

@@ -100,7 +100,6 @@ class MerchantInfoViewset(viewsets.ViewSet):
             }
             return Response(result, status=status.HTTP_404_NOT_FOUND)
 
-        # merchant['token'] = token
         try:
             shop_name = mall_user.merchant.shop.name
         except Shop.DoesNotExist:
