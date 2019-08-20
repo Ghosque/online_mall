@@ -3,7 +3,7 @@ import os
 import sys
 
 if __name__ == "__main__":
-    profile = os.environ.get('PROJECT_PROFILE', 'product')
+    profile = os.environ.get('PROJECT_PROFILE', 'develop')
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "online_mall.settings.{}".format(profile))
     try:
         from django.core.management import execute_from_command_line
