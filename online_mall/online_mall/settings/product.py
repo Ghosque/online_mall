@@ -1,9 +1,6 @@
 from .develop import *
 
 
-ALLOWED_HOSTS = ['*']
-DEBUG = False
-
 
 log_path = '/home/ghosque/django/online_mall/online_mall/log'
 LOGGING = {

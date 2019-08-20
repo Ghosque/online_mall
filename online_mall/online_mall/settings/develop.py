@@ -3,6 +3,10 @@ import re
 from .base import *
 
 
+ALLOWED_HOSTS = ['*']
+DEBUG = False
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
