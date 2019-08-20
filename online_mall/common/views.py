@@ -37,7 +37,7 @@ class PhoneCodeViewset(viewsets.ViewSet):
 class TokenVerifyViewset(viewsets.ViewSet):
 
     def create(self, request):
-        serializer = PhoneCodeSerializer(data=request.data)
+        serializer = TokenVerifySerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
