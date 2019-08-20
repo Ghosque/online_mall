@@ -1,7 +1,10 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
+from rest_framework_jwt.utils import jwt_decode_handler
+from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
 from .models import Merchant
 from common.models import MallUser
@@ -22,7 +25,7 @@ class MerchantRegCodeSerializer(serializers.Serializer):
                                       "min_length": "手机号码格式错误"
                                   },
                                   help_text="手机号码")
-    id_card = serializers.CharField(required=True, write_only=True, max_length=18, min_length=18, label='手机号码',
+    id_card = serializers.CharField(required=True, write_only=True, max_length=18, min_length=18, label='身份证号码',
                                     error_messages={
                                         "max_length": "身份证号码格式错误",
                                         "min_length": "身份证号码格式错误"
@@ -86,3 +89,28 @@ class MerchantLoginSerializer(serializers.Serializer):
                 raise serializers.ValidationError("密码错误")
             else:
                 return mall_user.user
+
+
+class MerchantInfoSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True, max_length=50, label="姓名")
+    gender = serializers.IntegerField(required=True, max_value=2, min_value=0, label="性别")
+    phone = serializers.CharField(required=True, max_length=11, label='手机号码')
+    id_card = serializers.CharField(required=True, max_length=18, min_length=18, label='身份证号码')
+    token = serializers.CharField(required=True, label="token", help_text="token")
+    shop_name = serializers.CharField(required=True, allow_blank=True, allow_null=True, label='商店名称')
+
+    def validate_token(self, token):
+        token_info = jwt_decode_handler(token)
+        user_id = token_info['user_id']
+        expire_date = datetime.fromtimestamp(token_info['exp'])
+        if (expire_date - datetime.now()).seconds > settings.REFRESH_SECONDS:
+            user = User.objects.get(pk=user_id)
+            payload = jwt_payload_handler(user)
+            token = jwt_encode_handler(payload)
+
+        return token
+
+    class Meta:
+        model = Merchant
+        fields = ('name', 'gender', 'phone', 'id_card', 'token', 'shop_name')
+

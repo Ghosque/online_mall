@@ -18,7 +18,7 @@ class MallUser(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User', related_name='mall_user')
 
     class Meta:
         verbose_name = verbose_name_plural = '用户'

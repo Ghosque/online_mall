@@ -60,7 +60,7 @@ class Merchant(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    mall_user = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='mall_user')
+    mall_user = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='mall_user', related_name='merchant')
 
     class Meta:
         verbose_name = verbose_name_plural = '商家'
@@ -85,7 +85,7 @@ class Shop(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    merchant = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='商家')
+    merchant = models.OneToOneField(Merchant, on_delete=models.CASCADE, verbose_name='商家', related_name='shop')
 
     class Meta:
         verbose_name = verbose_name_plural = '商店'

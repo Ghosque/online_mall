@@ -9,8 +9,8 @@ from common_function import GetId
 class Order(models.Model):
     STATUS_ITEMS = (
         (0, '删除'),
-        (1, '已支付'),
-        (2, '待支付'),
+        (1, '待支付'),
+        (2, '已支付'),
         (3, '正在出库'),
         (4, '已出库'),
         (5, '派送中'),
@@ -19,7 +19,7 @@ class Order(models.Model):
 
     order_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='订单ID')
     info = JSONField(verbose_name='订单内容')
-    status = models.SmallIntegerField(default=2, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')

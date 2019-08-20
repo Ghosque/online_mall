@@ -13,7 +13,7 @@ class Buyer(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    mall_user = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='mall_user')
+    mall_user = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='mall_user', related_name='buyer')
 
     class Meta:
         verbose_name = verbose_name_plural = '买家'

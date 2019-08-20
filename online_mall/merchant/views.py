@@ -1,13 +1,15 @@
+import re
+
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
-from .serializers import MerchantRegCodeSerializer, MerchantLoginSerializer
-from .models import Merchant
+from .serializers import MerchantRegCodeSerializer, MerchantLoginSerializer, MerchantInfoSerializer
+from .models import Merchant, Shop
 from common.models import MallUser
 from common_function import GetId
 
@@ -79,11 +81,36 @@ class MerchantLoginViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
 
-class MerchantViewset(viewsets.ViewSet):
+class MerchantInfoViewset(viewsets.ViewSet):
 
     permission_classes = (IsAuthenticated,)
 
-    def retrieve(self, request, pk):
-        user = User.objects.get(pk=pk)
+    def retrieve(self, request, pk=None):
+        token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
+        try:
+            user = User.objects.get(id=pk)
+            mall_user = MallUser.objects.get(user_id=user.id)
+        except (User.DoesNotExist, MallUser.DoesNotExist):
+            result = {
+                'code': 0,
+                'message': '查无此用户'
+            }
+            return Response(result, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({'user_name': user.username}, status=status.HTTP_201_CREATED)
+        # merchant['token'] = token
+        try:
+            shop_name = mall_user.merchant.shop.name
+        except Shop.DoesNotExist:
+            shop_name = None
+        data = {
+            'name': mall_user.name,
+            'gender': mall_user.gender,
+            'phone': mall_user.phone,
+            'id_card': mall_user.id_card,
+            'token': token,
+            'shop_name': shop_name
+        }
+        print(data)
+        serializer = MerchantInfoSerializer(data=data)
+        serializer.is_valid()
+        return Response(serializer.data, status=status.HTTP_200_OK)
