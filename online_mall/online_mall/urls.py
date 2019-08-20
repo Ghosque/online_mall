@@ -16,7 +16,7 @@ Including another URLconf
 import xadmin
 from django.urls import path, include
 from rest_framework import routers
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+from rest_framework_jwt.views import obtain_jwt_token
 
 from common.views import PhoneCodeViewset
 from merchant.views import MerchantRegViewset, MerchantLoginViewset, MerchantViewset
@@ -33,5 +33,4 @@ urlpatterns = [
     path('admin/', xadmin.site.urls, name='xadmin'),
     path('api/', include(router.urls)),
     path(r'api-token-auth/', obtain_jwt_token),
-    path(r'api-token-refresh/', refresh_jwt_token),
 ]

@@ -55,6 +55,7 @@ class SecondCategory(models.Model):
         return self.name
 
 
+# 商家
 class Merchant(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -165,6 +166,7 @@ class Specification(models.Model):
 class BackStageFirst(models.Model):
 
     name = models.CharField(max_length=20, verbose_name='单元名称')
+    status = models.BooleanField(default=True, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')

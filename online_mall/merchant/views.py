@@ -23,6 +23,11 @@ class MerchantRegViewset(viewsets.ViewSet):
         return merchant_id
 
     def create(self, request):
+        """
+        注册请求
+        :param request: password name gender phone id_card code
+        :return: code message
+        """
         serializer = MerchantRegCodeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -50,6 +55,11 @@ class MerchantRegViewset(viewsets.ViewSet):
 class MerchantLoginViewset(viewsets.ViewSet):
 
     def create(self, request):
+        """
+        登录请求
+        :param request: phone password
+        :return: token user_id
+        """
         serializer = MerchantLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

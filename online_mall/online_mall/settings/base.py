@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'common',
     'merchant',
     'buyer',
     'payment',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     'reversion',
     'import_export',
     'rest_framework',
-    'common',
 ]
 
 MIDDLEWARE = [

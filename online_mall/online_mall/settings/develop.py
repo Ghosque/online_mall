@@ -27,7 +27,7 @@ REST_FRAMEWORK = {
 from _datetime import timedelta
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(days=7),  # 过期时间：七天
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',  # 设置 请求头中的前缀
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',  # 设置请求头中的前缀
     'JWT_ALLOW_REFRESH': True,
 }
 

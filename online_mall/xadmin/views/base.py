@@ -206,7 +206,7 @@ class BaseAdminObject(object):
 
     def message_user(self, message, level='info'):
         """
-        Send a message to the user. The default implementation
+        Send a message to the buyer. The default implementation
         posts a message using the django.contrib.messages backend.
         """
         if hasattr(messages, level) and callable(getattr(messages, level)):

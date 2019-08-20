@@ -24,8 +24,8 @@ class LogAdmin(object):
     link.allow_tags = True
     link.is_column = False
 
-    list_display = ('action_time', 'user', 'ip_addr', '__str__', 'link')
-    list_filter = ['user', 'action_time']
+    list_display = ('action_time', 'buyer', 'ip_addr', '__str__', 'link')
+    list_filter = ['buyer', 'action_time']
     search_fields = ['ip_addr', 'message']
     model_icon = 'fa fa-cog'
 
