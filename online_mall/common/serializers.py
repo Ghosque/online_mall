@@ -13,7 +13,7 @@ from .models import MallUser, VerifyCode
 
 # 手机验证码序列化组件
 class PhoneCodeSerializer(serializers.Serializer):
-    phone = serializers.CharField(max_length=15)
+    phone = serializers.CharField(max_length=15, label='手机号码', help_text='手机号码')
 
     # 验证手机号码
     # validate_ + 字段名 的格式命名
@@ -46,12 +46,12 @@ class TokenVerifySerializer(serializers.Serializer):
             token_info = jwt_decode_handler(token)
 
         except ExpiredSignatureError:
-            if cache.get('token'):
+            if cache.get('token') and cache.get('token') == token:
                 user = User.objects.get(pk=self.initial_data['user_id'])
                 payload = jwt_payload_handler(user)
                 token = jwt_encode_handler(payload)
                 cache.set('token', token, settings.REFRESH_SECONDS)
             else:
-                return serializers.ValidationError("Token过期，请重新登录")
+                raise serializers.ValidationError("Token过期，请重新登录")
 
         return token

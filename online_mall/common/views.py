@@ -21,7 +21,14 @@ class PhoneCodeViewset(viewsets.ViewSet):
     def create(self, request):
         print(request.data)
         serializer = PhoneCodeSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('phone')[0])
+            }
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
         # 验证后即可取出数据
         phone = serializer.validated_data["phone"]
         code = self.generate_code()
@@ -29,17 +36,36 @@ class PhoneCodeViewset(viewsets.ViewSet):
         # 确认无误后需要保存数据库中
         code_record = VerifyCode(code=code, phone=phone)
         code_record.save()
-        return Response({
-            "phone": phone,
-            "verify_code": code
-        }, status=status.HTTP_201_CREATED)
+
+        result = {
+            'code': 1,
+            'data': {
+                'phone': phone,
+                'verify_code': code
+            },
+            'message': '获取验证码成功'
+        }
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class TokenVerifyViewset(viewsets.ViewSet):
 
     def create(self, request):
         serializer = TokenVerifySerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('token')[0])
+            }
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'code': 0}, status=status.HTTP_400_BAD_REQUEST)
+        result = {
+            'code': 1,
+            'data': {
+                'token': serializer.data['token'],
+                'user_id': serializer.data['user_id']
+            },
+            'message': '请求成功'
+        }
+        return Response(result, status=status.HTTP_200_OK)

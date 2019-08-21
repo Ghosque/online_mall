@@ -43,11 +43,11 @@ class MerchantRegCodeSerializer(serializers.Serializer):
         front_17_list = [i for i in id_card[:-1]]
         remainder = sum([int(i)*int(j) for i, j in zip(front_17_list, settings.COEFFICIENT_LIST)]) % 11
         if not settings.REMAINDER_DICT.get(remainder) == id_card[-1]:
-            return serializers.ValidationError("身份证错误")
+            raise serializers.ValidationError("身份证错误")
 
         merchant_info = MallUser.objects.filter(id_card=id_card)
         if merchant_info:
-            return serializers.ValidationError("该身份证已被注册")
+            raise serializers.ValidationError("该身份证已被注册")
 
     def validate_code(self, code):
         # 前端传过来的所有的数据都在, initial_data 字典里面, 如果是验证通过的数据则保存在 validated_data 字典中
@@ -61,10 +61,11 @@ class MerchantRegCodeSerializer(serializers.Serializer):
                 raise serializers.ValidationError("验证码过期")
             # 根据记录的 验证码 比对判断
             if last_record.code != code:
-                return serializers.ValidationError("验证码错误")
+                raise serializers.ValidationError("验证码错误")
+
             return code  # 没必要保存验证码记录, 仅仅是用作验证
         else:
-            return serializers.ValidationError("验证码错误")
+            raise serializers.ValidationError("验证码错误")
 
     class Meta:
         model = Merchant
@@ -86,18 +87,18 @@ class MerchantLoginSerializer(serializers.Serializer):
             mall_user = MallUser_list[0]
             username = mall_user.user.username
             if not authenticate(username=username,password=password):
-                return serializers.ValidationError("密码错误")
+                raise serializers.ValidationError("密码错误")
             else:
                 return mall_user.user
 
 
 class MerchantInfoSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(required=True, max_length=50, label="姓名")
-    gender = serializers.IntegerField(required=True, max_value=2, min_value=0, label="性别")
-    phone = serializers.CharField(required=True, max_length=11, label='手机号码')
-    id_card = serializers.CharField(required=True, max_length=18, min_length=18, label='身份证号码')
+    name = serializers.CharField(required=True, max_length=50, label="姓名", help_text="姓名")
+    gender = serializers.IntegerField(required=True, max_value=2, min_value=0, label="性别", help_text="性别")
+    phone = serializers.CharField(required=True, max_length=11, label='手机号码', help_text="手机号码")
+    id_card = serializers.CharField(required=True, max_length=18, min_length=18, label='身份证号码', help_text="身份证号码")
     token = serializers.CharField(required=True, label="token", help_text="token")
-    shop_name = serializers.CharField(required=True, allow_blank=True, allow_null=True, label='商店名称')
+    shop_name = serializers.CharField(required=True, allow_blank=True, allow_null=True, label='商店名称', help_text="商店名称")
 
     def validate_token(self, token):
         token_info = jwt_decode_handler(token)

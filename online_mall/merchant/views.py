@@ -32,7 +32,13 @@ class MerchantRegViewset(viewsets.ViewSet):
         :return: code message
         """
         serializer = MerchantRegCodeSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('id_card')[0]) or str(serializer.errors.get('code')[0])
+            }
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
         merchant_id = self.get_merchant_id()
 
@@ -50,6 +56,7 @@ class MerchantRegViewset(viewsets.ViewSet):
 
         result = {
             'code': 1,
+            'data': None,
             'message': '注册成功'
         }
         return Response(result, status=status.HTTP_201_CREATED)
@@ -64,7 +71,13 @@ class MerchantLoginViewset(viewsets.ViewSet):
         :return: token user_id
         """
         serializer = MerchantLoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('password')[0])
+            }
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
         mall_user = MallUser.objects.get(phone=request.data['phone'])
         user = mall_user.user
@@ -112,7 +125,6 @@ class MerchantInfoViewset(viewsets.ViewSet):
             'token': token,
             'shop_name': shop_name
         }
-        print(data)
         serializer = MerchantInfoSerializer(data=data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
