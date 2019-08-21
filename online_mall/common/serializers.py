@@ -44,6 +44,9 @@ class TokenVerifySerializer(serializers.Serializer):
     def validate_token(self, token):
         try:
             token_info = jwt_decode_handler(token)
+            user_id = token_info['user_id']
+            if user_id != int(self.initial_data['user_id']):
+                raise serializers.ValidationError("Token认证失败，请重新登录")
 
         except ExpiredSignatureError:
             if cache.get('token') and cache.get('token') == token:

@@ -6,12 +6,12 @@ from django.contrib.auth import authenticate
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
-from .models import Merchant
+from .models import Merchant, Shop
 from common.models import MallUser
 from common.models import VerifyCode
 
 
-class MerchantRegCodeSerializer(serializers.Serializer):
+class MerchantRegSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, write_only=True, max_length=500, label='密码', help_text="密码")
     name = serializers.CharField(required=True, write_only=True, max_length=50, label="姓名",
                                  error_messages={
@@ -72,6 +72,21 @@ class MerchantRegCodeSerializer(serializers.Serializer):
         fields = ('password', 'name', 'gender', 'phone', 'id_card', 'code')
 
 
+class ShopRegSerializer(serializers.Serializer):
+    name = serializers.CharField(required=True, write_only=True, max_length=50, min_length=10, label='店名',
+                                 error_messages={
+                                     "max_length": "店名长度不能超过50个字节",
+                                     "min_length": "店名长度不能少于10个字节"
+                                 },
+                                 help_text="店名")
+    user_id = serializers.IntegerField(required=True, write_only=True, label='用户ID', help_text='用户ID')
+
+    def validate_name(self, name):
+        name_list = Shop.objects.filter(name=name)
+        if name_list:
+            raise serializers.ValidationError("该店名已被注册")
+
+
 class MerchantLoginSerializer(serializers.Serializer):
     phone = serializers.CharField(required=True, write_only=True, max_length=11, label='手机号码',
                                   error_messages={
@@ -88,8 +103,6 @@ class MerchantLoginSerializer(serializers.Serializer):
             username = mall_user.user.username
             if not authenticate(username=username,password=password):
                 raise serializers.ValidationError("密码错误")
-            else:
-                return mall_user.user
 
 
 class MerchantInfoSerializer(serializers.ModelSerializer):

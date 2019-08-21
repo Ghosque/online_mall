@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 from django.core.cache import cache
 
-from .serializers import MerchantRegCodeSerializer, MerchantLoginSerializer, MerchantInfoSerializer
+from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer
 from .models import Merchant, Shop
 from common.models import MallUser
 from common_function import GetId
@@ -29,14 +29,19 @@ class MerchantRegViewset(viewsets.ViewSet):
         """
         注册请求
         :param request: password name gender phone id_card code
-        :return: code message
+        :return: code data message
         """
-        serializer = MerchantRegCodeSerializer(data=request.data)
+        serializer = MerchantRegSerializer(data=request.data)
         if not serializer.is_valid():
+            if serializer.errors.get('id_card'):
+                message = str(serializer.errors.get('id_card')[0])
+            else:
+                message = str(serializer.errors.get('code')[0])
+
             result = {
                 'code': 0,
                 'data': None,
-                'message': str(serializer.errors.get('id_card')[0]) or str(serializer.errors.get('code')[0])
+                'message': message
             }
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
@@ -62,13 +67,23 @@ class MerchantRegViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_201_CREATED)
 
 
+class ShopRegViewset(viewsets.ViewSet):
+
+    def create(self, request):
+        """
+        注册商店
+        :param request: name user_id
+        :return: code data message
+        """
+
+
 class MerchantLoginViewset(viewsets.ViewSet):
 
     def create(self, request):
         """
         登录请求
         :param request: phone password
-        :return: token user_id
+        :return: code data(token user_id) message
         """
         serializer = MerchantLoginSerializer(data=request.data)
         if not serializer.is_valid():
