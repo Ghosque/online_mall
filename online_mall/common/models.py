@@ -25,3 +25,21 @@ class MallUser(models.Model):
 
     def __str__(self):
         return self.phone
+
+
+class DisplayImage(models.Model):
+    image = models.ImageField(verbose_name='图片', upload_to='display/')
+    is_display = models.BooleanField(verbose_name='是否展示')
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '轮播图'
+
+    def __str__(self):
+        return self.image
+
+    @classmethod
+    def get_display_image(cls):
+        return cls.objects.filter(is_display=True)
