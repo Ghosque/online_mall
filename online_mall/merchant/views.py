@@ -12,7 +12,7 @@ from django.core.cache import cache
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
 from .models import Merchant, Shop
 from common.models import MallUser
-from common_function import GetId
+from common_function.get_id import GetId
 
 
 class MerchantRegViewset(viewsets.ViewSet):
@@ -121,7 +121,7 @@ class MerchantLoginViewset(viewsets.ViewSet):
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
 
-        cache.set('token', token, settings.REFRESH_SECONDS)
+        cache.set(user.id, token, settings.REFRESH_SECONDS)
 
         result = {
             'code': 1,

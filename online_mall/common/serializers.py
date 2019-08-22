@@ -39,7 +39,7 @@ class PhoneCodeSerializer(serializers.Serializer):
 # 验证Token是否过期，若过期且在安全期内则返回新的Token
 class TokenVerifySerializer(serializers.Serializer):
     token = serializers.CharField(required=True)
-    user_id = serializers.CharField(required=True)
+    user_id = serializers.IntegerField(required=True)
 
     def validate_token(self, token):
         try:
@@ -49,11 +49,11 @@ class TokenVerifySerializer(serializers.Serializer):
                 raise serializers.ValidationError("Token认证失败，请重新登录")
 
         except ExpiredSignatureError:
-            if cache.get('token') and cache.get('token') == token:
+            if cache.get(self.initial_data['user_id']) and cache.get(self.initial_data['user_id']) == token:
                 user = User.objects.get(pk=self.initial_data['user_id'])
                 payload = jwt_payload_handler(user)
                 token = jwt_encode_handler(payload)
-                cache.set('token', token, settings.REFRESH_SECONDS)
+                cache.set(self.initial_data['user_id'], token, settings.REFRESH_SECONDS)
             else:
                 raise serializers.ValidationError("Token过期，请重新登录")
 
