@@ -198,4 +198,12 @@ class BackStageSecond(models.Model):
 
     @classmethod
     def get_back_stage_data(cls):
-        return cls.objects.filter(status=True)
+        back_stage_dict = {}
+        first_list = BackStageFirst.objects.filter(status=True)
+        for first_item in first_list:
+            back_stage_dict[first_item.name] = []
+            second_list = cls.objects.filter(status=True, first=first_item)
+            for second_item in second_list:
+                back_stage_dict[first_item.name].append(second_item.name)
+
+        return back_stage_dict

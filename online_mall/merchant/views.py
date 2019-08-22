@@ -10,7 +10,7 @@ from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handl
 from django.core.cache import cache
 
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
-from .models import Merchant, Shop
+from .models import Merchant, Shop, BackStageSecond
 from common.models import MallUser
 from common_function.get_id import GetId
 
@@ -223,6 +223,26 @@ class ShopInfoViewset(viewsets.ViewSet):
                 'status': mall_user.merchant.shop.status,
                 'token': token,
             },
+            'message': '请求成功'
+        }
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class NavigationViewset(viewsets.ViewSet):
+
+    def list(self, request):
+        back_stage_dict = BackStageSecond.get_back_stage_data()
+        if not back_stage_dict:
+            result = {
+                'code': 0,
+                'data': None,
+                'message': '暂无导航栏数据'
+            }
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        result = {
+            'code': 1,
+            'data': back_stage_dict,
             'message': '请求成功'
         }
         return Response(result, status=status.HTTP_200_OK)
