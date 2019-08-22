@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from jwt.exceptions import ExpiredSignatureError
 from rest_framework import serializers
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -105,15 +106,9 @@ class MerchantLoginSerializer(serializers.Serializer):
                 raise serializers.ValidationError("密码错误")
 
 
-class MerchantInfoSerializer(serializers.ModelSerializer):
+class MerchantInfoSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=True, label='用户ID', help_text='用户ID')
-    merchant_id = serializers.CharField(required=True, max_length=15, label='商家ID', help_text='商家ID')
-    name = serializers.CharField(required=True, max_length=50, label="姓名", help_text="姓名")
-    gender = serializers.IntegerField(required=True, max_value=2, min_value=0, label="性别", help_text="性别")
-    phone = serializers.CharField(required=True, max_length=11, label='手机号码', help_text="手机号码")
-    id_card = serializers.CharField(required=True, max_length=18, min_length=18, label='身份证号码', help_text="身份证号码")
     token = serializers.CharField(required=True, label="token", help_text="token")
-    shop_name = serializers.CharField(required=True, allow_blank=True, allow_null=True, label='商店名称', help_text="商店名称")
 
     def validate_token(self, token):
         token_info = jwt_decode_handler(token)
@@ -122,19 +117,18 @@ class MerchantInfoSerializer(serializers.ModelSerializer):
         if user_id != int(self.initial_data['user_id']):
             raise serializers.ValidationError("Token认证失败，请重新登录")
 
-        expire_date = datetime.fromtimestamp(token_info['exp'])
-        if settings.EXPIRE_SECONDS < (expire_date - datetime.now()).seconds < settings.REFRESH_SECONDS:
-            user = User.objects.get(pk=user_id)
-            payload = jwt_payload_handler(user)
-            token = jwt_encode_handler(payload)
-
         return token
 
-    class Meta:
-        model = Merchant
-        fields = ('user_id', 'merchant_id', 'name', 'gender', 'phone', 'id_card', 'token', 'shop_name')
 
-
-class ShopInfoSerializer(serializers.ModelSerializer):
+class ShopInfoSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=True, label='用户ID', help_text='用户ID')
-    name = serializers.CharField(required=True, allow_blank=True, allow_null=True, label='商店名称', help_text="商店名称")
+    token = serializers.CharField(required=True, label="token", help_text="token")
+
+    def validate_token(self, token):
+        token_info = jwt_decode_handler(token)
+        user_id = token_info['user_id']
+        print(self.initial_data)
+        if user_id != int(self.initial_data['user_id']):
+            raise serializers.ValidationError("Token认证失败，请重新登录")
+
+        return token

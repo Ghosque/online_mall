@@ -157,15 +157,8 @@ class MerchantInfoViewset(viewsets.ViewSet):
             shop_name = None
         data = {
             'user_id': pk,
-            'merchant_id': mall_user.merchant.merchant_id,
-            'name': mall_user.name,
-            'gender': mall_user.gender,
-            'phone': mall_user.phone,
-            'id_card': mall_user.id_card,
             'token': token,
-            'shop_name': shop_name
         }
-        print(data)
         serializer = MerchantInfoSerializer(data=data)
         if not serializer.is_valid():
             result = {
@@ -196,4 +189,40 @@ class ShopInfoViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
-        pass
+        token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
+        try:
+            user = User.objects.get(id=pk)
+            mall_user = MallUser.objects.get(user_id=user.id, is_merchant=1)
+
+        except (User.DoesNotExist, MallUser.DoesNotExist):
+            result = {
+                'code': 0,
+                'message': '查无此用户'
+            }
+            return Response(result, status=status.HTTP_404_NOT_FOUND)
+
+        data = {
+            'user_id': pk,
+            'token': token,
+        }
+        serializer = MerchantInfoSerializer(data=data)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('token')[0])
+            }
+            return Response(result, status=status.HTTP_403_FORBIDDEN)
+
+        result = {
+            'code': 1,
+            'data': {
+                'merchant_id': mall_user.merchant.shop.shop_id,
+                'name': mall_user.merchant.shop.name,
+                'star': mall_user.merchant.shop.star,
+                'status': mall_user.merchant.shop.status,
+                'token': token,
+            },
+            'message': '请求成功'
+        }
+        return Response(result, status=status.HTTP_200_OK)
