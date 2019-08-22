@@ -2,10 +2,12 @@ from django.db import models
 
 from common.models import MallUser
 from merchant.models import Commodity
+from common_function.get_id import GetId
 
 
 # 买家
 class Buyer(models.Model):
+    buyer_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='买家ID')
     nickname = models.CharField(max_length=30, verbose_name='昵称')
     reward_points = models.IntegerField(default=0, verbose_name='积分')
     head = models.ImageField(verbose_name='头像', upload_to='buyer/head/', null=True, blank=True)

@@ -4,7 +4,7 @@ from django.db import models
 from django_mysql.models import JSONField, ListTextField
 
 from common.models import MallUser
-from common_function import GetId
+from common_function.get_id import GetId
 
 logger = logging.getLogger('scripts')
 

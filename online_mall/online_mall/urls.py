@@ -18,18 +18,18 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 
-from common.views import PhoneCodeViewset, TokenVerifyViewset
-from merchant.views import MerchantRegViewset, MerchantLoginViewset, MerchantInfoViewset, ShopRegViewset, ShopInfoViewset
+from common import views as c_views
+from merchant import views as m_views
 
 
 router = routers.DefaultRouter()
-router.register(r'code', PhoneCodeViewset, base_name='verify_code')
-router.register(r'merchantReg', MerchantRegViewset, base_name='merchant_reg')
-router.register(r'merchantLogin', MerchantLoginViewset, base_name='merchant_login')
-router.register(r'merchant', MerchantInfoViewset, base_name='merchant_info')
-router.register(r'token_verify', TokenVerifyViewset, base_name='token_verify')
-router.register(r'shopReg', ShopRegViewset, base_name='shop_reg')
-router.register(r'shop', ShopInfoViewset, base_name='shop_info')
+router.register(r'code', c_views.PhoneCodeViewset, base_name='verify_code')
+router.register(r'merchantReg', m_views.MerchantRegViewset, base_name='merchant_reg')
+router.register(r'merchantLogin', m_views.MerchantLoginViewset, base_name='merchant_login')
+router.register(r'merchant', m_views.MerchantInfoViewset, base_name='merchant_info')
+router.register(r'token_verify', c_views.TokenVerifyViewset, base_name='token_verify')
+router.register(r'shopReg', m_views.ShopRegViewset, base_name='shop_reg')
+router.register(r'shop', m_views.ShopInfoViewset, base_name='shop_info')
 
 
 urlpatterns = [

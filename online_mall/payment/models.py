@@ -2,7 +2,7 @@ from django.db import models
 from django_mysql.models import JSONField
 
 from buyer.models import Buyer, Address
-from common_function import GetId
+from common_function.get_id import GetId
 
 
 # 订单
