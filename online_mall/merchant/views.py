@@ -244,8 +244,6 @@ class ShopInfoViewset(viewsets.ViewSet):
 
 class NavigationViewset(viewsets.ViewSet):
 
-    permission_classes = (IsAuthenticated,)
-
     def list(self, request):
         """
         获取导航栏
