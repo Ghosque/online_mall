@@ -1,15 +1,12 @@
-from django.contrib.auth.models import User
-from jwt.exceptions import ExpiredSignatureError
+from django.core.cache import cache
 from rest_framework import serializers
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from rest_framework_jwt.utils import jwt_decode_handler
-from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
 from .models import Merchant, Shop
 from common.models import MallUser
-from common.models import VerifyCode
 
 
 class MerchantRegSerializer(serializers.Serializer):
@@ -32,6 +29,7 @@ class MerchantRegSerializer(serializers.Serializer):
                                         "min_length": "身份证号码格式错误"
                                     },
                                     help_text="身份证号码")
+    code_key = serializers.CharField(required=True, write_only=True, label='验证码key', help_text='验证码key')
     code = serializers.CharField(required=True, write_only=True, max_length=4, min_length=4, label="验证码",
                                  error_messages={
                                      "max_length": "验证码格式错误",
@@ -51,26 +49,16 @@ class MerchantRegSerializer(serializers.Serializer):
             raise serializers.ValidationError("该身份证已被注册")
 
     def validate_code(self, code):
-        # 前端传过来的所有的数据都在, initial_data 字典里面, 如果是验证通过的数据则保存在 validated_data 字典中
-        verify_records = VerifyCode.objects.filter(phone=self.initial_data["phone"]).order_by("-update_time")
-        if verify_records:
-            last_record = verify_records[0]  # 时间倒叙排序后的的第一条就是最新的一条
-            # 当前时间回退5分钟
-            five_mintes_ago = datetime.now() - timedelta(hours=0, minutes=5, seconds=0)
-            # 最后一条短信记录的发出时间小于5分钟前, 表示是5分钟前发送的, 表示过期
-            if five_mintes_ago > last_record.update_time:
-                raise serializers.ValidationError("验证码过期")
-            # 根据记录的 验证码 比对判断
-            if last_record.code != code:
-                raise serializers.ValidationError("验证码错误")
+        if not cache.get(self.initial_data['code_key']):
+            raise serializers.ValidationError("该验证码已过期，请重新获取")
 
-            return code  # 没必要保存验证码记录, 仅仅是用作验证
-        else:
+        true_code = cache.get(self.initial_data['code_key'])
+        if true_code.lower() != code.lower():
             raise serializers.ValidationError("验证码错误")
 
     class Meta:
         model = Merchant
-        fields = ('password', 'name', 'gender', 'phone', 'id_card', 'code')
+        fields = ('password', 'name', 'gender', 'phone', 'id_card', 'code_key', 'code')
 
 
 class ShopRegSerializer(serializers.Serializer):

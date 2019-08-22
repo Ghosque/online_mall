@@ -25,14 +25,3 @@ class MallUser(models.Model):
 
     def __str__(self):
         return self.phone
-
-
-class VerifyCode(models.Model):
-    code = models.CharField(max_length=6, verbose_name='验证码')
-    phone = models.CharField(max_length=11, verbose_name='手机号码')
-
-    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
-
-    class Meta:
-        verbose_name = verbose_name_plural = '验证码'

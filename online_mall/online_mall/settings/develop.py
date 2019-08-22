@@ -71,3 +71,5 @@ REGEX_PHONE = re.compile("^1[358]\d{9}$|^147\d{8}$|^176\d{8}$")
 REGEX_TOKEN = re.compile("JWT (.*)")
 
 APPEND_SLASH = False
+
+CODE_VALIDATION = 5 * 60

@@ -1,18 +1,22 @@
+from django.conf import settings
+from django.core.cache import cache
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+
 from random import choice
+import string
 
 from .serializers import PhoneCodeSerializer, TokenVerifySerializer
-from .models import VerifyCode
+from common_function import get_verify_code
 
 
-# 发送短信验证码
+# 获取验证码图片
 class PhoneCodeViewset(viewsets.ViewSet):
 
-    # 生成四位数字的验证码
-    def generate_code(self):
+    # 生成四位的验证码key
+    def generate_code_key(self):
 
-        seeds = "1234567890"
+        seeds = string.digits + string.ascii_uppercase
         random_str = []
         for i in range(4):
             random_str.append(choice(seeds))
@@ -31,17 +35,17 @@ class PhoneCodeViewset(viewsets.ViewSet):
 
         # 验证后即可取出数据
         phone = serializer.validated_data["phone"]
-        code = self.generate_code()
+        code_key = self.generate_code_key()
+        code_img, code = get_verify_code.gene_code(code_key)
 
-        # 确认无误后需要保存数据库中
-        code_record = VerifyCode(code=code, phone=phone)
-        code_record.save()
+        cache.set(code_key, code, settings.CODE_VALIDATION)
 
         result = {
             'code': 1,
             'data': {
                 'phone': phone,
-                'verify_code': code
+                'code_key': code_key,
+                'code_img': code_img
             },
             'message': '获取验证码成功'
         }
