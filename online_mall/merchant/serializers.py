@@ -1,7 +1,6 @@
 from django.core.cache import cache
 from rest_framework import serializers
 from django.conf import settings
-from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from rest_framework_jwt.utils import jwt_decode_handler
 
@@ -120,3 +119,28 @@ class ShopInfoSerializer(serializers.Serializer):
             raise serializers.ValidationError("Token认证失败，请重新登录")
 
         return token
+
+
+class CommoditySerializer(serializers.Serializer):
+    title = serializers.CharField(required=True, write_only=True, max_length=500, min_length=10, label='详情页标题',
+                                  error_messages={
+                                      "max_length": "超过长度限制",
+                                      "min_length": "未达到长度标准"
+                                  },
+                                  help_text='详情页标题')
+    title_desc = serializers.CharField(required=True, write_only=True, max_length=200, min_length=10, label='预览页标题',
+                                       error_messages={
+                                           "max_length": "超过长度限制",
+                                           "min_length": "未达到长度标准"
+                                       },
+                                       help_text='预览页标题')
+    cover = serializers.ImageField(required=True, write_only=True, label='封面', help_text='封面')
+    inventory = serializers.IntegerField(required=True, write_only=True, max_value=9999, min_value=5, label='库存',
+                                         error_messages={
+                                           "max_value": "超过限制数量",
+                                           "min_value": "未达标准数量"
+                                         },
+                                         help_text='库存')
+    commodity_class = serializers.JSONField(required=True, write_only=True, label='分类', help_text='分类')
+    information = serializers.JSONField(required=True, write_only=True, label='详情', help_text='详情')
+    category = serializers.IntegerField(required=True, write_only=True, label='类别', help_text='类别')

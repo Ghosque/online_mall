@@ -1,4 +1,6 @@
-import datetime, random
+import datetime
+import random
+import string
 from random import shuffle
 
 
@@ -37,3 +39,7 @@ class GetId:
         a.reverse()
         out = ''.join(a)
         return out
+
+    @classmethod
+    def getDigitId(cls):
+        return ''.join(random.sample(string.digits, 6))

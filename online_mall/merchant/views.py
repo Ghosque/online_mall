@@ -6,11 +6,13 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
+from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 from django.core.cache import cache
 
-from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
-from .models import Merchant, Shop, BackStageSecond
+from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer,\
+    CommoditySerializer
+from .models import Merchant, Shop, BackStageSecond, Commodity, CommodityColor, Specification, SecondCategory
 from common.models import MallUser
 from common_function.get_id import GetId
 
@@ -139,6 +141,12 @@ class MerchantInfoViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
+        """
+        获取商家数据
+        :param request:
+        :param pk: user_id
+        :return: code data(merchant_id name gender phone id_card token shop_name) message
+        """
         token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
         try:
             user = User.objects.get(id=pk)
@@ -189,6 +197,12 @@ class ShopInfoViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
+        """
+        获取商店数据
+        :param request:
+        :param pk: user_id
+        :return: code data(shop_id name star status token) message
+        """
         token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
         try:
             user = User.objects.get(id=pk)
@@ -217,7 +231,7 @@ class ShopInfoViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': {
-                'merchant_id': mall_user.merchant.shop.shop_id,
+                'shop_id': mall_user.merchant.shop.shop_id,
                 'name': mall_user.merchant.shop.name,
                 'star': mall_user.merchant.shop.star,
                 'status': mall_user.merchant.shop.status,
@@ -230,7 +244,14 @@ class ShopInfoViewset(viewsets.ViewSet):
 
 class NavigationViewset(viewsets.ViewSet):
 
+    permission_classes = (IsAuthenticated,)
+
     def list(self, request):
+        """
+        获取导航栏
+        :param request:
+        :return: code data(back_stage_dict) message
+        """
         back_stage_dict = BackStageSecond.get_back_stage_data()
         if not back_stage_dict:
             result = {
@@ -246,3 +267,72 @@ class NavigationViewset(viewsets.ViewSet):
             'message': '请求成功'
         }
         return Response(result, status=status.HTTP_200_OK)
+
+
+class CommodityViewset(viewsets.ViewSet):
+
+    def create(self, request):
+        """
+        新增商品
+        :param request: title title_desc cover inventory commodity_class, information
+        :return:
+        """
+        serializer = CommoditySerializer(data=request.data)
+        if not serializer.is_valid():
+            pass
+
+        token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
+        token_info = jwt_decode_handler(token)
+        user_id = token_info['user_id']
+        user = User.objects.get(pk=user_id)
+
+        commodity_id = GetId.getDigitId()
+        while Commodity.objects.filter(commodity_id=commodity_id):
+            commodity_id = GetId.getDigitId()
+
+        url = '47.107.183.166:9000/'
+
+        category = SecondCategory.objects.get(id=serializer.validated_data['category'])
+
+        commodity = Commodity.objects.create(
+            commodity_id=commodity_id,
+            title=serializer.validated_data['title'],
+            title_desc=serializer.validated_data['title_desc'],
+            url=url,
+            cover=serializer.validated_data['cover'],
+            inventory=serializer.validated_data['inventory'],
+            category=category,
+            shop=user.mall_user.merchant.shop,
+        )
+
+    def list(self, request):
+        """
+        商品列表
+        :param request:
+        :return:
+        """
+        pass
+
+    def retrieve(self, request):
+        """
+        商品详情
+        :param request:
+        :return:
+        """
+        pass
+
+    def update(self, request):
+        """
+        更新商品数据
+        :param request:
+        :return:
+        """
+        pass
+
+    def destroy(self, request):
+        """
+        删除商品
+        :param request:
+        :return:
+        """
+        pass
