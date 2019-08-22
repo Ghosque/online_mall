@@ -9,7 +9,7 @@ import string
 
 # 字体的位置，不同版本的系统会有不同
 
-font_path = '../../resources/font/arial.ttf'
+font_path = '../resources/font/arial.ttf'
 # 生成几位数的验证码
 number = 4
 # 生成验证码图片的高度和宽度
@@ -42,14 +42,15 @@ def gene_line(draw, width, height):
 
 def gene_code(filename):
     save_base_path = os.path.join(settings.MEDIA_ROOT, 'verify_code')
-    width,height = size  # 宽和高
+    width, height = size  # 宽和高
     image = Image.new('RGBA', (width,height), bgcolor)  # 创建图片
 
+    print(os.path.abspath(font_path))
     font = ImageFont.truetype(font_path, 25)  # 验证码的字体和字体大小
     draw = ImageDraw.Draw(image)  # 创建画笔
     text = gen_text()  # 生成字符串
     font_width, font_height = font.getsize(text)
-    draw.text(((width-font_width)/number, (height-font_height)/number), text, font= font,fill=fontcolor) # 填充字符串
+    draw.text(((width-font_width)/number, (height-font_height)/number), text, font=font,fill=fontcolor) # 填充字符串
 
     if draw_line:
         gene_line(draw, width, height)
