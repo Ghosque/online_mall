@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 from django.core.cache import cache
 
-from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer
+from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
 from .models import Merchant, Shop
 from common.models import MallUser
 from common_function import GetId
@@ -75,6 +75,28 @@ class ShopRegViewset(viewsets.ViewSet):
         :param request: name user_id
         :return: code data message
         """
+        serializer = ShopRegSerializer(data=request.data)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('name')[0])
+            }
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(pk=request.data['user_id'])
+        merchant = user.mall_user.merchant
+        Shop.objects.create(
+            name=request.data['name'],
+            merchant=merchant
+        )
+
+        result = {
+            'code': 1,
+            'data': None,
+            'message': '商店登记成功'
+        }
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class MerchantLoginViewset(viewsets.ViewSet):
@@ -120,7 +142,8 @@ class MerchantInfoViewset(viewsets.ViewSet):
         token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
         try:
             user = User.objects.get(id=pk)
-            mall_user = MallUser.objects.get(user_id=user.id)
+            mall_user = MallUser.objects.get(user_id=user.id, is_merchant=1)
+
         except (User.DoesNotExist, MallUser.DoesNotExist):
             result = {
                 'code': 0,
@@ -133,6 +156,8 @@ class MerchantInfoViewset(viewsets.ViewSet):
         except Shop.DoesNotExist:
             shop_name = None
         data = {
+            'user_id': pk,
+            'merchant_id': mall_user.merchant.merchant_id,
             'name': mall_user.name,
             'gender': mall_user.gender,
             'phone': mall_user.phone,
@@ -140,6 +165,35 @@ class MerchantInfoViewset(viewsets.ViewSet):
             'token': token,
             'shop_name': shop_name
         }
+        print(data)
         serializer = MerchantInfoSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('token')[0])
+            }
+            return Response(result, status=status.HTTP_403_FORBIDDEN)
+
+        result = {
+            'code': 1,
+            'data': {
+                'merchant_id': mall_user.merchant.merchant_id,
+                'name': mall_user.name,
+                'gender': mall_user.gender,
+                'phone': mall_user.phone,
+                'id_card': mall_user.id_card,
+                'token': token,
+                'shop_name': shop_name
+            },
+            'message': '请求成功'
+        }
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class ShopInfoViewset(viewsets.ViewSet):
+
+    permission_classes = (IsAuthenticated,)
+
+    def retrieve(self, request, pk=None):
+        pass

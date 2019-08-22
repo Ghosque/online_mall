@@ -73,18 +73,18 @@ class MerchantRegSerializer(serializers.Serializer):
 
 
 class ShopRegSerializer(serializers.Serializer):
-    name = serializers.CharField(required=True, write_only=True, max_length=50, min_length=10, label='店名',
+    user_id = serializers.IntegerField(required=True, write_only=True, label='用户ID', help_text='用户ID')
+    name = serializers.CharField(required=True, write_only=True, max_length=50, min_length=4, label='店名',
                                  error_messages={
                                      "max_length": "店名长度不能超过50个字节",
                                      "min_length": "店名长度不能少于10个字节"
                                  },
                                  help_text="店名")
-    user_id = serializers.IntegerField(required=True, write_only=True, label='用户ID', help_text='用户ID')
 
     def validate_name(self, name):
         name_list = Shop.objects.filter(name=name)
         if name_list:
-            raise serializers.ValidationError("该店名已被注册")
+            raise serializers.ValidationError("该店名正在审核中或已被注册")
 
 
 class MerchantLoginSerializer(serializers.Serializer):
@@ -106,6 +106,8 @@ class MerchantLoginSerializer(serializers.Serializer):
 
 
 class MerchantInfoSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, label='用户ID', help_text='用户ID')
+    merchant_id = serializers.CharField(required=True, max_length=15, label='商家ID', help_text='商家ID')
     name = serializers.CharField(required=True, max_length=50, label="姓名", help_text="姓名")
     gender = serializers.IntegerField(required=True, max_value=2, min_value=0, label="性别", help_text="性别")
     phone = serializers.CharField(required=True, max_length=11, label='手机号码', help_text="手机号码")
@@ -116,6 +118,10 @@ class MerchantInfoSerializer(serializers.ModelSerializer):
     def validate_token(self, token):
         token_info = jwt_decode_handler(token)
         user_id = token_info['user_id']
+        print(self.initial_data)
+        if user_id != int(self.initial_data['user_id']):
+            raise serializers.ValidationError("Token认证失败，请重新登录")
+
         expire_date = datetime.fromtimestamp(token_info['exp'])
         if settings.EXPIRE_SECONDS < (expire_date - datetime.now()).seconds < settings.REFRESH_SECONDS:
             user = User.objects.get(pk=user_id)
@@ -126,4 +132,9 @@ class MerchantInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Merchant
-        fields = ('name', 'gender', 'phone', 'id_card', 'token', 'shop_name')
+        fields = ('user_id', 'merchant_id', 'name', 'gender', 'phone', 'id_card', 'token', 'shop_name')
+
+
+class ShopInfoSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, label='用户ID', help_text='用户ID')
+    name = serializers.CharField(required=True, allow_blank=True, allow_null=True, label='商店名称', help_text="商店名称")

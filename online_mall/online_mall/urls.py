@@ -19,7 +19,7 @@ from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 
 from common.views import PhoneCodeViewset, TokenVerifyViewset
-from merchant.views import MerchantRegViewset, MerchantLoginViewset, MerchantInfoViewset
+from merchant.views import MerchantRegViewset, MerchantLoginViewset, MerchantInfoViewset, ShopRegViewset
 
 
 router = routers.DefaultRouter()
@@ -28,6 +28,7 @@ router.register(r'merchantReg', MerchantRegViewset, base_name='merchant_reg')
 router.register(r'merchantLogin', MerchantLoginViewset, base_name='merchant_login')
 router.register(r'merchant', MerchantInfoViewset, base_name='merchant_info')
 router.register(r'token_verify', TokenVerifyViewset, base_name='token_verify')
+router.register(r'shopReg', ShopRegViewset, base_name='shop_reg')
 
 
 urlpatterns = [
