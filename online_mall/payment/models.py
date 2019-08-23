@@ -136,3 +136,6 @@ class CommentPaise(models.Model):
     first_comment = models.ForeignKey(CommodityComment, on_delete=models.CASCADE, null=True, verbose_name='一级评论')
     second_comment = models.ForeignKey(SecondComment, on_delete=models.CASCADE, null=True, verbose_name='二级评论')
 
+    class Meta:
+        verbose_name = verbose_name_plural = '评论点赞'
+
