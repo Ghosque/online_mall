@@ -2,7 +2,6 @@ from django.db import models
 
 from common.models import MallUser
 from merchant.models import Commodity
-from payment.models import SinglePurchaseOrder
 from common_function.get_id import GetId
 
 
@@ -42,23 +41,6 @@ class FollowCommodity(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = '商品关注'
-
-
-# 买家评论已收货订单的商品
-class CommodityComment(models.Model):
-    STATUS_ITEMS = (
-        (1, '正常'),
-        (0, '删除'),
-    )
-
-    content = models.TextField(verbose_name='评论内容')
-    status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
-
-    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
-
-    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
-    single_purchase_order = models.ForeignKey(SinglePurchaseOrder, on_delete=models.DO_NOTHING, verbose_name='单件商品订单')
 
 
 # 省
