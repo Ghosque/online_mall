@@ -1,5 +1,4 @@
 import xadmin
-from xadmin import views
 
 from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, CommodityColor, Specification, BackStageFirst, BackStageSecond
 from adminx import *

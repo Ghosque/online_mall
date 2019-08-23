@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# 商城用户
 class MallUser(models.Model):
     GENDER_ITEMS = (
         (0, '女'),
@@ -27,6 +28,7 @@ class MallUser(models.Model):
         return self.phone
 
 
+# 轮播图
 class DisplayImage(models.Model):
     image = models.ImageField(verbose_name='图片', upload_to='display/')
     is_display = models.BooleanField(verbose_name='是否展示')
@@ -43,3 +45,18 @@ class DisplayImage(models.Model):
     @classmethod
     def get_display_image(cls):
         return cls.objects.filter(is_display=True)
+
+
+# 评论标签
+class CommentLabel(models.Model):
+    label = models.CharField(max_length=50, verbose_name='标签')
+    is_delete = models.BooleanField(default=False)
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '评论标签'
+
+    def __str__(self):
+        return self.label

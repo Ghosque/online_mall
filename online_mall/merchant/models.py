@@ -1,7 +1,7 @@
 import hashlib
 import logging
 from django.db import models
-from django_mysql.models import JSONField, ListTextField
+from django_mysql.models import JSONField
 
 from common.models import MallUser
 from common_function.get_id import GetId
