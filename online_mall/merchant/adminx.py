@@ -50,7 +50,7 @@ class CommodityAdmin:
 
 @xadmin.sites.register(CommodityColor)
 class CommodityColorAdmin:
-    list_display = ('id', 'commodity_class', 'size', 'commodity', 'create_time', 'update_time',)
+    list_display = ('id', 'commodity_class', 'commodity', 'create_time', 'update_time',)
     list_filter = ('commodity',)
     search_fields = ('commodity',)
     ordering = ('id',)
@@ -59,7 +59,7 @@ class CommodityColorAdmin:
 
 @xadmin.sites.register(Specification)
 class SpecificationAdmin:
-    list_display = ('id', 'infomation', 'commodity', 'create_time', 'update_time',)
+    list_display = ('id', 'information', 'commodity', 'create_time', 'update_time',)
     list_filter = ('commodity',)
     search_fields = ('commodity',)
     ordering = ('id',)
