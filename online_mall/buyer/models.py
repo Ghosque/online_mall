@@ -43,6 +43,18 @@ class FollowCommodity(models.Model):
         verbose_name = verbose_name_plural = '商品关注'
 
 
+# 商品浏览
+class CommodityView(models.Model):
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
+    commodity = models.ForeignKey(Commodity, on_delete=models.DO_NOTHING, verbose_name='商品')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '商品浏览'
+
+
 # 省
 class Province(models.Model):
     province_id = models.CharField(max_length=10, verbose_name='省份编码')

@@ -4,24 +4,6 @@ from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, Co
 from adminx import *
 
 
-@xadmin.sites.register(FirstCategory)
-class FirstCategoryAdmin:
-    list_display = ('id', 'name', 'status', 'create_time', 'update_time',)
-    list_filter = ('status',)
-    search_fields = ('name',)
-    ordering = ('id',)
-    readonly_fields = ('create_time', 'update_time',)
-
-
-@xadmin.sites.register(SecondCategory)
-class SecondCategoryAdmin:
-    list_display = ('id', 'name', 'status', 'first_category', 'create_time', 'update_time',)
-    list_filter = ('first_category', 'status',)
-    search_fields = ('name',)
-    ordering = ('id',)
-    readonly_fields = ('create_time', 'update_time',)
-
-
 @xadmin.sites.register(Merchant)
 class MerchantAdmin:
     list_display = ('id', 'mall_user', 'create_time', 'update_time',)
@@ -62,6 +44,24 @@ class SpecificationAdmin:
     list_display = ('id', 'information', 'commodity', 'create_time', 'update_time',)
     list_filter = ('commodity',)
     search_fields = ('commodity',)
+    ordering = ('id',)
+    readonly_fields = ('create_time', 'update_time',)
+
+
+@xadmin.sites.register(FirstCategory)
+class FirstCategoryAdmin:
+    list_display = ('id', 'name', 'status', 'create_time', 'update_time',)
+    list_filter = ('status',)
+    search_fields = ('name',)
+    ordering = ('id',)
+    readonly_fields = ('create_time', 'update_time',)
+
+
+@xadmin.sites.register(SecondCategory)
+class SecondCategoryAdmin:
+    list_display = ('id', 'name', 'status', 'first_category', 'create_time', 'update_time',)
+    list_filter = ('first_category', 'status',)
+    search_fields = ('name',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
