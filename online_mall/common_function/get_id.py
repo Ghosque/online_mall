@@ -43,3 +43,7 @@ class GetId:
     @classmethod
     def getDigitId(cls):
         return ''.join(random.sample(string.digits, 6))
+
+    @classmethod
+    def getOrderId(cls):
+        return ''.join(random.choice(string.digits) for i in range(15))
