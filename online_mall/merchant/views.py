@@ -251,6 +251,7 @@ class NavigationViewset(viewsets.ViewSet):
         :return: code data(back_stage_dict) message
         """
         back_stage_dict = BackStageSecond.get_back_stage_data()
+        print(back_stage_dict)
         if not back_stage_dict:
             result = {
                 'code': 0,
