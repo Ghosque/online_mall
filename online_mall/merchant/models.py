@@ -197,12 +197,12 @@ class BackStageSecond(models.Model):
 
     @classmethod
     def get_back_stage_data(cls):
-        back_stage_dict = {}
+        back_stage_list = []
         first_list = BackStageFirst.objects.filter(status=True)
-        for first_item in first_list:
-            back_stage_dict[first_item.name] = []
+        for index_1, first_item in enumerate(first_list):
+            temp_dict = {'id': index_1+1, 'name': first_item, 'child': {}}
             second_list = cls.objects.filter(status=True, first=first_item)
-            for second_item in second_list:
-                back_stage_dict[first_item.name].append(second_item.name)
+            for index_2, second_item in enumerate(second_list):
+                temp_dict['child']['child-{}'.format(index_2+1)] = second_item
 
-        return back_stage_dict
+        return back_stage_list
