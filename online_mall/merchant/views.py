@@ -250,8 +250,9 @@ class NavigationViewset(viewsets.ViewSet):
         :param request:
         :return: code data(back_stage_dict) message
         """
-        back_stage_dict = BackStageSecond.get_back_stage_data()
-        if not back_stage_dict:
+        back_stage_list = BackStageSecond.get_back_stage_data()
+        print(back_stage_list)
+        if not back_stage_list:
             result = {
                 'code': 0,
                 'data': None,
@@ -261,7 +262,7 @@ class NavigationViewset(viewsets.ViewSet):
 
         result = {
             'code': 1,
-            'data': back_stage_dict,
+            'data': back_stage_list,
             'message': '请求成功'
         }
         return Response(result, status=status.HTTP_200_OK)
