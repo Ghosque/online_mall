@@ -205,4 +205,6 @@ class BackStageSecond(models.Model):
             for index_2, second_item in enumerate(second_list):
                 temp_dict['child']['child-{}'.format(index_2+1)] = second_item
 
+            back_stage_list.append(temp_dict)
+
         return back_stage_list
