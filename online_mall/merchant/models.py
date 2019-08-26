@@ -207,4 +207,6 @@ class BackStageSecond(models.Model):
 
             back_stage_list.append(temp_dict)
 
-        return back_stage_list
+        back_stage_dict = {'navigation': back_stage_list}
+
+        return back_stage_dict
