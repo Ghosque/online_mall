@@ -13,7 +13,7 @@ font_path = '../resources/font/arial.ttf'
 # 生成几位数的验证码
 number = 4
 # 生成验证码图片的高度和宽度
-size = (120, 40)
+size = (140, 40)
 # 背景颜色，默认为白色
 bgcolor = (255, 255, 255)
 # 字体颜色，默认为蓝色
