@@ -76,8 +76,8 @@ CODE_VALIDATION = 5 * 60
 
 # CORS
 CORS_ORIGIN_WHITELIST = (
-    '127.0.0.1:9000',
-    'localhost:9000',
-    '121.32.145.115:63343'
+    'http://127.0.0.1:9000',
+    'http://localhost:9000',
+    'http://121.32.145.115:63343'
 )
 CORS_ALLOW_CREDENTIALS = True  # 指明在跨域访问中，后端是否支持对cookie的操作
