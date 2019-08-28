@@ -116,7 +116,7 @@ class MerchantLoginViewset(viewsets.ViewSet):
                 'data': None,
                 'message': str(serializer.errors.get('password')[0])
             }
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+            return Response(result, status=status.HTTP_200_OK)
 
         mall_user = MallUser.objects.get(phone=request.data['phone'])
         user = mall_user.user
