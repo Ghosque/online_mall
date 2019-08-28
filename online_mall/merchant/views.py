@@ -34,6 +34,7 @@ class MerchantRegViewset(viewsets.ViewSet):
         :return: code data message
         """
         print(request.body)
+        print(request.data)
         serializer = MerchantRegSerializer(data=request.data)
         if not serializer.is_valid():
             if serializer.errors.get('id_card'):
