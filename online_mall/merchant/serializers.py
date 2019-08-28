@@ -37,6 +37,7 @@ class MerchantRegSerializer(serializers.Serializer):
                                  help_text="验证码")
 
     def validate_id_card(self, id_card):
+        print(id_card)
         # 检查最后一位校验码是否正确
         front_17_list = [i for i in id_card[:-1]]
         remainder = sum([int(i)*int(j) for i, j in zip(front_17_list, settings.COEFFICIENT_LIST)]) % 11
