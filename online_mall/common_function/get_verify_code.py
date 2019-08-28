@@ -62,6 +62,6 @@ def gene_code(filename):
     image = image.filter(ImageFilter.EDGE_ENHANCE_MORE)  # 滤镜，边界加强
     save_path = os.path.join(save_base_path, '{}.png'.format(filename))
     image.save(save_path)  # 保存验证码图片
-    return_path = '/media/verify_code/{}.png'.format(filename)
+    return_path = 'media/verify_code/{}.png'.format(filename)
 
     return return_path, text
