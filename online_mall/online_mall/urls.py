@@ -15,6 +15,7 @@ Including another URLconf
 """
 import xadmin
 from django.conf import settings
+from django.conf.urls import url
 from django.urls import path, include
 from django.conf.urls.static import serve
 from rest_framework import routers
@@ -41,5 +42,5 @@ urlpatterns = [
     path('admin/', xadmin.site.urls, name='xadmin'),
     path('api/', include(router.urls)),
     path(r'api-token-auth/', obtain_jwt_token),
-    path('media/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
+    url(r'media/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
 ]
