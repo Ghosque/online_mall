@@ -45,7 +45,6 @@ def gene_code(filename):
     width, height = size  # 宽和高
     image = Image.new('RGBA', (width,height), bgcolor)  # 创建图片
 
-    print(os.path.abspath(font_path))
     font = ImageFont.truetype(font_path, 25)  # 验证码的字体和字体大小
     draw = ImageDraw.Draw(image)  # 创建画笔
     text = gen_text()  # 生成字符串
