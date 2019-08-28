@@ -14,7 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import xadmin
+from django.conf import settings
 from django.urls import path, include
+from django.conf.urls.static import serve
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 
@@ -39,4 +41,5 @@ urlpatterns = [
     path('admin/', xadmin.site.urls, name='xadmin'),
     path('api/', include(router.urls)),
     path(r'api-token-auth/', obtain_jwt_token),
+    path('media/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
 ]
