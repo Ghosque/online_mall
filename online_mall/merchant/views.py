@@ -33,6 +33,7 @@ class MerchantRegViewset(viewsets.ViewSet):
         :param request: password name gender phone id_card code
         :return: code data message
         """
+        print(request.body)
         serializer = MerchantRegSerializer(data=request.data)
         if not serializer.is_valid():
             if serializer.errors.get('id_card'):
