@@ -46,7 +46,7 @@ class MerchantRegViewset(viewsets.ViewSet):
                 'data': None,
                 'message': message
             }
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+            return Response(result, status=status.HTTP_200_OK)
 
         merchant_id = self.get_merchant_id()
 
@@ -85,7 +85,7 @@ class ShopRegViewset(viewsets.ViewSet):
                 'data': None,
                 'message': str(serializer.errors.get('name')[0])
             }
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+            return Response(result, status=status.HTTP_200_OK)
 
         user = User.objects.get(pk=request.data['user_id'])
         merchant = user.mall_user.merchant
@@ -158,7 +158,7 @@ class MerchantInfoViewset(viewsets.ViewSet):
                 'code': 0,
                 'message': '查无此用户'
             }
-            return Response(result, status=status.HTTP_404_NOT_FOUND)
+            return Response(result, status=status.HTTP_200_OK)
 
         try:
             shop_name = mall_user.merchant.shop.name
@@ -175,7 +175,7 @@ class MerchantInfoViewset(viewsets.ViewSet):
                 'data': None,
                 'message': str(serializer.errors.get('token')[0])
             }
-            return Response(result, status=status.HTTP_403_FORBIDDEN)
+            return Response(result, status=status.HTTP_200_OK)
 
         result = {
             'code': 1,
@@ -214,7 +214,7 @@ class ShopInfoViewset(viewsets.ViewSet):
                 'code': 0,
                 'message': '查无此用户'
             }
-            return Response(result, status=status.HTTP_404_NOT_FOUND)
+            return Response(result, status=status.HTTP_200_OK)
 
         data = {
             'user_id': pk,
@@ -227,7 +227,7 @@ class ShopInfoViewset(viewsets.ViewSet):
                 'data': None,
                 'message': str(serializer.errors.get('token')[0])
             }
-            return Response(result, status=status.HTTP_403_FORBIDDEN)
+            return Response(result, status=status.HTTP_200_OK)
 
         result = {
             'code': 1,
@@ -259,7 +259,7 @@ class NavigationViewset(viewsets.ViewSet):
                 'data': None,
                 'message': '暂无导航栏数据'
             }
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+            return Response(result, status=status.HTTP_200_OK)
 
         result = {
             'code': 1,
