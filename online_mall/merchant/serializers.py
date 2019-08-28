@@ -1,3 +1,4 @@
+import re
 from django.core.cache import cache
 from rest_framework import serializers
 from django.conf import settings
@@ -35,6 +36,20 @@ class MerchantRegSerializer(serializers.Serializer):
                                      "min_length": "验证码格式错误"
                                  },
                                  help_text="验证码")
+
+    # 验证手机号码
+    # validate_ + 字段名 的格式命名
+    def validate_phone(self, phone):
+
+        # 手机是否注册
+        if MallUser.objects.filter(phone=phone).count():
+            raise serializers.ValidationError("用户已经存在")
+
+        # 验证手机号码是否合法
+        if not re.match(settings.REGEX_PHONE, phone):
+            raise serializers.ValidationError("手机号码非法")
+
+        return phone
 
     def validate_id_card(self, id_card):
         # 检查最后一位校验码是否正确

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from random import choice
 import string
 
-from .serializers import PhoneCodeSerializer, TokenVerifySerializer
+from .serializers import TokenVerifySerializer
 from common_function import get_verify_code
 
 
@@ -24,19 +24,8 @@ class PhoneCodeViewset(viewsets.ViewSet):
             random_str.append(choice(seeds))
         return "".join(random_str)
 
-    def create(self, request):
-        print(request.data)
-        serializer = PhoneCodeSerializer(data=request.data)
-        if not serializer.is_valid():
-            result = {
-                'code': 0,
-                'data': None,
-                'message': str(serializer.errors.get('phone')[0])
-            }
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+    def list(self, request):
 
-        # 验证后即可取出数据
-        phone = serializer.validated_data["phone"]
         code_key = self.generate_code_key()
         while cache.get(code_key):
             code_key = self.generate_code_key()
@@ -48,7 +37,6 @@ class PhoneCodeViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': {
-                'phone': phone,
                 'code_key': code_key,
                 'code_img': code_img
             },
