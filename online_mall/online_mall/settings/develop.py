@@ -81,3 +81,4 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:63343',
 )
 CORS_ALLOW_CREDENTIALS = True  # 指明在跨域访问中，后端是否支持对cookie的操作
+CORS_ORIGIN_ALLOW_ALL = True
