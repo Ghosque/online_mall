@@ -203,7 +203,10 @@ class BackStageSecond(models.Model):
             temp_dict = {'id': index_1+1, 'name': first_item.name, 'child': {}}
             second_list = cls.objects.filter(status=True, first=first_item)
             for index_2, second_item in enumerate(second_list):
-                temp_dict['child']['child-{}'.format(index_2+1)] = second_item.name
+                temp_dict['child']['child-{}'.format(index_2+1)] = {
+                    'id': '{}-{}'.format(index_1+1, index_2+1),
+                    'name': second_item.name
+                }
 
             back_stage_list.append(temp_dict)
 
