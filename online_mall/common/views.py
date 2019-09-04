@@ -55,7 +55,7 @@ class TokenVerifyViewset(viewsets.ViewSet):
                 'data': None,
                 'message': str(serializer.errors.get('token')[0])
             }
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+            return Response(result, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
         result = {
             'code': 1,
