@@ -186,7 +186,7 @@ class MerchantInfoViewset(viewsets.ViewSet):
                 'id_card': mall_user.id_card,
                 'token': token,
                 'shop_name': shop_name,
-                'shop_status': Shop.STATUS_ITEMS[mall_user.merchant.shop.status]
+                'shop_status': Shop.STATUS_ITEMS[mall_user.merchant.shop.status][1]
             },
             'message': '请求成功'
         }
