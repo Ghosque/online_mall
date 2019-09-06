@@ -181,7 +181,7 @@ class MerchantInfoViewset(viewsets.ViewSet):
             'data': {
                 'merchant_id': mall_user.merchant.merchant_id,
                 'name': mall_user.name,
-                'gender': mall_user.gender,
+                'gender': MallUser.GENDER_ITEMS[mall_user.gender],
                 'phone': mall_user.phone,
                 'id_card': mall_user.id_card,
                 'token': token,
@@ -237,7 +237,7 @@ class ShopInfoViewset(viewsets.ViewSet):
                     'shop_id': shop_id,
                     'name': mall_user.merchant.shop.name,
                     'star': mall_user.merchant.shop.star,
-                    'status': settings.SHOP_STATUS_DICT[shop_status],
+                    'status': Shop.STATUS_ITEMS[shop_status],
                     'token': token,
                 },
                 'message': '请求成功'
