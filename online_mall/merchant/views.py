@@ -244,7 +244,7 @@ class ShopInfoViewset(viewsets.ViewSet):
             }
             return Response(result, status=status.HTTP_200_OK)
 
-        except Merchant.RelatedObjectDoesNotExist:
+        except Merchant.DoesNotExist:
             result = {
                 'code': 2,
                 'data': {},
