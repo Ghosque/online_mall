@@ -228,6 +228,8 @@ class ShopInfoViewset(viewsets.ViewSet):
             }
             return Response(result, status=status.HTTP_200_OK)
 
+        shop_id = mall_user.merchant.shop.shop_id
+
         result = {
             'code': 1,
             'data': {
