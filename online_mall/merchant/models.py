@@ -73,8 +73,8 @@ class Merchant(models.Model):
 # 商店
 class Shop(models.Model):
     STATUS_ITEMS = (
-        (1, '正常'),
         (0, '删除'),
+        (1, '正常'),
         (2, '审核中'),
     )
 
