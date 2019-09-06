@@ -228,20 +228,31 @@ class ShopInfoViewset(viewsets.ViewSet):
             }
             return Response(result, status=status.HTTP_200_OK)
 
-        shop_id = mall_user.merchant.shop.shop_id
+        try:
+            shop_id = mall_user.merchant.shop.shop_id
+            shop_status = mall_user.merchant.shop.status
+            result = {
+                'code': 1,
+                'data': {
+                    'shop_id': shop_id,
+                    'name': mall_user.merchant.shop.name,
+                    'star': mall_user.merchant.shop.star,
+                    'status': settings.SHOP_STATUS_DICT[shop_status],
+                    'token': token,
+                },
+                'message': '请求成功'
+            }
+            return Response(result, status=status.HTTP_200_OK)
 
-        result = {
-            'code': 1,
-            'data': {
-                'shop_id': mall_user.merchant.shop.shop_id,
-                'name': mall_user.merchant.shop.name,
-                'star': mall_user.merchant.shop.star,
-                'status': mall_user.merchant.shop.status,
-                'token': token,
-            },
-            'message': '请求成功'
-        }
-        return Response(result, status=status.HTTP_200_OK)
+        except Merchant.RelatedObjectDoesNotExist:
+            result = {
+                'code': 2,
+                'data': {},
+                'message': '请求成功'
+            }
+            return Response(result, status=status.HTTP_200_OK)
+
+
 
 
 class NavigationViewset(viewsets.ViewSet):
