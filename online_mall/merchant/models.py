@@ -109,6 +109,7 @@ class Commodity(models.Model):
     )
 
     commodity_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商品ID')
+    name = models.CharField(max_length=50, verbose_name='商品名称')
     title = models.CharField(max_length=500, verbose_name='详情页标题')
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
     url = models.URLField(verbose_name='商品url')
