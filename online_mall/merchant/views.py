@@ -185,7 +185,8 @@ class MerchantInfoViewset(viewsets.ViewSet):
                 'phone': mall_user.phone,
                 'id_card': mall_user.id_card,
                 'token': token,
-                'shop_name': shop_name
+                'shop_name': shop_name,
+                'shop_status': Shop.STATUS_ITEMS[mall_user.merchant.shop.status][1]
             },
             'message': '请求成功'
         }
@@ -251,8 +252,6 @@ class ShopInfoViewset(viewsets.ViewSet):
                 'message': '请求成功'
             }
             return Response(result, status=status.HTTP_200_OK)
-
-
 
 
 class NavigationViewset(viewsets.ViewSet):
