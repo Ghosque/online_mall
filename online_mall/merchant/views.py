@@ -161,8 +161,10 @@ class MerchantInfoViewset(viewsets.ViewSet):
 
         try:
             shop_name = mall_user.merchant.shop.name
-        except (Shop.DoesNotExist, Merchant.DoesNotExist):
+            shop_status = Shop.STATUS_ITEMS[mall_user.merchant.shop.status][1]
+        except (Shop.DoesNotExist):
             shop_name = None
+            shop_status = None
         data = {
             'user_id': pk,
             'token': token,
@@ -186,7 +188,7 @@ class MerchantInfoViewset(viewsets.ViewSet):
                 'id_card': mall_user.id_card,
                 'token': token,
                 'shop_name': shop_name,
-                'shop_status': Shop.STATUS_ITEMS[mall_user.merchant.shop.status][1]
+                'shop_status': shop_status
             },
             'message': '请求成功'
         }
