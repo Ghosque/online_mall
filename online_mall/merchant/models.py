@@ -120,7 +120,7 @@ class Commodity(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    category = models.ManyToManyField(SecondCategory, on_delete=models.CASCADE, verbose_name='类别')
+    category = models.ManyToManyField(SecondCategory, verbose_name='类别')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name='商店')
 
     class Meta:
