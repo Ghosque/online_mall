@@ -161,7 +161,7 @@ class MerchantInfoViewset(viewsets.ViewSet):
 
         try:
             shop_name = mall_user.merchant.shop.name
-        except Shop.DoesNotExist:
+        except (Shop.DoesNotExist, Merchant.DoesNotExist):
             shop_name = None
         data = {
             'user_id': pk,
