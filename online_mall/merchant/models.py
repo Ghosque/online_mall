@@ -46,10 +46,32 @@ class SecondCategory(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    first_category = models.ForeignKey(FirstCategory, on_delete=models.CASCADE, verbose_name='父类别')
+    first_category = models.ForeignKey(FirstCategory, on_delete=models.CASCADE, verbose_name='第一类别')
 
     class Meta:
         verbose_name = verbose_name_plural = '第二类别'
+
+    def __str__(self):
+        return self.name
+
+
+# 第三类别
+class ThirdCategory(models.Model):
+    STATUS_ITEMS = (
+        (1, '正常'),
+        (0, '删除'),
+    )
+
+    name = models.CharField(max_length=20, verbose_name='类别名')
+    status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    second_category = models.ForeignKey(SecondCategory, on_delete=models.CASCADE, verbose_name='第二类别')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '第三类别'
 
     def __str__(self):
         return self.name

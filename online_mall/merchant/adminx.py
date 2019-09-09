@@ -1,6 +1,6 @@
 import xadmin
 
-from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, CommodityColor, Specification, BackStageFirst, BackStageSecond
+from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, CommodityColor, Specification, BackStageFirst, BackStageSecond, ThirdCategory
 from adminx import *
 
 
@@ -61,6 +61,15 @@ class FirstCategoryAdmin:
 class SecondCategoryAdmin:
     list_display = ('id', 'name', 'status', 'first_category', 'create_time', 'update_time',)
     list_filter = ('first_category', 'status',)
+    search_fields = ('name',)
+    ordering = ('id',)
+    readonly_fields = ('create_time', 'update_time',)
+
+
+@xadmin.sites.register(ThirdCategory)
+class ThirdCategoryAdmin:
+    list_display = ('id', 'name', 'status', 'second_category', 'create_time', 'update_time',)
+    list_filter = ('second_category', 'status',)
     search_fields = ('name',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
