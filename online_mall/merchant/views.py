@@ -12,7 +12,7 @@ from django.core.cache import cache
 
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer,\
     CommoditySerializer
-from .models import Merchant, Shop, BackStageSecond, Commodity, CommodityColor, Specification, SecondCategory
+from .models import Merchant, Shop, BackStageSecond, Commodity, CommodityColor, Specification, ThirdCategory
 from common.models import MallUser
 from common_function.get_id import GetId
 
@@ -282,6 +282,32 @@ class NavigationViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
 
+class CategoryViewset(viewsets.ViewSet):
+
+    def list(self, request):
+        """
+        获取分类信息
+        :param request:
+        :return: code data(category_list) message
+        """
+        categoty_list = ThirdCategory.get_category()
+        print(categoty_list)
+        if not categoty_list:
+            result = {
+                'code': 0,
+                'data': None,
+                'message': '暂无导航栏数据'
+            }
+            return Response(result, status=status.HTTP_200_OK)
+
+        result = {
+            'code': 1,
+            'data': categoty_list,
+            'message': '请求成功'
+        }
+        return Response(result, status=status.HTTP_200_OK)
+
+
 class CommodityViewset(viewsets.ViewSet):
 
     permission_classes = (IsAuthenticated,)
@@ -307,7 +333,7 @@ class CommodityViewset(viewsets.ViewSet):
 
         url = '47.107.183.166:9000/'
 
-        category = SecondCategory.objects.get(id=serializer.validated_data['category'])
+        category = ThirdCategory.objects.get(id=serializer.validated_data['category'])
 
         commodity = Commodity.objects.create(
             commodity_id=commodity_id,

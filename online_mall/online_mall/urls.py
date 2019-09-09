@@ -36,6 +36,7 @@ router.register(r'merchant', m_views.MerchantInfoViewset, base_name='merchant_in
 router.register(r'shopReg', m_views.ShopRegViewset, base_name='shop_reg')
 router.register(r'shop', m_views.ShopInfoViewset, base_name='shop_info')
 router.register(r'navigation', m_views.NavigationViewset, base_name='navigation')
+router.register(r'category', m_views.CategoryViewset, base_name='category')
 
 
 urlpatterns = [

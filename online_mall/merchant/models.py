@@ -5,6 +5,7 @@ from django_mysql.models import JSONField
 
 from common.models import MallUser
 from common_function.get_id import GetId
+from common_function.get_pinyin import chinese_to_pinyin
 
 logger = logging.getLogger('scripts')
 
@@ -76,6 +77,47 @@ class ThirdCategory(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_category(cls):
+        category_list = []
+
+        first_category_list = FirstCategory.objects.filter(status=1)
+        for first_category in first_category_list:
+            f_name = first_category.name
+            f_id = first_category.id
+            temp_f_dict = {
+                'value': f_id,
+                'label': f_name,
+                'children': []
+            }
+
+            second_category_list = SecondCategory.objects.filter(first_category=first_category, status=1)
+            for second_category in second_category_list:
+                s_name = second_category.name
+                s_id = second_category.id
+                temp_s_dict = {
+                    'value': s_id,
+                    'label': s_name,
+                    'children': []
+                }
+
+                third_category_list = ThirdCategory.objects.filter(second_category=second_category, status=1)
+                for third_category in third_category_list:
+                    t_name = third_category.name
+                    t_id = third_category.id
+                    temp_t_dict = {
+                        'value': t_id,
+                        'label': t_name
+                    }
+
+                    temp_s_dict['children'].append(temp_t_dict)
+
+                temp_f_dict['children'].append(temp_s_dict)
+
+            category_list.append(temp_f_dict)
+
+        return category_list
+
 
 # 商家
 class Merchant(models.Model):
@@ -142,7 +184,7 @@ class Commodity(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    category = models.ManyToManyField(SecondCategory, verbose_name='类别')
+    category = models.ManyToManyField(ThirdCategory, verbose_name='类别')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name='商店')
 
     class Meta:
