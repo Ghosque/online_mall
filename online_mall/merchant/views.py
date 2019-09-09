@@ -291,7 +291,6 @@ class CategoryViewset(viewsets.ViewSet):
         :return: code data(category_list) message
         """
         categoty_list = ThirdCategory.get_category()
-        print(categoty_list)
         if not categoty_list:
             result = {
                 'code': 0,
