@@ -109,7 +109,7 @@ class Commodity(models.Model):
         (3, '下架'),
     )
 
-    commodity_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商品ID')
+    commodity_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商品ID', unique=True)
     name = models.CharField(max_length=50, verbose_name='商品名称')
     title = models.CharField(max_length=500, verbose_name='详情页标题')
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
@@ -125,7 +125,6 @@ class Commodity(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = '商品'
-        unique_together = ('commodity_id', 'url',)
 
     def __str__(self):
         return self.title
