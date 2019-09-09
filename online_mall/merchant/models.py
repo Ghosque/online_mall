@@ -103,16 +103,16 @@ class Shop(models.Model):
 # 商品
 class Commodity(models.Model):
     STATUS_ITEMS = (
-        (1, '正常'),
         (0, '删除'),
+        (1, '正常'),
         (2, '审核中'),
+        (3, '下架'),
     )
 
     commodity_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商品ID')
     name = models.CharField(max_length=50, verbose_name='商品名称')
     title = models.CharField(max_length=500, verbose_name='详情页标题')
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
-    url = models.URLField(verbose_name='商品url')
     cover = models.ImageField(verbose_name='预览页封面', upload_to='commodity/{}/cover/'.format(commodity_id))
     status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
@@ -120,7 +120,7 @@ class Commodity(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    category = models.ForeignKey(SecondCategory, on_delete=models.CASCADE, verbose_name='类别')
+    category = models.ManyToManyField(SecondCategory, on_delete=models.CASCADE, verbose_name='类别')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name='商店')
 
     class Meta:
