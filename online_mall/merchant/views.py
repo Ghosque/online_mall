@@ -284,6 +284,8 @@ class NavigationViewset(viewsets.ViewSet):
 
 class CommodityViewset(viewsets.ViewSet):
 
+    permission_classes = (IsAuthenticated,)
+
     def create(self, request):
         """
         新增商品
