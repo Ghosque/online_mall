@@ -12,6 +12,15 @@ class TokenVerifySerializer(serializers.Serializer):
     token = serializers.CharField(required=True)
     user_id = serializers.IntegerField(required=True)
 
+    def validate_user_id(self, user_id):
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("无此用户，请重新登录")
+
+        else:
+            return user_id
+
     def validate_token(self, token):
         try:
             token_info = jwt_decode_handler(token)
