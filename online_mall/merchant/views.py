@@ -297,13 +297,14 @@ class CategoryViewset(viewsets.ViewSet):
                 'data': None,
                 'message': '暂无导航栏数据'
             }
-            return Response(result, status=status.HTTP_200_OK)
 
-        result = {
-            'code': 1,
-            'data': categoty_list,
-            'message': '请求成功'
-        }
+        else:
+            result = {
+                'code': 1,
+                'data': categoty_list,
+                'message': '请求成功'
+            }
+
         return Response(result, status=status.HTTP_200_OK)
 
 
