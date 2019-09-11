@@ -5,7 +5,6 @@ from django_mysql.models import JSONField
 
 from common.models import MallUser
 from common_function.get_id import GetId
-from common_function.get_pinyin import chinese_to_pinyin
 
 logger = logging.getLogger('scripts')
 
