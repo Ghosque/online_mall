@@ -1,6 +1,7 @@
 import xadmin
 
-from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, CommodityColor, Specification, BackStageFirst, BackStageSecond, ThirdCategory
+from .models import FirstCategory, SecondCategory, Merchant, Shop, Commodity, CommodityColor, Specification,\
+    BackStageFirst, BackStageSecond, ThirdCategory, MerchantImage
 from adminx import *
 
 
@@ -8,6 +9,14 @@ from adminx import *
 class MerchantAdmin:
     list_display = ('id', 'mall_user', 'create_time', 'update_time',)
     search_fields = ('mall_user',)
+    ordering = ('id',)
+    readonly_fields = ('create_time', 'update_time',)
+
+
+@xadmin.sites.register(MerchantImage)
+class MerchantImageAdmin:
+    list_display = ('id', 'name', 'img', 'status', 'merchant', 'create_time', 'update_time',)
+    search_fields = ('merchant',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 

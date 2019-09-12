@@ -6,7 +6,7 @@ from xadmin import views
 class GlobalSettings(object):
     site_title = 'Online Mall 后台'
     site_footer = '2019 Ghosque, Inc. All rights reserved.'
-    menu_style = 'accordion'
+    # menu_style = 'accordion'
 
 
 @xadmin.sites.register(views.BaseAdminView)
