@@ -176,7 +176,7 @@ class Commodity(models.Model):
     name = models.CharField(max_length=50, verbose_name='商品名称')
     title = models.CharField(max_length=500, verbose_name='详情页标题')
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
-    cover = models.ImageField(verbose_name='预览页封面', upload_to='commodity/cover/')
+    cover = models.ImageField(verbose_name='预览页封面')
     status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
 
