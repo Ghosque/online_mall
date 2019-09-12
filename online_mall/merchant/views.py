@@ -364,6 +364,28 @@ class ImageUploadViewset(viewsets.ViewSet):
 
         return Response(result, status=status.HTTP_200_OK)
 
+    def retrieve(self, pk):
+        try:
+            user = User.objects.get(pk=pk)
+
+        except User.DoesNotExist:
+            result = {
+                'code': 0,
+                'data': None,
+                'message': '用户不存在'
+            }
+
+        else:
+            img_list = MerchantImage.get_point_merchant_images(pk)
+
+            result = {
+                'code': 1,
+                'data': img_list,
+                'message': '用户不存在'
+            }
+
+        return Response(result, status=status.HTTP_200_OK)
+
 
 class CommodityViewset(viewsets.ViewSet):
 
