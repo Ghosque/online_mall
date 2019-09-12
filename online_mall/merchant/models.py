@@ -162,10 +162,12 @@ class MerchantImage(models.Model):
     @classmethod
     def get_name(cls, img_name, user_id):
         name = '/'.join([user_id, img_name])
+        print('name:', name)
         image_obj = cls.objects.filter(name=name)
         while len(image_obj) > 0:
             random_str = ''.join(random.sample(string.ascii_letters + string.digits, 6))
             new_img_name = '_'.join([os.path.splitext(img_name)[0], random_str]) + os.path.splitext(img_name)[1]
+            print('while name:', name)
             name = '/'.join([user_id, new_img_name])
             image_obj = cls.objects.filter(name=name)
 
