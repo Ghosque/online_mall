@@ -377,7 +377,6 @@ class ImageUploadViewset(viewsets.ViewSet):
 
         else:
             temp_img_list = MerchantImage.get_point_merchant_images(pk)
-            print(temp_img_list)
 
             img_list = []
             temp_list = []
