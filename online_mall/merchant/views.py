@@ -326,8 +326,8 @@ class ImageUploadViewset(viewsets.ViewSet):
         else:
             base64_img = base64_img.split(',')[1]
             name = MerchantImage.get_name(img_name, user_id)
-            img_file = '../online_mall/media/commodity/{}'.format(user_id, name)
-            img = 'media/commodity/{}'.format(user_id, name)
+            img_file = '../online_mall/media/commodity/{}'.format(name)
+            img = 'media/commodity/{}'.format(name)
 
             try:
                 user = User.objects.get(pk=user_id)
