@@ -329,7 +329,7 @@ class ImageUploadViewset(viewsets.ViewSet):
             img = 'media/commodity/{}/{}'.format(user_id, name)
 
             try:
-                user = User.objects.get(p=user_id)
+                user = User.objects.get(pk=user_id)
                 merchant = user.mall_user.merchant
 
             except (User.DoesNotExist, Merchant.DoesNotExist):
