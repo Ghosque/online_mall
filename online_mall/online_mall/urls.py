@@ -30,7 +30,6 @@ router = routers.DefaultRouter()
 router.register(r'token_verify', c_views.TokenVerifyViewset, base_name='token_verify')
 router.register(r'code', c_views.PhoneCodeViewset, base_name='verify_code')
 router.register(r'colorSelector', c_views.ColorSelectorViewset, base_name='color_selector')
-router.register(r'imageUpload', c_views.ImageUploadViewset, base_name='image_upload')
 
 router.register(r'merchantReg', m_views.MerchantRegViewset, base_name='merchant_reg')
 router.register(r'merchantLogin', m_views.MerchantLoginViewset, base_name='merchant_login')
@@ -39,6 +38,7 @@ router.register(r'shopReg', m_views.ShopRegViewset, base_name='shop_reg')
 router.register(r'shop', m_views.ShopInfoViewset, base_name='shop_info')
 router.register(r'navigation', m_views.NavigationViewset, base_name='navigation')
 router.register(r'category', m_views.CategoryViewset, base_name='category')
+router.register(r'imageUpload', m_views.ImageUploadViewset, base_name='image_upload')
 
 
 urlpatterns = [
