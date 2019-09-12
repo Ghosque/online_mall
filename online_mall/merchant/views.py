@@ -377,6 +377,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
         else:
             temp_img_list = MerchantImage.get_point_merchant_images(pk)
+            print(temp_img_list)
 
             img_list = []
             temp_list = []
@@ -392,7 +393,7 @@ class ImageUploadViewset(viewsets.ViewSet):
             result = {
                 'code': 1,
                 'data': img_list,
-                'message': '用户不存在'
+                'message': '请求成功'
             }
 
         return Response(result, status=status.HTTP_200_OK)
