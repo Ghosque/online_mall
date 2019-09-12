@@ -327,6 +327,7 @@ class ImageUploadViewset(viewsets.ViewSet):
         else:
             base64_img = base64_img.split(',')[1]
             name = MerchantImage.get_name(img_name, user_id)
+            img_dir = os.path.join(settings.MEDIA_ROOT, 'commodity', user_id)
             img_file = os.path.join(settings.MEDIA_ROOT, 'commodity', name)
             img = 'media/commodity/{}'.format(name)
 
@@ -343,6 +344,9 @@ class ImageUploadViewset(viewsets.ViewSet):
 
             else:
                 img_data = base64.b64decode(base64_img)
+                if not os.path.isdir(img_dir):
+                    os.makedirs(img_dir)
+
                 with open(img_file, 'ab') as f:
                     f.write(img_data)
 
