@@ -342,7 +342,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
             else:
                 img_data = base64.b64decode(base64_img)
-                with open(img_file, 'wb') as f:
+                with open(img_file, 'ab') as f:
                     f.write(img_data)
 
                 MerchantImage.objects.create(
