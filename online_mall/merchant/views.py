@@ -312,7 +312,7 @@ class CategoryViewset(viewsets.ViewSet):
 class ImageUploadViewset(viewsets.ViewSet):
 
     def create(self, request):
-        base64_img = request.data['base64_img'].split(',')[1]
+        base64_img = request.data['base64_img']
         user_id = request.data['user_id']
         img_name = request.data['img_name']
 
@@ -324,6 +324,7 @@ class ImageUploadViewset(viewsets.ViewSet):
             }
 
         else:
+            base64_img = base64_img.split(',')[1]
             name = MerchantImage.get_name(img_name, user_id)
             img_file = '../online_mall/media/commodity/{}'.format(user_id, name)
             img = 'media/commodity/{}'.format(user_id, name)
