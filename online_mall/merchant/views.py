@@ -376,7 +376,18 @@ class ImageUploadViewset(viewsets.ViewSet):
             }
 
         else:
-            img_list = MerchantImage.get_point_merchant_images(pk)
+            temp_img_list = MerchantImage.get_point_merchant_images(pk)
+
+            img_list = []
+            temp_list = []
+            col_num = 5
+            for index, item in enumerate(temp_img_list):
+                if index % col_num == 0:
+                    if temp_list:
+                        img_list.append(temp_list)
+                    temp_list = []
+
+                temp_list.append(item.img)
 
             result = {
                 'code': 1,
