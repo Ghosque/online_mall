@@ -364,7 +364,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
         return Response(result, status=status.HTTP_200_OK)
 
-    def retrieve(self, pk):
+    def retrieve(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
 
