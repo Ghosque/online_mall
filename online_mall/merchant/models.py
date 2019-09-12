@@ -1,4 +1,6 @@
-import hashlib
+import os
+import random
+import string
 import logging
 
 from django.contrib.auth.models import User
@@ -157,6 +159,17 @@ class MerchantImage(models.Model):
         merchant = User.objects.get(pk=user_id).mall_user.merchant
         return cls.objects.filter(merchant=merchant, status=True)
 
+    @classmethod
+    def get_name(cls, img_name, user_id):
+        name = '/'.join([user_id, img_name])
+        image_obj = cls.objects.filter(name=name)
+        while len(image_obj) > 0:
+            random_str = ''.join(random.sample(string.ascii_letters + string.digits, 6))
+            new_img_name = '_'.join([os.path.splitext(img_name)[0], random_str]) + os.path.splitext(img_name)[1]
+            name = '/'.join([user_id, new_img_name])
+            image_obj = cls.objects.filter(name=name)
+
+        return name
 
 # 商店
 class Shop(models.Model):

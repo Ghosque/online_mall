@@ -1,4 +1,5 @@
 import re
+import base64
 
 from django.conf import settings
 from rest_framework.response import Response
@@ -12,7 +13,7 @@ from django.core.cache import cache
 
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer,\
     CommoditySerializer
-from .models import Merchant, Shop, BackStageSecond, Commodity, CommodityColor, Specification, ThirdCategory
+from .models import Merchant, Shop, BackStageSecond, Commodity, ThirdCategory, MerchantImage
 from common.models import MallUser
 from common_function.get_id import GetId
 
@@ -311,9 +312,49 @@ class CategoryViewset(viewsets.ViewSet):
 class ImageUploadViewset(viewsets.ViewSet):
 
     def create(self, request):
-        base64_img = request.data['base64_img']
-        print(base64_img)
-        result = 'success'
+        base64_img = request.data['base64_img'].split(',')[1]
+        user_id = request.data['user_id']
+        img_name = request.data['img_name']
+
+        if not base64_img:
+            result = {
+                'code': 0,
+                'data': None,
+                'message': '上传图片为空'
+            }
+
+        else:
+            name = MerchantImage.get_name(img_name, user_id)
+            img_file = '../online_mall/media/commodity/{}/{}'.format(user_id, name)
+            img = 'media/commodity/{}/{}'.format(user_id, name)
+
+            try:
+                user = User.objects.get(p=user_id)
+                merchant = user.mall_user.merchant
+
+            except (User.DoesNotExist, Merchant.DoesNotExist):
+                result = {
+                    'code': 2,
+                    'data': None,
+                    'message': '用户不存在'
+                }
+
+            else:
+                img_data = base64.b64decode(base64_img)
+                with open(img_file, 'wb') as f:
+                    f.write(img_data)
+
+                MerchantImage.objects.create(
+                    name=name,
+                    img=img,
+                    merchant=merchant
+                )
+
+                result = {
+                    'code': 1,
+                    'data': None,
+                    'message': '上传成功'
+                }
 
         return Response(result, status=status.HTTP_200_OK)
 
