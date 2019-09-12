@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from merchant.models import Merchant
-
 
 # 商城用户
 class MallUser(models.Model):
@@ -125,26 +123,3 @@ class SecondColorSelector(models.Model):
             color_selector_list.append(temp_f_dict)
 
         return color_selector_list
-
-
-# 商家上传图片
-class MerchantImage(models.Model):
-    name = models.CharField(max_length=500, verbose_name='文件名')
-    img = models.ImageField(verbose_name='图片路径')
-    status = models.BooleanField(default=True, verbose_name='状态')
-
-    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
-
-    merchant = models.ForeignKey(Merchant, on_delete=models.CASCADE, verbose_name='商家')
-
-    class Meta:
-        verbose_name = verbose_name_plural = '商家上传图片'
-
-    def __str__(self):
-        return self.img
-
-    @classmethod
-    def get_point_merchant_images(cls, user_id):
-        merchant = User.objects.get(pk=user_id).mall_user.merchant
-        return cls.objects.filter(merchant=merchant, status=True)

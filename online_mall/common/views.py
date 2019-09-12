@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from random import choice
 import string
 
-from .models import SecondColorSelector, MerchantImage
+from .models import SecondColorSelector
 from .serializers import TokenVerifySerializer
 from common_function import get_verify_code
 
@@ -90,15 +90,5 @@ class ColorSelectorViewset(viewsets.ViewSet):
                 'data': color_selector_list,
                 'message': '请求成功'
             }
-
-        return Response(result, status=status.HTTP_200_OK)
-
-
-class ImageUploadViewset(viewsets.ViewSet):
-
-    def create(self, request):
-        base64_img = request.data['base64_img']
-        print(base64_img)
-        result = 'success'
 
         return Response(result, status=status.HTTP_200_OK)
