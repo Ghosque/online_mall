@@ -325,8 +325,8 @@ class ImageUploadViewset(viewsets.ViewSet):
 
         else:
             name = MerchantImage.get_name(img_name, user_id)
-            img_file = '../online_mall/media/commodity/{}/{}'.format(user_id, name)
-            img = 'media/commodity/{}/{}'.format(user_id, name)
+            img_file = '../online_mall/media/commodity/{}'.format(user_id, name)
+            img = 'media/commodity/{}'.format(user_id, name)
 
             try:
                 user = User.objects.get(pk=user_id)
