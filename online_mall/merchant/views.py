@@ -366,7 +366,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
     def retrieve(self, request, pk):
         try:
-            user = User.objects.get(pk=pk)
+            User.objects.get(pk=pk)
 
         except User.DoesNotExist:
             result = {
