@@ -160,7 +160,6 @@ class MerchantImage(models.Model):
         image_list = cls.objects.filter(merchant=merchant, status=True)
         img_list = []
         for image in image_list:
-            print(type(str(image.img)))
             img_list.append(str(image.img))
 
         return img_list
