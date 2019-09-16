@@ -387,7 +387,7 @@ class ImageUploadViewset(viewsets.ViewSet):
                         img_list.append(temp_list)
                     temp_list = []
 
-                temp_list.append(item.img)
+                temp_list.append(item)
 
             result = {
                 'code': 1,
