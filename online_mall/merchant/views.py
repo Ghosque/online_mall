@@ -386,6 +386,18 @@ class ImageUploadViewset(viewsets.ViewSet):
 
         return Response(result, status=status.HTTP_200_OK)
 
+    def destroy(self, request):
+        delete_list = request.data['delete_list']
+        MerchantImage.delete_images(delete_list)
+
+        result = {
+            'code': 1,
+            'data': None,
+            'message': '删除成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
 
 class CommodityViewset(viewsets.ViewSet):
 

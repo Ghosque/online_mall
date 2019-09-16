@@ -178,6 +178,13 @@ class MerchantImage(models.Model):
 
         return name
 
+    @classmethod
+    def delete_images(cls, delete_list):
+        for item in delete_list:
+            item_obj = cls.objects.get(img=item)
+            item_obj.status = False
+            item_obj.save()
+
 # 商店
 class Shop(models.Model):
     STATUS_ITEMS = (
