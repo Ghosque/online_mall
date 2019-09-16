@@ -380,7 +380,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
             img_list = []
             temp_list = []
-            col_num = 5
+            col_num = 6
             for index, item in enumerate(temp_img_list):
                 if index % col_num == 0:
                     if temp_list:
