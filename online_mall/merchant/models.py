@@ -231,6 +231,7 @@ class Commodity(models.Model):
     cover = models.CharField(max_length=300, verbose_name='预览页封面')
     status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
+    price = models.DecimalField(max_digits=7, decimal_places=1, verbose_name='价格')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
