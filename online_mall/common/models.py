@@ -123,9 +123,3 @@ class SecondColorSelector(models.Model):
             color_selector_list.append(temp_f_dict)
 
         return color_selector_list
-
-    @classmethod
-    def get_point_color(cls, color_code):
-        color_obj = cls.objects.get(color_code=color_code)
-
-        return color_obj.name

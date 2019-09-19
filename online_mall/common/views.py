@@ -92,14 +92,3 @@ class ColorSelectorViewset(viewsets.ViewSet):
             }
 
         return Response(result, status=status.HTTP_200_OK)
-
-    def retrieve(self, request, color_code):
-        data = SecondColorSelector.get_point_color(color_code)
-
-        result = {
-            'code': 1,
-            'data': data,
-            'message': '请求成功'
-        }
-
-        return Response(result, status=status.HTTP_200_OK)
