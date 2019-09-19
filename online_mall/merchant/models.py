@@ -33,8 +33,10 @@ class FirstCategory(models.Model):
         return self.name
 
     @classmethod
-    def get_all_data(cls):
-        pass
+    def get_point_category(cls, pk):
+        category_obj = cls.objects.get(pk=pk)
+
+        return category_obj.name
 
 
 # 第二类别
@@ -57,6 +59,12 @@ class SecondCategory(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_point_category(cls, pk):
+        category_obj = cls.objects.get(pk=pk)
+
+        return category_obj.name
 
 
 # 第三类别
@@ -120,6 +128,12 @@ class ThirdCategory(models.Model):
             category_list.append(temp_f_dict)
 
         return category_list
+
+    @classmethod
+    def get_point_category(cls, pk):
+        category_obj = cls.objects.get(pk=pk)
+
+        return category_obj.name
 
 
 # 商家

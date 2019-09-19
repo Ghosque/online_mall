@@ -14,7 +14,8 @@ from django.core.cache import cache
 
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer,\
     CommoditySerializer
-from .models import Merchant, Shop, BackStageSecond, Commodity, ThirdCategory, MerchantImage
+from .models import Merchant, Shop, BackStageSecond, Commodity, FirstCategory, SecondCategory, ThirdCategory,\
+    MerchantImage
 from common.models import MallUser
 from common_function.get_id import GetId
 
@@ -306,6 +307,48 @@ class CategoryViewset(viewsets.ViewSet):
                 'data': categoty_list,
                 'message': '请求成功'
             }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class FirstCategoryViewset(viewsets.ViewSet):
+
+    def retrieve(self, request, pk):
+        data = FirstCategory.get_point_category(pk)
+
+        result = {
+            'code': 1,
+            'data': data,
+            'message': '请求成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class SecondCategoryViewset(viewsets.ViewSet):
+
+    def retrieve(self, request, pk):
+        data = SecondCategory.get_point_category(pk)
+
+        result = {
+            'code': 1,
+            'data': data,
+            'message': '请求成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class ThirdCategoryViewset(viewsets.ViewSet):
+
+    def retrieve(self, request, pk):
+        data = ThirdCategory.get_point_category(pk)
+
+        result = {
+            'code': 1,
+            'data': data,
+            'message': '请求成功'
+        }
 
         return Response(result, status=status.HTTP_200_OK)
 
