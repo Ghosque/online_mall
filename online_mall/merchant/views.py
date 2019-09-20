@@ -536,10 +536,10 @@ class CommodityViewset(viewsets.ViewSet):
 
     def saveBase64Image(cls, base64_img, user_id, type):
         base64_img = base64_img.split(',')[1]
-        img_name = ''.join(random.sample(string.ascii_letters + string.digits, 8))
-        name = MerchantImage.get_name(img_name, user_id)
-        img_dir = os.path.join(settings.MEDIA_ROOT, type, user_id)
-        img_file = os.path.join(settings.MEDIA_ROOT, type, user_id, name)
+        img_name = ''.join(random.sample(string.ascii_letters + string.digits, 8)) + '.jpg'
+        name = MerchantImage.get_name(img_name, str(user_id))
+        img_dir = os.path.join(settings.MEDIA_ROOT, type, str(user_id))
+        img_file = os.path.join(settings.MEDIA_ROOT, type, str(user_id), name)
         img = 'media/{}/{}'.format(type, name)
 
         user = User.objects.get(pk=user_id)
