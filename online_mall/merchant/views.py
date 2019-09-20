@@ -467,24 +467,11 @@ class CommodityViewset(viewsets.ViewSet):
         cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
 
         display_image_list = []
-        print(type(request.data['display_images']))
         for image in request.data['display_images']:
-            print(type(image))
             new = self.saveBase64Image(image, user_id, 'imagePicture')
             display_image_list.append(new)
 
         category = ThirdCategory.objects.get(id=request.data['category'])
-
-        print(commodity_id)
-        print(request.data['name'])
-        print(request.data['title'])
-        print(request.data['title_desc'])
-        print(cover)
-        print(display_image_list)
-        print(int(float(request.data['inventory'])))
-        print(float(request.data['price']))
-        print(category)
-        print(user.mall_user.merchant.shop)
 
         result = {
             'code': 1
