@@ -502,12 +502,12 @@ class CommodityViewset(viewsets.ViewSet):
                 )
                 # 插入 CommodityColor 数据
                 CommodityColor.objects.create(
-                    commodity_class=json.dumps(color_item),
+                    commodity_class=json.dumps(color_item).decode('unicode_escape').encode("utf-8"),
                     commodity=commodity,
                 )
                 # 插入 Specification 数据
                 Specification.objects.create(
-                    information=json.dumps(attribute_item),
+                    information=json.dumps(attribute_item).decode('unicode_escape').encode("utf-8"),
                     commodity=commodity,
                 )
         except Exception as e:
