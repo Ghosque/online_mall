@@ -460,18 +460,29 @@ class CommodityViewset(viewsets.ViewSet):
         user_id = token_info['user_id']
         user = User.objects.get(pk=user_id)
 
+        # 商品ID
         commodity_id = GetId.getDigitId()
         while Commodity.objects.filter(commodity_id=commodity_id):
             commodity_id = GetId.getDigitId()
-
-        cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
-
-        display_image_list = []
-        for image in request.data['display_images']:
-            new = self.saveBase64Image(image, user_id, 'imagePicture')
-            display_image_list.append(new)
-
+        # # 封面
+        # cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
+        # # 展示图片
+        # display_image_list = []
+        # for image in request.data['display_images']:
+        #     new = self.saveBase64Image(image, user_id, 'imagePicture')
+        #     display_image_list.append(new)
+        # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
+
+        # 颜色分类
+        color_item = request.data['color_item']
+        print(color_item)
+        print(type(color_item))
+
+        # 自定义属性
+        attribute_item = request.data['attribute_item']
+        print(attribute_item)
+        print(type(attribute_item))
 
         result = {
             'code': 1
