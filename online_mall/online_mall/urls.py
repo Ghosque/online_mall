@@ -42,6 +42,7 @@ router.register(r'imageUpload', m_views.ImageUploadViewset, base_name='image_upl
 router.register(r'getFirstCategory', m_views.FirstCategoryViewset, base_name='get_first_category')
 router.register(r'getSecondCategory', m_views.SecondCategoryViewset, base_name='get_second_category')
 router.register(r'getThirdCategory', m_views.ThirdCategoryViewset, base_name='get_third_category')
+router.register(r'commodity', m_views.CommodityViewset, base_name='commodity')
 
 
 urlpatterns = [
