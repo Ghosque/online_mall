@@ -5,7 +5,7 @@ import logging
 
 from django.contrib.auth.models import User
 from django.db import models
-from django_mysql.models import JSONField
+from django_mysql.models import JSONField, ListTextField
 
 from common.models import MallUser
 from common_function.get_id import GetId
@@ -243,6 +243,7 @@ class Commodity(models.Model):
     title = models.CharField(max_length=500, verbose_name='详情页标题')
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
     cover = models.CharField(max_length=300, verbose_name='预览页封面')
+    display_images = ListTextField(base_field=models.CharField(), size=10, verbose_name='图片展示')
     status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='价格')
@@ -250,7 +251,7 @@ class Commodity(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    category = models.ManyToManyField(ThirdCategory, verbose_name='类别')
+    category = models.ForeignKey(ThirdCategory, on_delete=models.CASCADE, verbose_name='类别')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name='商店')
 
     class Meta:
