@@ -467,8 +467,8 @@ class CommodityViewset(viewsets.ViewSet):
         cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
 
         display_image_list = []
-        print(type(request.POST.getlist('display_images', [])))
-        for image in request.POST.getlist('display_images', []):
+        print(type(request.data['display_images']))
+        for image in request.data['display_images']:
             print(type(image))
             new = self.saveBase64Image(image, user_id, 'imagePicture')
             display_image_list.append(new)
