@@ -1,7 +1,8 @@
 import os
-import random
 import re
+import json
 import base64
+import random
 import string
 
 from django.conf import settings
@@ -501,12 +502,12 @@ class CommodityViewset(viewsets.ViewSet):
                 )
                 # 插入 CommodityColor 数据
                 CommodityColor.objects.create(
-                    commodity_class=color_item,
+                    commodity_class=json.dumps(color_item),
                     commodity=commodity,
                 )
                 # 插入 Specification 数据
                 Specification.objects.create(
-                    information=attribute_item,
+                    information=json.dumps(attribute_item),
                     commodity=commodity,
                 )
         except Exception as e:
