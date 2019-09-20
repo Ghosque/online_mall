@@ -77,6 +77,12 @@ class FirstColorSelector(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_point_color(cls, color_code):
+        color_obj = cls.objects.get(color_code=color_code)
+
+        return color_obj.name
+
 
 # 颜色分类器小类
 class SecondColorSelector(models.Model):
@@ -123,3 +129,9 @@ class SecondColorSelector(models.Model):
             color_selector_list.append(temp_f_dict)
 
         return color_selector_list
+
+    @classmethod
+    def get_point_color(cls, color_code):
+        color_obj = cls.objects.get(color_code=color_code)
+
+        return color_obj.name

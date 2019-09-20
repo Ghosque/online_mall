@@ -263,7 +263,7 @@ class Commodity(models.Model):
 
 # 商品颜色（分类）
 class CommodityColor(models.Model):
-    commodity_class = JSONField(verbose_name='分类')
+    commodity_class = ListTextField(base_field=JSONField(), size=60, verbose_name='分类')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -279,7 +279,7 @@ class CommodityColor(models.Model):
 
 # 商品详情（规格）
 class Specification(models.Model):
-    information = JSONField(verbose_name='详情')
+    information = ListTextField(base_field=JSONField(), size=100, verbose_name='详情')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')

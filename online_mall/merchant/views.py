@@ -1,11 +1,11 @@
 import os
 import random
 import re
-import json
 import base64
 import string
 
 from django.conf import settings
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import status
@@ -17,8 +17,8 @@ from django.core.cache import cache
 
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
 from .models import Merchant, Shop, BackStageSecond, Commodity, FirstCategory, SecondCategory, ThirdCategory,\
-    MerchantImage
-from common.models import MallUser
+    MerchantImage, CommodityColor, Specification
+from common.models import MallUser, FirstColorSelector, SecondColorSelector
 from common_function.get_id import GetId
 
 
@@ -464,44 +464,65 @@ class CommodityViewset(viewsets.ViewSet):
         commodity_id = GetId.getDigitId()
         while Commodity.objects.filter(commodity_id=commodity_id):
             commodity_id = GetId.getDigitId()
-        # # 封面
-        # cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
-        # # 展示图片
-        # display_image_list = []
-        # for image in request.data['display_images']:
-        #     new = self.saveBase64Image(image, user_id, 'imagePicture')
-        #     display_image_list.append(new)
+        # 封面
+        cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
+        # 展示图片
+        display_image_list = []
+        for image in request.data['display_images']:
+            new = self.saveBase64Image(image, user_id, 'imagePicture')
+            display_image_list.append(new)
         # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
 
         # 颜色分类
         color_item = request.data['color_item']
-        print(color_item)
-        print(type(color_item))
+        for item in color_item:
+            color_list = item['color']
+            item['color'][0] = FirstColorSelector.get_point_color(color_list[0])
+            item['color'][1] = SecondColorSelector.get_point_color(color_list[1])
 
         # 自定义属性
         attribute_item = request.data['attribute_item']
-        print(attribute_item)
-        print(type(attribute_item))
 
-        result = {
-            'code': 1
-        }
+        try:
+            with transaction.atomic():
+                # 插入 Commodity 数据
+                commodity = Commodity.objects.create(
+                    commodity_id=commodity_id,
+                    name=request.data['name'],
+                    title=request.data['title'],
+                    title_desc=request.data['title_desc'],
+                    cover=cover,
+                    display_images=display_image_list,
+                    inventory=int(float(request.data['inventory'])),
+                    price=float(request.data['price']),
+                    category=category,
+                    shop=user.mall_user.merchant.shop,
+                )
+                # 插入 CommodityColor 数据
+                CommodityColor.objects.create(
+                    commodity_class=color_item,
+                    commodity=commodity,
+                )
+                # 插入 Specification 数据
+                Specification.objects.create(
+                    information=attribute_item,
+                    commodity=commodity,
+                )
+        except Exception as e:
+            result = {
+                'code': 0,
+                'data': None,
+                'msssage': '上传失败'
+            }
+        else:
+            result = {
+                'code': 1,
+                'data': None,
+                'msssage': '上传成功'
+            }
 
         return Response(result, status=status.HTTP_200_OK)
-
-        # commodity = Commodity.objects.create(
-        #     commodity_id=commodity_id,
-        #     name=request.data['name'],
-        #     title=request.data['title'],
-        #     title_desc=request.data['title_desc'],
-        #     cover=cover,
-        #     display_images=display_image_list,
-        #     inventory=int(float(request.data['inventory'])),
-        #     price=float(request.data['price']),
-        #     category=category,
-        #     shop=user.mall_user.merchant.shop,
-        # )
 
     def list(self, request):
         """
