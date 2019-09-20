@@ -467,6 +467,7 @@ class CommodityViewset(viewsets.ViewSet):
         cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
 
         display_image_list = []
+        print(type(json.loads(request.data['display_images'])))
         for image in json.loads(request.data['display_images']):
             new = self.saveBase64Image(image, user_id, 'imagePicture')
             display_image_list.append(new)
@@ -536,7 +537,6 @@ class CommodityViewset(viewsets.ViewSet):
         pass
 
     def saveBase64Image(cls, base64_img, user_id, type):
-        print(base64_img, type(base64_img))
         base64_img = base64_img.split(',')[1]
         img_name = ''.join(random.sample(string.ascii_letters + string.digits, 8)) + '.jpg'
         name = MerchantImage.get_name(img_name, str(user_id))
