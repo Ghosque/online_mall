@@ -1,6 +1,8 @@
 import os
+import random
 import re
 import base64
+import string
 
 from django.conf import settings
 from rest_framework.response import Response
@@ -12,8 +14,7 @@ from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 from django.core.cache import cache
 
-from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer,\
-    CommoditySerializer
+from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
 from .models import Merchant, Shop, BackStageSecond, Commodity, FirstCategory, SecondCategory, ThirdCategory,\
     MerchantImage
 from common.models import MallUser
@@ -453,10 +454,6 @@ class CommodityViewset(viewsets.ViewSet):
         :param request: title title_desc cover inventory commodity_class, information
         :return:
         """
-        serializer = CommoditySerializer(data=request.data)
-        if not serializer.is_valid():
-            pass
-
         token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
         token_info = jwt_decode_handler(token)
         user_id = token_info['user_id']
@@ -466,20 +463,38 @@ class CommodityViewset(viewsets.ViewSet):
         while Commodity.objects.filter(commodity_id=commodity_id):
             commodity_id = GetId.getDigitId()
 
-        url = '47.107.183.166:9000/'
+        cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
 
-        category = ThirdCategory.objects.get(id=serializer.validated_data['category'])
+        display_image_list = []
+        for image in request.data['display_images']:
+            new = self.saveBase64Image(image, user_id, 'imagePicture')
+            display_image_list.append(new)
 
-        commodity = Commodity.objects.create(
-            commodity_id=commodity_id,
-            title=serializer.validated_data['title'],
-            title_desc=serializer.validated_data['title_desc'],
-            url=url,
-            cover=serializer.validated_data['cover'],
-            inventory=serializer.validated_data['inventory'],
-            category=category,
-            shop=user.mall_user.merchant.shop,
-        )
+        category = ThirdCategory.objects.get(id=request.data['category'])
+
+        print(commodity_id)
+        print(request.data['name'])
+        print(request.data['title'])
+        print(request.data['title_desc'])
+        print(cover)
+        print(display_image_list)
+        print(int(float(request.data['inventory'])))
+        print(float(request.data['price']))
+        print(category)
+        print(user.mall_user.merchant.shop)
+
+        # commodity = Commodity.objects.create(
+        #     commodity_id=commodity_id,
+        #     name=request.data['name'],
+        #     title=request.data['title'],
+        #     title_desc=request.data['title_desc'],
+        #     cover=cover,
+        #     display_images=display_image_list,
+        #     inventory=int(float(request.data['inventory'])),
+        #     price=float(request.data['price']),
+        #     category=category,
+        #     shop=user.mall_user.merchant.shop,
+        # )
 
     def list(self, request):
         """
@@ -512,3 +527,29 @@ class CommodityViewset(viewsets.ViewSet):
         :return:
         """
         pass
+
+    def saveBase64Image(cls, base64_img, user_id, type):
+        base64_img = base64_img.split(',')[1]
+        img_name = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+        name = MerchantImage.get_name(img_name, user_id)
+        img_dir = os.path.join(settings.MEDIA_ROOT, type, user_id)
+        img_file = os.path.join(settings.MEDIA_ROOT, type, user_id, name)
+        img = 'media/{}/{}'.format(type, name)
+
+        user = User.objects.get(pk=user_id)
+        merchant = user.mall_user.merchant
+
+        img_data = base64.b64decode(base64_img)
+        if not os.path.isdir(img_dir):
+            os.makedirs(img_dir)
+
+        with open(img_file, 'ab') as f:
+            f.write(img_data)
+
+        MerchantImage.objects.create(
+            name=name,
+            img=img,
+            merchant=merchant
+        )
+
+        return img
