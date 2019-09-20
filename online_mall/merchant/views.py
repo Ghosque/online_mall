@@ -483,6 +483,12 @@ class CommodityViewset(viewsets.ViewSet):
         print(category)
         print(user.mall_user.merchant.shop)
 
+        result = {
+            'code': 1
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
         # commodity = Commodity.objects.create(
         #     commodity_id=commodity_id,
         #     name=request.data['name'],
