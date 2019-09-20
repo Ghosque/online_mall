@@ -510,6 +510,7 @@ class CommodityViewset(viewsets.ViewSet):
                     commodity=commodity,
                 )
         except Exception as e:
+            print(e)
             result = {
                 'code': 0,
                 'data': None,
