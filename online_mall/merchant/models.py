@@ -243,7 +243,7 @@ class Commodity(models.Model):
     title = models.CharField(max_length=500, verbose_name='详情页标题')
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
     cover = models.CharField(max_length=300, verbose_name='预览页封面')
-    display_images = ListTextField(base_field=models.CharField(), size=10, verbose_name='图片展示')
+    display_images = ListTextField(base_field=models.CharField(max_length=300), size=10, verbose_name='图片展示')
     status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='价格')
