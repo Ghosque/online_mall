@@ -468,6 +468,7 @@ class CommodityViewset(viewsets.ViewSet):
 
         display_image_list = []
         for image in request.POST.getlist('display_images[]'):
+            print(image)
             new = self.saveBase64Image(image, user_id, 'imagePicture')
             display_image_list.append(new)
 
