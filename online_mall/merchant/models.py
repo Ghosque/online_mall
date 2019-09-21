@@ -1,8 +1,10 @@
 import os
+import base64
 import random
 import string
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django_mysql.models import ListTextField
@@ -154,7 +156,7 @@ class Merchant(models.Model):
 # 商家上传图片
 class MerchantImage(models.Model):
     name = models.CharField(max_length=500, verbose_name='文件名')
-    img = models.ImageField(verbose_name='图片路径')
+    img = models.CharField(max_length=500, verbose_name='图片路径')
     status = models.BooleanField(default=True, verbose_name='状态')
     is_display = models.BooleanField(default=True, verbose_name='是否为展示图片')
 
@@ -175,9 +177,16 @@ class MerchantImage(models.Model):
         image_list = cls.objects.filter(merchant=merchant, status=True, is_display=True)
         img_list = []
         for image in image_list:
-            img_list.append(str(image.img))
+            img_list.append(cls.img_covert_base64(os.path.join(settings.BASE_DIR, image.img)))
 
         return img_list
+
+    @classmethod
+    def img_covert_base64(cls, image):
+        with open(image, 'rb') as f:
+            img_data = base64.b64encode(f.read()).decode()
+
+        return 'data:image/png;base64,' + img_data
 
     @classmethod
     def get_name(cls, img_name, user_id):
