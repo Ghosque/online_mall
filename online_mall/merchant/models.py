@@ -156,6 +156,7 @@ class MerchantImage(models.Model):
     name = models.CharField(max_length=500, verbose_name='文件名')
     img = models.ImageField(verbose_name='图片路径')
     status = models.BooleanField(default=True, verbose_name='状态')
+    is_display = models.BooleanField(default=True, verbose_name='是否为展示图片')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -171,7 +172,7 @@ class MerchantImage(models.Model):
     @classmethod
     def get_point_merchant_images(cls, user_id):
         merchant = User.objects.get(pk=user_id).mall_user.merchant
-        image_list = cls.objects.filter(merchant=merchant, status=True)
+        image_list = cls.objects.filter(merchant=merchant, status=True, is_display=True)
         img_list = []
         for image in image_list:
             img_list.append(str(image.img))
@@ -198,6 +199,7 @@ class MerchantImage(models.Model):
             item_obj = cls.objects.get(img=item)
             item_obj.status = False
             item_obj.save()
+
 
 # 商店
 class Shop(models.Model):
