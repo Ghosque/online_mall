@@ -177,7 +177,12 @@ class MerchantImage(models.Model):
         image_list = cls.objects.filter(merchant=merchant, status=True, is_display=True)
         img_list = []
         for image in image_list:
-            img_list.append(cls.img_covert_base64(os.path.join(settings.BASE_DIR, image.img)))
+            img_list.append(
+                {
+                    'id': image.id,
+                    'img': cls.img_covert_base64(os.path.join(settings.BASE_DIR, image.img))
+                }
+            )
 
         return img_list
 
