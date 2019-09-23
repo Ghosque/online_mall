@@ -181,7 +181,7 @@ class MerchantImage(models.Model):
             img_list.append(
                 {
                     'id': image.id,
-                    'img': image.base64_data
+                    'img': image.img
                 }
             )
 
