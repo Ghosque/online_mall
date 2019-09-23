@@ -396,7 +396,7 @@ class ImageUploadViewset(viewsets.ViewSet):
                 with open(img_file, 'ab') as f:
                     f.write(img_data)
 
-                MerchantImage.objects.create(
+                merchant_image_obj = MerchantImage.objects.create(
                     name=name,
                     img=img,
                     merchant=merchant
@@ -404,7 +404,10 @@ class ImageUploadViewset(viewsets.ViewSet):
 
                 result = {
                     'code': 1,
-                    'data': None,
+                    'data': {
+                        'id': merchant_image_obj.id,
+                        'img': MerchantImage.img_covert_base64(os.path.join(settings.BASE_DIR, merchant_image_obj.img)),
+                    },
                     'message': '上传成功'
                 }
 
