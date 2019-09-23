@@ -412,6 +412,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
     def retrieve(self, request, pk):
         if cache.get('{}_images'.format(pk)):
+            print(1)
             img_list = cache.get('{}_images'.format(pk))
 
             result = {
@@ -421,6 +422,7 @@ class ImageUploadViewset(viewsets.ViewSet):
             }
 
         else:
+            print(2)
             try:
                 User.objects.get(pk=pk)
 
