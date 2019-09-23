@@ -28,9 +28,9 @@ REST_FRAMEWORK = {
 }
 
 # Token过期时间：两小时
-EXPIRE_SECONDS = 2 * 60 * 60  # 2 * 60 * 60
+EXPIRE_SECONDS = 2 * 60 * 60
 # Token刷新有效期：七天（当Token已过期但不超过七天则刷新新Token）
-REFRESH_SECONDS = 7 * 24 * 60 * 60  # 7 * 24 * 60 * 60
+REFRESH_SECONDS = 7 * 24 * 60 * 60
 
 # 自定义token过期时间
 from _datetime import timedelta
@@ -82,3 +82,6 @@ CORS_ORIGIN_WHITELIST = (
 )
 CORS_ALLOW_CREDENTIALS = True  # 指明在跨域访问中，后端是否支持对cookie的操作
 CORS_ORIGIN_ALLOW_ALL = True
+
+# 图片库缓存时间
+IMAGES_REFRESH_SECONDS = 4 * 60 * 60

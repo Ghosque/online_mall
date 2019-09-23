@@ -411,24 +411,35 @@ class ImageUploadViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk):
-        try:
-            User.objects.get(pk=pk)
-
-        except User.DoesNotExist:
-            result = {
-                'code': 0,
-                'data': None,
-                'message': '用户不存在'
-            }
-
-        else:
-            img_list = MerchantImage.get_point_merchant_images(pk)
+        if cache.get('{}_images'.format(pk)):
+            img_list = cache.get('{}_images'.format(pk))
 
             result = {
                 'code': 1,
                 'data': img_list,
                 'message': '请求成功'
             }
+
+        else:
+            try:
+                User.objects.get(pk=pk)
+
+            except User.DoesNotExist:
+                result = {
+                    'code': 0,
+                    'data': None,
+                    'message': '用户不存在'
+                }
+
+            else:
+                img_list = MerchantImage.get_point_merchant_images(pk)
+                cache.set('{}_images'.format(pk), img_list, settings.IMAGES_REFRESH_SECONDS)
+
+                result = {
+                    'code': 1,
+                    'data': img_list,
+                    'message': '请求成功'
+                }
 
         return Response(result, status=status.HTTP_200_OK)
 
