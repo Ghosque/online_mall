@@ -359,11 +359,11 @@ class ThirdCategoryViewset(viewsets.ViewSet):
 class ImageUploadViewset(viewsets.ViewSet):
 
     def create(self, request):
-        base64_img = request.data['base64_img']
+        base64_data = request.data['base64_img']
         user_id = request.data['user_id']
         img_name = request.data['img_name']
 
-        if not base64_img:
+        if not base64_data:
             result = {
                 'code': 0,
                 'data': None,
@@ -371,7 +371,7 @@ class ImageUploadViewset(viewsets.ViewSet):
             }
 
         else:
-            base64_img = base64_img.split(',')[1]
+            new_base64_data = base64_data.split(',')[1]
             name = MerchantImage.get_name(img_name, user_id)
             img_dir = os.path.join(settings.MEDIA_ROOT, 'commodity', user_id)
             img_file = os.path.join(settings.MEDIA_ROOT, 'commodity', name)
@@ -389,7 +389,7 @@ class ImageUploadViewset(viewsets.ViewSet):
                 }
 
             else:
-                img_data = base64.b64decode(base64_img)
+                img_data = base64.b64decode(new_base64_data)
                 if not os.path.isdir(img_dir):
                     os.makedirs(img_dir)
 
@@ -399,6 +399,7 @@ class ImageUploadViewset(viewsets.ViewSet):
                 MerchantImage.objects.create(
                     name=name,
                     img=img,
+                    base64_data=base64_data,
                     merchant=merchant
                 )
 

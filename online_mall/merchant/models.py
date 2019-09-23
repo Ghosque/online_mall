@@ -157,6 +157,7 @@ class Merchant(models.Model):
 class MerchantImage(models.Model):
     name = models.CharField(max_length=500, verbose_name='文件名')
     img = models.CharField(max_length=500, verbose_name='图片路径')
+    base64_data = models.TextField(verbose_name='base64编码数据')
     status = models.BooleanField(default=True, verbose_name='状态')
     is_display = models.BooleanField(default=True, verbose_name='是否为展示图片')
 
