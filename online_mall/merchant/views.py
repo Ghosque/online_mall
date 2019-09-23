@@ -412,9 +412,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
     def retrieve(self, request, pk):
         if cache.get('{}_images'.format(pk)):
-            print(1)
             img_list = cache.get('{}_images'.format(pk))
-            print(111)
 
             result = {
                 'code': 1,
@@ -422,10 +420,7 @@ class ImageUploadViewset(viewsets.ViewSet):
                 'message': '请求成功'
             }
 
-            return Response(result, status=status.HTTP_200_OK)
-
         else:
-            print(2)
             try:
                 User.objects.get(pk=pk)
 
@@ -435,8 +430,6 @@ class ImageUploadViewset(viewsets.ViewSet):
                     'data': None,
                     'message': '用户不存在'
                 }
-
-                return Response(result, status=status.HTTP_200_OK)
 
             else:
                 img_list = MerchantImage.get_point_merchant_images(pk)
@@ -448,7 +441,7 @@ class ImageUploadViewset(viewsets.ViewSet):
                     'message': '请求成功'
                 }
 
-                return Response(result, status=status.HTTP_200_OK)
+        return Response(result, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk):
         print(pk)
