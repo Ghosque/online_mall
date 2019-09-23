@@ -422,6 +422,8 @@ class ImageUploadViewset(viewsets.ViewSet):
                 'message': '请求成功'
             }
 
+            return Response(result, status=status.HTTP_200_OK)
+
         else:
             print(2)
             try:
@@ -434,6 +436,8 @@ class ImageUploadViewset(viewsets.ViewSet):
                     'message': '用户不存在'
                 }
 
+                return Response(result, status=status.HTTP_200_OK)
+
             else:
                 img_list = MerchantImage.get_point_merchant_images(pk)
                 cache.set('{}_images'.format(pk), img_list, settings.IMAGES_REFRESH_SECONDS)
@@ -444,7 +448,7 @@ class ImageUploadViewset(viewsets.ViewSet):
                     'message': '请求成功'
                 }
 
-        return Response(result, status=status.HTTP_200_OK)
+                return Response(result, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk):
         print(pk)
