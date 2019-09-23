@@ -399,7 +399,6 @@ class ImageUploadViewset(viewsets.ViewSet):
                 MerchantImage.objects.create(
                     name=name,
                     img=img,
-                    base64_data=base64_data,
                     merchant=merchant
                 )
 
