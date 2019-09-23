@@ -414,6 +414,7 @@ class ImageUploadViewset(viewsets.ViewSet):
         if cache.get('{}_images'.format(pk)):
             print(1)
             img_list = cache.get('{}_images'.format(pk))
+            print(img_list)
 
             result = {
                 'code': 1,
