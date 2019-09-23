@@ -181,7 +181,7 @@ class MerchantImage(models.Model):
             img_list.append(
                 {
                     'id': image.id,
-                    'img': cls.img_covert_base64(os.path.join(settings.BASE_DIR, image.img))
+                    'img': image.base64_data
                 }
             )
 
