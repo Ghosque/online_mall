@@ -4,6 +4,7 @@ import random
 import string
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django_mysql.models import ListTextField
@@ -179,7 +180,7 @@ class MerchantImage(models.Model):
             img_list.append(
                 {
                     'id': image.id,
-                    'img': cls.img_covert_base64("http://47.107.183.166:9000/" + image.img)
+                    'img': cls.img_covert_base64(os.path.join(settings.BASE_DIR, image.img))
                 }
             )
 
