@@ -179,7 +179,7 @@ class MerchantImage(models.Model):
             img_list.append(
                 {
                     'id': image.id,
-                    'img': cls.img_covert_base64(image.img)
+                    'img': cls.img_covert_base64("http://47.107.183.166:9000/" + image.img)
                 }
             )
 
