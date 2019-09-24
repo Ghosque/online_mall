@@ -316,8 +316,9 @@ class CategoryViewset(viewsets.ViewSet):
     def retrieve(self, request, pk):
         print(request.GET)
         type = request.GET.get('type')
+        print(type)
 
-        if type == 1:
+        if type == '1':
             data = FirstCategory.get_point_category(pk)
             result = {
                 'code': 1,
@@ -325,7 +326,7 @@ class CategoryViewset(viewsets.ViewSet):
                 'message': '请求成功'
             }
 
-        elif type == 2:
+        elif type == '2':
             data = SecondCategory.get_point_category(pk)
             result = {
                 'code': 1,
@@ -333,7 +334,7 @@ class CategoryViewset(viewsets.ViewSet):
                 'message': '请求成功'
             }
 
-        elif type == 3:
+        elif type == '3':
             data = ThirdCategory.get_point_category(pk)
             result = {
                 'code': 1,
