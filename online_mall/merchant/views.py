@@ -313,45 +313,40 @@ class CategoryViewset(viewsets.ViewSet):
 
         return Response(result, status=status.HTTP_200_OK)
 
-
-class FirstCategoryViewset(viewsets.ViewSet):
-
     def retrieve(self, request, pk):
-        data = FirstCategory.get_point_category(pk)
+        type = request.GET.get('type')
 
-        result = {
-            'code': 1,
-            'data': data,
-            'message': '请求成功'
-        }
+        if type == 1:
+            data = FirstCategory.get_point_category(pk)
+            result = {
+                'code': 1,
+                'data': data,
+                'message': '请求成功'
+            }
 
-        return Response(result, status=status.HTTP_200_OK)
+        elif type == 2:
+            data = SecondCategory.get_point_category(pk)
+            result = {
+                'code': 1,
+                'data': data,
+                'message': '请求成功'
+            }
 
+        elif type == 3:
+            data = ThirdCategory.get_point_category(pk)
+            result = {
+                'code': 1,
+                'data': data,
+                'message': '请求成功'
+            }
 
-class SecondCategoryViewset(viewsets.ViewSet):
-
-    def retrieve(self, request, pk):
-        data = SecondCategory.get_point_category(pk)
-
-        result = {
-            'code': 1,
-            'data': data,
-            'message': '请求成功'
-        }
-
-        return Response(result, status=status.HTTP_200_OK)
-
-
-class ThirdCategoryViewset(viewsets.ViewSet):
-
-    def retrieve(self, request, pk):
-        data = ThirdCategory.get_point_category(pk)
-
-        result = {
-            'code': 1,
-            'data': data,
-            'message': '请求成功'
-        }
+        else:
+            data = None
+            result = {
+                'code': 0,
+                'data': data,
+                'message': '不存在该级分类'
+            }
 
         return Response(result, status=status.HTTP_200_OK)
 

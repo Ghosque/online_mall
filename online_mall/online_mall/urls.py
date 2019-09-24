@@ -39,9 +39,6 @@ router.register(r'shop', m_views.ShopInfoViewset, base_name='shop_info')
 router.register(r'navigation', m_views.NavigationViewset, base_name='navigation')
 router.register(r'category', m_views.CategoryViewset, base_name='category')
 router.register(r'imageUpload', m_views.ImageUploadViewset, base_name='image_upload')
-router.register(r'getFirstCategory', m_views.FirstCategoryViewset, base_name='get_first_category')
-router.register(r'getSecondCategory', m_views.SecondCategoryViewset, base_name='get_second_category')
-router.register(r'getThirdCategory', m_views.ThirdCategoryViewset, base_name='get_third_category')
 router.register(r'commodity', m_views.CommodityViewset, base_name='commodity')
 
 
