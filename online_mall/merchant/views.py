@@ -586,3 +586,9 @@ class CommodityViewset(viewsets.ViewSet):
         )
 
         return img
+
+
+class InReviewCommodity(viewsets.ViewSet):
+
+    def list(self, request):
+        STATUS = settings.COMMODITY_IN_REVIEW_STATUS

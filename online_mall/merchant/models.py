@@ -18,12 +18,12 @@ logger = logging.getLogger('scripts')
 # 第一类别
 class FirstCategory(models.Model):
     STATUS_ITEMS = (
-        (1, '正常'),
-        (0, '删除'),
+        (settings.CATEGORY_DELETE_STATUS, '删除'),
+        (settings.CATEGORY_NORMAL_STATUS, '正常'),
     )
 
     name = models.CharField(max_length=20, verbose_name='类别名')
-    status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=settings.CATEGORY_NORMAL_STATUS, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -44,12 +44,12 @@ class FirstCategory(models.Model):
 # 第二类别
 class SecondCategory(models.Model):
     STATUS_ITEMS = (
-        (1, '正常'),
-        (0, '删除'),
+        (settings.CATEGORY_DELETE_STATUS, '删除'),
+        (settings.CATEGORY_NORMAL_STATUS, '正常'),
     )
 
     name = models.CharField(max_length=20, verbose_name='类别名')
-    status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=settings.CATEGORY_NORMAL_STATUS, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -72,12 +72,12 @@ class SecondCategory(models.Model):
 # 第三类别
 class ThirdCategory(models.Model):
     STATUS_ITEMS = (
-        (1, '正常'),
-        (0, '删除'),
+        (settings.CATEGORY_DELETE_STATUS, '删除'),
+        (settings.CATEGORY_NORMAL_STATUS, '正常'),
     )
 
     name = models.CharField(max_length=20, verbose_name='类别名')
-    status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=settings.CATEGORY_NORMAL_STATUS, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -218,15 +218,15 @@ class MerchantImage(models.Model):
 # 商店
 class Shop(models.Model):
     STATUS_ITEMS = (
-        (0, '删除'),
-        (1, '正常'),
-        (2, '审核中'),
+        (settings.SHOP_DELETE_STATUS, '删除'),
+        (settings.SHOP_NORMAL_STATUS, '正常'),
+        (settings.SHOP_IN_REVIEW_STATUS, '审核中'),
     )
 
     shop_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商店ID')
     name = models.CharField(max_length=50, verbose_name='店名')
     star = models.DecimalField(default=4.0, max_digits=2, decimal_places=1, verbose_name='星级')
-    status = models.SmallIntegerField(default=2, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=settings.SHOP_IN_REVIEW_STATUS, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -248,10 +248,10 @@ class Shop(models.Model):
 # 商品
 class Commodity(models.Model):
     STATUS_ITEMS = (
-        (0, '删除'),
-        (1, '正常'),
-        (2, '审核中'),
-        (3, '下架'),
+        (settings.COMMODITY_DELETE_STATUS, '删除'),
+        (settings.COMMODITY_NORMAL_STATUS, '正常'),
+        (settings.COMMODITY_IN_REVIEW_STATUS, '审核中'),
+        (settings.COMMODITY_OFF_SHELF_STATUS, '下架'),
     )
 
     commodity_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商品ID', unique=True)
@@ -260,7 +260,7 @@ class Commodity(models.Model):
     title_desc = models.CharField(max_length=200, verbose_name='预览页标题')
     cover = models.CharField(max_length=300, verbose_name='预览页封面')
     display_images = ListTextField(base_field=models.CharField(max_length=300), size=10, verbose_name='图片展示')
-    status = models.SmallIntegerField(default=2, choices=STATUS_ITEMS, verbose_name='状态')
+    status = models.SmallIntegerField(default=settings.COMMODITY_IN_REVIEW_STATUS, choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='价格')
 
@@ -307,6 +307,13 @@ class Specification(models.Model):
 
     def __str__(self):
         return self.information
+
+    @classmethod
+    def get_point_commodity(cls, user_id, status):
+        commodity_list = Commodity.objects.filter(shop=User.objects.get(pk=user_id).mall_user.merchant.shop, status=status)
+
+        for item in commodity_list:
+            print(item)
 
 
 # 后台管理单元大类
