@@ -529,12 +529,13 @@ class CommodityViewset(viewsets.ViewSet):
 
         return Response(result, status=status.HTTP_200_OK)
 
-    def list(self, request, **kwargs):
+    def list(self, request, *args, **kwargs):
         """
         商品列表
         :param request:
         :return:
         """
+        print(args)
         print(kwargs)
 
         return Response(status=status.HTTP_200_OK)
