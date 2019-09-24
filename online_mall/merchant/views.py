@@ -314,7 +314,7 @@ class CategoryViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk):
-        print(request)
+        print(request.GET)
         type = request.GET.get('type')
 
         if type == 1:
