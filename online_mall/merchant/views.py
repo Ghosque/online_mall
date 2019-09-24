@@ -451,7 +451,7 @@ class ImageUploadViewset(viewsets.ViewSet):
 
 class CommodityViewset(viewsets.ViewSet):
 
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         """
