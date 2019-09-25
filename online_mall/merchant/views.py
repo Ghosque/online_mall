@@ -365,7 +365,7 @@ class CategoryViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
 
-class ImageUploadViewset(viewsets.ViewSet):
+class ImageViewset(viewsets.ViewSet):
 
     def create(self, request):
         base64_data = request.data['base64_img']

@@ -35,7 +35,7 @@ router.register(r'merchant', m_views.MerchantViewset, base_name='merchant')
 router.register(r'shop', m_views.ShopViewset, base_name='shop_info')
 router.register(r'navigation', m_views.NavigationViewset, base_name='navigation')
 router.register(r'category', m_views.CategoryViewset, base_name='category')
-router.register(r'imageUpload', m_views.ImageUploadViewset, base_name='image_upload')
+router.register(r'image', m_views.ImageViewset, base_name='image_upload')
 router.register(r'commodity', m_views.CommodityViewset, base_name='commodity')
 
 
