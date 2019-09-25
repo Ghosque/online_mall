@@ -72,15 +72,12 @@ class TokenVerifyViewset(viewsets.ViewSet):
 class ColorSelectorViewset(viewsets.ViewSet):
 
     def create(self, request):
-        color_list = request.data['color_list']
-        print(color_list, type(color_list))
-        new_list = []
-        for item in color_list:
-            new_list.append(SecondColorSelector.get_point_color(item))
+        color = request.data['color']
+        color_name = SecondColorSelector.get_point_color(color)
 
         result = {
             'code': 1,
-            'data': new_list,
+            'data': color_name,
             'message': '请求成功'
         }
 
