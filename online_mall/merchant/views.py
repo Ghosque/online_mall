@@ -24,38 +24,6 @@ from common.models import MallUser, FirstColorSelector, SecondColorSelector
 from common_function.get_id import GetId
 
 
-class ShopRegViewset(viewsets.ViewSet):
-
-    def create(self, request):
-        """
-        注册商店
-        :param request: name user_id
-        :return: code data message
-        """
-        serializer = ShopRegSerializer(data=request.data)
-        if not serializer.is_valid():
-            result = {
-                'code': 0,
-                'data': None,
-                'message': str(serializer.errors.get('name')[0])
-            }
-            return Response(result, status=status.HTTP_200_OK)
-
-        user = User.objects.get(pk=request.data['user_id'])
-        merchant = user.mall_user.merchant
-        Shop.objects.create(
-            name=request.data['name'],
-            merchant=merchant
-        )
-
-        result = {
-            'code': 1,
-            'data': None,
-            'message': '商店登记成功'
-        }
-        return Response(result, status=status.HTTP_200_OK)
-
-
 class MerchantViewset(viewsets.ViewSet):
 
     def create(self, request):
@@ -208,10 +176,49 @@ class MerchantViewset(viewsets.ViewSet):
         return result
 
 
-class ShopInfoViewset(viewsets.ViewSet):
+class ShopViewset(viewsets.ViewSet):
 
-    permission_classes = (IsAuthenticated,)
+    def create(self, request):
+        """
+        注册商店
+        :param request: name user_id
+        :return: code data message
+        """
+        type = request.GET.get('type')
 
+        if type == 'create':
+            serializer = ShopRegSerializer(data=request.data)
+            if not serializer.is_valid():
+                result = {
+                    'code': 0,
+                    'data': None,
+                    'message': str(serializer.errors.get('name')[0])
+                }
+                return Response(result, status=status.HTTP_200_OK)
+
+            user = User.objects.get(pk=request.data['user_id'])
+            merchant = user.mall_user.merchant
+            Shop.objects.create(
+                name=request.data['name'],
+                merchant=merchant
+            )
+
+            result = {
+                'code': 1,
+                'data': None,
+                'message': '商店登记成功'
+            }
+
+        else:
+            result = {
+                'code': 1,
+                'data': None,
+                'message': '类型错误'
+            }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+    @permission_classes([IsAuthenticated])
     def retrieve(self, request, pk=None):
         """
         获取商店数据
