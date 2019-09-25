@@ -296,6 +296,10 @@ class CommodityColor(models.Model):
     def __str__(self):
         return self.commodity_class
 
+    @classmethod
+    def get_appoint_color(cls, commodity_obj):
+        return cls.objects.filter(commodity=commodity_obj)
+
 
 # 商品详情（规格）
 class Specification(models.Model):
@@ -313,11 +317,8 @@ class Specification(models.Model):
         return self.information
 
     @classmethod
-    def get_point_commodity(cls, user_id, status):
-        commodity_list = Commodity.objects.filter(shop=User.objects.get(pk=user_id).mall_user.merchant.shop, status=status)
-
-        for item in commodity_list:
-            print(item)
+    def get_point_spectification(cls, commodity_obj):
+        return cls.objects.filter(commodity=commodity_obj)
 
 
 # 后台管理单元大类

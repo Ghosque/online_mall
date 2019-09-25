@@ -556,9 +556,21 @@ class CommodityViewset(viewsets.ViewSet):
 
         else:
             commodity_list = Commodity.get_commodity(user_id, commodity_status)
-            print(commodity_list)
             for item in commodity_list:
-                print(item)
+                print('------------------->')
+                print(item.name)
+                print(item.title)
+                print(item.title_desc)
+                print(item.cover)
+                print(item.display_images)
+                print(item.inventory)
+                print(item.price)
+                print(item.category.name)
+                color_obj = CommodityColor.get_appoint_color(item)
+                print(color_obj.commodity_class)
+
+                specification_obj = Specification.get_point_spectification(item)
+                print(specification_obj.information)
 
         return Response(status=status.HTTP_200_OK)
 
