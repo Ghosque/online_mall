@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+from rest_framework.decorators import permission_classes
 from django.core.cache import cache
 
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
@@ -144,12 +145,11 @@ class MerchantLoginViewset(viewsets.ViewSet):
 
 class MerchantInfoViewset(viewsets.ViewSet):
 
-    # permission_classes = (IsAuthenticated,)
-
     def create(self, request):
         print(request.GET)
         return Response(status=status.HTTP_200_OK)
 
+    @permission_classes([IsAuthenticated])
     def retrieve(self, request, pk=None):
         """
         获取商家数据
