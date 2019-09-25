@@ -31,9 +31,7 @@ router.register(r'token_verify', c_views.TokenVerifyViewset, base_name='token_ve
 router.register(r'code', c_views.PhoneCodeViewset, base_name='verify_code')
 router.register(r'colorSelector', c_views.ColorSelectorViewset, base_name='color_selector')
 
-router.register(r'merchantReg', m_views.MerchantRegViewset, base_name='merchant_reg')
-router.register(r'merchantLogin', m_views.MerchantLoginViewset, base_name='merchant_login')
-router.register(r'merchant', m_views.MerchantInfoViewset, base_name='merchant_info')
+router.register(r'merchant', m_views.MerchantViewset, base_name='merchant')
 router.register(r'shopReg', m_views.ShopRegViewset, base_name='shop_reg')
 router.register(r'shop', m_views.ShopInfoViewset, base_name='shop_info')
 router.register(r'navigation', m_views.NavigationViewset, base_name='navigation')

@@ -24,58 +24,6 @@ from common.models import MallUser, FirstColorSelector, SecondColorSelector
 from common_function.get_id import GetId
 
 
-class MerchantRegViewset(viewsets.ViewSet):
-
-    @classmethod
-    def get_merchant_id(cls):
-        merchant_id = GetId.getId()
-        while User.objects.filter(username=merchant_id):
-            merchant_id = GetId.getId()
-
-        return merchant_id
-
-    def create(self, request):
-        """
-        注册请求
-        :param request: password name gender phone id_card code
-        :return: code data message
-        """
-        serializer = MerchantRegSerializer(data=request.data)
-        if not serializer.is_valid():
-            if serializer.errors.get('id_card'):
-                message = str(serializer.errors.get('id_card')[0])
-            else:
-                message = str(serializer.errors.get('code')[0])
-
-            result = {
-                'code': 0,
-                'data': None,
-                'message': message
-            }
-            return Response(result, status=status.HTTP_200_OK)
-
-        merchant_id = self.get_merchant_id()
-
-        user = User.objects.create_user(username=merchant_id, password=request.data['password'], is_superuser=0, is_staff=1)
-
-        mall_user = MallUser.objects.create(
-            name=request.data['name'],
-            gender=request.data['gender'],
-            phone=request.data['phone'],
-            id_card=request.data['id_card'],
-            is_merchant=1,
-            user=user
-        )
-        Merchant.objects.create(mall_user=mall_user)
-
-        result = {
-            'code': 1,
-            'data': None,
-            'message': '注册成功'
-        }
-        return Response(result, status=status.HTTP_201_CREATED)
-
-
 class ShopRegViewset(viewsets.ViewSet):
 
     def create(self, request):
@@ -108,46 +56,25 @@ class ShopRegViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
 
-class MerchantLoginViewset(viewsets.ViewSet):
+class MerchantViewset(viewsets.ViewSet):
 
     def create(self, request):
-        """
-        登录请求
-        :param request: phone password
-        :return: code data(token user_id) message
-        """
-        serializer = MerchantLoginSerializer(data=request.data)
-        if not serializer.is_valid():
+        type = request.GET.get('type')
+
+        if type == 'login':
+            result = self.handle_login(request)
+
+        elif type == 'register':
+            result = self.handle_register(request)
+
+        else:
             result = {
                 'code': 0,
                 'data': None,
-                'message': str(serializer.errors.get('password')[0])
+                'message': '类型错误'
             }
-            return Response(result, status=status.HTTP_200_OK)
 
-        mall_user = MallUser.objects.get(phone=request.data['phone'])
-        user = mall_user.user
-        payload = jwt_payload_handler(user)
-        token = jwt_encode_handler(payload)
-
-        cache.set(user.id, token, settings.REFRESH_SECONDS)
-
-        result = {
-            'code': 1,
-            'data': {
-                'token': token,
-                'user_id': user.id
-            },
-            'message': '登录成功'
-        }
         return Response(result, status=status.HTTP_200_OK)
-
-
-class MerchantInfoViewset(viewsets.ViewSet):
-
-    def create(self, request):
-        print(request.GET)
-        return Response(status=status.HTTP_200_OK)
 
     @permission_classes([IsAuthenticated])
     def retrieve(self, request, pk=None):
@@ -203,6 +130,82 @@ class MerchantInfoViewset(viewsets.ViewSet):
             'message': '请求成功'
         }
         return Response(result, status=status.HTTP_200_OK)
+
+    @classmethod
+    def handle_login(cls, request):
+        serializer = MerchantLoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            result = {
+                'code': 0,
+                'data': None,
+                'message': str(serializer.errors.get('password')[0])
+            }
+            return Response(result, status=status.HTTP_200_OK)
+
+        mall_user = MallUser.objects.get(phone=request.data['phone'])
+        user = mall_user.user
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+
+        cache.set(user.id, token, settings.REFRESH_SECONDS)
+
+        result = {
+            'code': 1,
+            'data': {
+                'token': token,
+                'user_id': user.id
+            },
+            'message': '登录成功'
+        }
+
+        return result
+
+    @classmethod
+    def get_merchant_id(cls):
+        merchant_id = GetId.getId()
+        while User.objects.filter(username=merchant_id):
+            merchant_id = GetId.getId()
+
+        return merchant_id
+
+    @classmethod
+    def handle_register(cls, request):
+        serializer = MerchantRegSerializer(data=request.data)
+        if not serializer.is_valid():
+            if serializer.errors.get('id_card'):
+                message = str(serializer.errors.get('id_card')[0])
+            else:
+                message = str(serializer.errors.get('code')[0])
+
+            result = {
+                'code': 0,
+                'data': None,
+                'message': message
+            }
+            return Response(result, status=status.HTTP_200_OK)
+
+        merchant_id = cls.get_merchant_id()
+
+        user = User.objects.create_user(username=merchant_id, password=request.data['password'], is_superuser=0,
+                                        is_staff=1)
+
+        mall_user = MallUser.objects.create(
+            name=request.data['name'],
+            gender=request.data['gender'],
+            phone=request.data['phone'],
+            id_card=request.data['id_card'],
+            is_merchant=1,
+            user=user
+        )
+        Merchant.objects.create(mall_user=mall_user)
+
+        result = {
+            'code': 1,
+            'data': None,
+            'message': '注册成功'
+        }
+
+        return result
 
 
 class ShopInfoViewset(viewsets.ViewSet):
