@@ -555,24 +555,37 @@ class CommodityViewset(viewsets.ViewSet):
             }
 
         else:
+            data_list = []
+            # 获取目标status的商品列表
             commodity_list = Commodity.get_commodity(user_id, commodity_status)
             for item in commodity_list:
-                print('------------------->')
-                print(item.name)
-                print(item.title)
-                print(item.title_desc)
-                print(item.cover)
-                print(item.display_images)
-                print(item.inventory)
-                print(item.price)
-                print(item.category.name)
+                # 获取颜色分类
                 color_obj = CommodityColor.get_appoint_color(item)
-                print(color_obj.commodity_class)
-
+                # 获取自定义属性
                 specification_obj = Specification.get_point_spectification(item)
-                print(specification_obj.information)
 
-        return Response(status=status.HTTP_200_OK)
+                single_data = {
+                    'name': item.name,
+                    'title': item.title,
+                    'title_desc': item.title_desc,
+                    'cover': item.cover,
+                    'display_images': item.display_images,
+                    'inventory': item.inventory,
+                    'price': item.price,
+                    'category': item.category.name,
+                    'color_item': color_obj.commodity_class,
+                    'attribute_item': specification_obj.information,
+                }
+
+                data_list.append(single_data)
+
+            result = {
+                'code': 1,
+                'data': data_list,
+                'message': '请求成功'
+            }
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request):
         """
