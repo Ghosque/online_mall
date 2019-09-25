@@ -547,6 +547,7 @@ class CommodityViewset(viewsets.ViewSet):
         token_info = jwt_decode_handler(token)
         user_id = token_info['user_id']
         commodity_status = int(request.GET.get('commodity_status'))
+        print(commodity_status, type(commodity_status))
         if status not in [settings.COMMODITY_NORMAL_STATUS, settings.COMMODITY_IN_REVIEW_STATUS, settings.COMMODITY_OFF_SHELF_STATUS]:
             result = {
                 'code': 0,
