@@ -278,6 +278,7 @@ class Commodity(models.Model):
 
     @classmethod
     def get_commodity(cls, user_id, status):
+        print(User.objects.get(pk=user_id).mall_user.merchant.shop.id)
         return cls.objects.filter(shop=User.objects.get(pk=user_id).mall_user.merchant.shop, status=status)
 
 
