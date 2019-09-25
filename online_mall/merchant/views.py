@@ -551,6 +551,7 @@ class CommodityViewset(viewsets.ViewSet):
         print(settings.COMMODITY_IN_REVIEW_STATUS, type(settings.COMMODITY_IN_REVIEW_STATUS))
         print(settings.COMMODITY_OFF_SHELF_STATUS, type(settings.COMMODITY_OFF_SHELF_STATUS))
         if status not in [settings.COMMODITY_NORMAL_STATUS, settings.COMMODITY_IN_REVIEW_STATUS, settings.COMMODITY_OFF_SHELF_STATUS]:
+            print(0)
             result = {
                 'code': 0,
                 'data': None,
@@ -558,6 +559,7 @@ class CommodityViewset(viewsets.ViewSet):
             }
 
         else:
+            print(1)
             commodity_list = Commodity.get_commodity(user_id, commodity_status)
             print(commodity_list)
             for item in commodity_list:
