@@ -565,6 +565,7 @@ class CommodityViewset(viewsets.ViewSet):
                 specification_obj = Specification.get_point_spectification(item)
 
                 single_data = {
+                    'id': item.id,
                     'name': item.name,
                     'title': item.title,
                     'title_desc': item.title_desc,
