@@ -459,7 +459,7 @@ class ImageViewset(viewsets.ViewSet):
 
 class CommodityViewset(viewsets.ViewSet):
 
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         """
@@ -477,11 +477,11 @@ class CommodityViewset(viewsets.ViewSet):
         while Commodity.objects.filter(commodity_id=commodity_id):
             commodity_id = GetId.getDigitId()
         # 封面
-        cover = self.saveBase64Image(request.data['cover'], user_id, 'cover')
+        cover = self.save_base64_image(request.data['cover'], user_id, 'cover')
         # 展示图片
         display_image_list = []
         for image in request.data['display_images']:
-            new = self.saveBase64Image(image, user_id, 'imagePicture')
+            new = self.save_base64_image(image, user_id, 'imagePicture')
             display_image_list.append(new)
         # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
@@ -543,7 +543,21 @@ class CommodityViewset(viewsets.ViewSet):
         :param request:
         :return:
         """
-        print(request.GET.get('status'))
+        token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
+        token_info = jwt_decode_handler(token)
+        user_id = token_info['user_id']
+        commodity_status = int(request.GET.get('commodity_status'))
+        if status not in [settings.COMMODITY_NORMAL_STATUS, settings.COMMODITY_IN_REVIEW_STATUS, settings.COMMODITY_OFF_SHELF_STATUS]:
+            result = {
+                'code': 0,
+                'data': None,
+                'message': '类型错误'
+            }
+
+        else:
+            commodity_list = Commodity.get_commodity(user_id, commodity_status)
+            for item in commodity_list:
+                print(item)
 
         return Response(status=status.HTTP_200_OK)
 
@@ -571,7 +585,8 @@ class CommodityViewset(viewsets.ViewSet):
         """
         pass
 
-    def saveBase64Image(cls, base64_img, user_id, type):
+    @classmethod
+    def save_base64_image(cls, base64_img, user_id, type):
         base64_img = base64_img.split(',')[1]
         img_name = ''.join(random.sample(string.ascii_letters + string.digits, 8)) + '.jpg'
         name = MerchantImage.get_name(img_name, str(user_id))
