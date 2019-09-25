@@ -445,7 +445,6 @@ class ImageViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk):
-        print(pk)
         delete_list = request.data['delete_list']
         MerchantImage.delete_images(delete_list)
 

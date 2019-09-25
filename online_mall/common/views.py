@@ -71,6 +71,20 @@ class TokenVerifyViewset(viewsets.ViewSet):
 
 class ColorSelectorViewset(viewsets.ViewSet):
 
+    def create(self, request):
+        color_list = request.data['color_list']
+        new_list = []
+        for item in color_list:
+            new_list.append(SecondColorSelector.get_point_color(item))
+
+        result = {
+            'code': 1,
+            'data': new_list,
+            'message': '请求成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
     def list(self, request):
         """
         获取颜色分类列表
