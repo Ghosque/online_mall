@@ -144,7 +144,11 @@ class MerchantLoginViewset(viewsets.ViewSet):
 
 class MerchantInfoViewset(viewsets.ViewSet):
 
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        print(request.GET)
+        return Response(status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
         """
