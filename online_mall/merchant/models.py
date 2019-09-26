@@ -179,6 +179,10 @@ class MerchantImage(models.Model):
         bucket = oss2.Bucket(auth, endpoint, settings.BUCKET_NAME)
         bucket.put_object_from_file(img_key, img_path)
 
+        image_url = bucket.sign_url('GET', img_key, 5*12*30*24*60*60)
+
+        return image_url
+
     @classmethod
     def get_point_merchant_images(cls, user_id):
         merchant = User.objects.get(pk=user_id).mall_user.merchant
