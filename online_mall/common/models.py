@@ -132,7 +132,6 @@ class SecondColorSelector(models.Model):
 
     @classmethod
     def get_point_color(cls, color_code):
-        print(color_code)
         color_obj = cls.objects.get(color_code=color_code)
 
         return color_obj.name
