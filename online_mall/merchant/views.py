@@ -417,7 +417,7 @@ class ImageViewset(viewsets.ViewSet):
                     'code': 1,
                     'data': {
                         'id': merchant_image_obj.id,
-                        'img': MerchantImage.img_covert_base64(os.path.join(settings.BASE_DIR, merchant_image_obj.img)),
+                        'img': merchant_image_obj.img,
                     },
                     'message': '上传成功'
                 }
@@ -633,9 +633,11 @@ class CommodityViewset(viewsets.ViewSet):
         with open(img_file, 'ab') as f:
             f.write(img_data)
 
+        image_url = MerchantImage.upload_image(img, img_file)
+
         MerchantImage.objects.create(
             name=name,
-            img=img,
+            img=image_url,
             merchant=merchant
         )
 

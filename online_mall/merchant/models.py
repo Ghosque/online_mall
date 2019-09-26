@@ -192,18 +192,11 @@ class MerchantImage(models.Model):
             img_list.append(
                 {
                     'id': image.id,
-                    'img': cls.img_covert_base64(os.path.join(settings.BASE_DIR, image.img))
+                    'img': image.img
                 }
             )
 
         return img_list
-
-    @classmethod
-    def img_covert_base64(cls, image):
-        with open(image, 'rb') as f:
-            img_data = base64.b64encode(f.read()).decode()
-
-        return 'data:image/png;base64,' + img_data
 
     @classmethod
     def get_name(cls, img_name, user_id):
