@@ -641,4 +641,4 @@ class CommodityViewset(viewsets.ViewSet):
             merchant=merchant
         )
 
-        return img
+        return image_url
