@@ -1,4 +1,5 @@
 import os
+import oss2
 import base64
 import random
 import string
@@ -170,6 +171,13 @@ class MerchantImage(models.Model):
 
     def __str__(self):
         return self.img
+
+    @classmethod
+    def upload_image(cls, img_key, img_path):
+        auth = oss2.Auth(settings.ACCESS_KEY_ID, settings.ACCESS_KEY_SECRET)
+        endpoint = settings.PREFIX_URL + settings.END_POINT
+        bucket = oss2.Bucket(auth, endpoint, settings.BUCKET_NAME)
+        bucket.put_object_from_file(img_key, img_path)
 
     @classmethod
     def get_point_merchant_images(cls, user_id):

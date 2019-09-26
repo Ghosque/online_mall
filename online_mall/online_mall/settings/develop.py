@@ -98,3 +98,14 @@ COMMODITY_DELETE_STATUS = 0
 COMMODITY_NORMAL_STATUS = 1
 COMMODITY_IN_REVIEW_STATUS = 2
 COMMODITY_OFF_SHELF_STATUS = 3
+
+# Ali OSS
+ACCESS_KEY_ID = "LTAI4FjxQZPVLGz8xJuAh3me"
+ACCESS_KEY_SECRET = "yqdYH8SeO7W2V1ht2BokBgEaUKF4zm"
+END_POINT = "oss-cn-shenzhen.aliyuncs.com"
+PREFIX_URL = 'http://'
+BUCKET_NAME = "ghosque-online-mall"
+BUCKET_ACL_TYPE = "private"
+DEFAULT_FILE_STORAGE = 'aliyun_oss2_storage.backends.AliyunMediaStorage'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = "media"

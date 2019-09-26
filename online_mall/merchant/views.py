@@ -405,6 +405,8 @@ class ImageViewset(viewsets.ViewSet):
                 with open(img_file, 'ab') as f:
                     f.write(img_data)
 
+                MerchantImage.upload_image(img, img_file)
+
                 merchant_image_obj = MerchantImage.objects.create(
                     name=name,
                     img=img,
