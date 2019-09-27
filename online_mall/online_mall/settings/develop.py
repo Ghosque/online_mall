@@ -1,4 +1,5 @@
 import re
+import oss2
 
 from .base import *
 
@@ -109,3 +110,7 @@ BUCKET_ACL_TYPE = "private"
 DEFAULT_FILE_STORAGE = 'aliyun_oss2_storage.backends.AliyunMediaStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = "media"
+
+OSS_AUTH = oss2.Auth(ACCESS_KEY_ID, ACCESS_KEY_SECRET)
+OSS_ENDPOINT = PREFIX_URL + END_POINT
+OSS_BUCKET = oss2.Bucket(OSS_AUTH, OSS_ENDPOINT, BUCKET_NAME)

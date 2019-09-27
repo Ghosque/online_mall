@@ -408,6 +408,7 @@ class ImageViewset(viewsets.ViewSet):
 
                 merchant_image_obj = MerchantImage.objects.create(
                     name=name,
+                    oss_object=img,
                     img=image_url,
                     merchant=merchant
                 )

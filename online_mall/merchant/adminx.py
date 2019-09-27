@@ -15,7 +15,7 @@ class MerchantAdmin:
 
 @xadmin.sites.register(MerchantImage)
 class MerchantImageAdmin:
-    list_display = ('id', 'name', 'img', 'status', 'merchant', 'create_time', 'update_time',)
+    list_display = ('id', 'name', 'oss_object', 'img', 'status', 'merchant', 'create_time', 'update_time',)
     search_fields = ('merchant',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)

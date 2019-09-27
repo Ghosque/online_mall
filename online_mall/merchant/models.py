@@ -157,7 +157,8 @@ class Merchant(models.Model):
 # 商家上传图片
 class MerchantImage(models.Model):
     name = models.CharField(max_length=500, verbose_name='文件名')
-    img = models.CharField(max_length=500, verbose_name='图片路径')
+    oss_object = models.CharField(max_length=500, verbose_name='oss对象')
+    img = models.CharField(max_length=500, verbose_name='图片链接')
     status = models.BooleanField(default=True, verbose_name='状态')
     is_display = models.BooleanField(default=True, verbose_name='是否为展示图片')
 
@@ -174,9 +175,7 @@ class MerchantImage(models.Model):
 
     @classmethod
     def upload_image(cls, img_key, img_path):
-        auth = oss2.Auth(settings.ACCESS_KEY_ID, settings.ACCESS_KEY_SECRET)
-        endpoint = settings.PREFIX_URL + settings.END_POINT
-        bucket = oss2.Bucket(auth, endpoint, settings.BUCKET_NAME)
+        bucket = settings.OSS_BUCKET
         bucket.put_object_from_file(img_key, img_path)
 
         image_url = bucket.sign_url('GET', img_key, 5*12*30*24*60*60)
@@ -201,7 +200,7 @@ class MerchantImage(models.Model):
     @classmethod
     def get_name(cls, img_name, user_id):
         name = '/'.join([user_id, img_name])
-        image_obj = cls.objects.filter(name=name)
+        image_obj = cls.objects.filter(name=name, status=True)
         while len(image_obj) > 0:
             random_str = ''.join(random.sample(string.ascii_letters + string.digits, 6))
             new_img_name = '_'.join([os.path.splitext(img_name)[0], random_str]) + os.path.splitext(img_name)[1]
@@ -212,8 +211,10 @@ class MerchantImage(models.Model):
 
     @classmethod
     def delete_images(cls, delete_list):
+        bucket = settings.OSS_BUCKET
         for item in delete_list:
             item_obj = cls.objects.get(id=item)
+            bucket.delete_object(item_obj.oss_object)
             item_obj.status = False
             item_obj.save()
 
