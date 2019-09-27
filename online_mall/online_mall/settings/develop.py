@@ -103,7 +103,7 @@ COMMODITY_OFF_SHELF_STATUS = 3
 # Ali OSS
 ACCESS_KEY_ID = "LTAI4FwfrskcFinuqtNADg8Y"
 ACCESS_KEY_SECRET = "LrI2TbPEl467zC8qSgDpA87qIpDzsA"
-END_POINT = "oss-cn-shenzhen.aliyuncs.com"
+END_POINT = "oss-cn-shenzhen-internal.aliyuncs.com"
 PREFIX_URL = 'http://'
 BUCKET_NAME = "ghosque-online-mall"
 BUCKET_ACL_TYPE = "private"
