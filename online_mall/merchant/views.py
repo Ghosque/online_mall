@@ -492,8 +492,10 @@ class CommodityViewset(viewsets.ViewSet):
         color_item = request.data['color_item']
         for item in color_item:
             color_list = item['color']
+            img_id = item['img']
             item['color'][0] = FirstColorSelector.get_point_color(color_list[0])
             item['color'][1] = SecondColorSelector.get_point_color(color_list[1])
+            item['img'] = MerchantImage.get_point_image(img_id)
 
         # 自定义属性
         attribute_item = request.data['attribute_item']
