@@ -483,11 +483,8 @@ class CommodityViewset(viewsets.ViewSet):
         # 展示图片
         display_image_list = []
         for image in request.data['display_images']:
-            if image.startswith('data'):
-                new = self.save_base64_image(image, user_id, 'imagePicture')
-                display_image_list.append(new)
-            else:
-                display_image_list.append(image)
+            new = self.save_base64_image(image, user_id, 'imagePicture')
+            display_image_list.append(new)
         # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
 
