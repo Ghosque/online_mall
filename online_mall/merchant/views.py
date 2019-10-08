@@ -485,8 +485,8 @@ class CommodityViewset(viewsets.ViewSet):
         cover = self.save_base64_image(request.data['cover'], user_id, 'cover')
         # 展示图片
         display_image_list = []
-        for image in request.data['display_images']:
-            new = self.save_base64_image(image, user_id, 'imagePicture')
+        for item in request.data['display_images']:
+            new = MerchantImage.get_point_image(item)
             display_image_list.append(new)
         # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
