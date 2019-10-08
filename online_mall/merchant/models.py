@@ -165,7 +165,8 @@ class MerchantImage(models.Model):
     name = models.CharField(max_length=500, verbose_name='文件名')
     oss_object = models.CharField(max_length=500, verbose_name='oss对象')
     img = models.CharField(max_length=500, verbose_name='图片链接')
-    img_type = models.SmallIntegerField(choices=TYPE_ITEM, verbose_name='状态')
+    img_type = models.SmallIntegerField(choices=TYPE_ITEM, verbose_name='类型')
+    status = models.BooleanField(default=True, verbose_name='状态')
     is_display = models.BooleanField(default=True, verbose_name='是否为展示图片')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
