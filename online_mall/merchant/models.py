@@ -191,7 +191,7 @@ class MerchantImage(models.Model):
     @classmethod
     def get_point_merchant_images(cls, user_id, img_type):
         merchant = User.objects.get(pk=user_id).mall_user.merchant
-        image_list = cls.objects.filter(merchant=merchant, img_type=img_type)
+        image_list = cls.objects.filter(merchant=merchant, img_type=img_type, status=True)
         img_list = []
         for image in image_list:
             img_list.append(
