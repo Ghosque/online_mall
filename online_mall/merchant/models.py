@@ -167,7 +167,6 @@ class MerchantImage(models.Model):
     img = models.CharField(max_length=500, verbose_name='图片链接')
     img_type = models.SmallIntegerField(choices=TYPE_ITEM, verbose_name='类型')
     status = models.BooleanField(default=True, verbose_name='状态')
-    is_display = models.BooleanField(default=True, verbose_name='是否为展示图片')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -192,7 +191,7 @@ class MerchantImage(models.Model):
     @classmethod
     def get_point_merchant_images(cls, user_id, img_type):
         merchant = User.objects.get(pk=user_id).mall_user.merchant
-        image_list = cls.objects.filter(merchant=merchant, img_type=img_type, is_display=True)
+        image_list = cls.objects.filter(merchant=merchant, img_type=img_type)
         img_list = []
         for image in image_list:
             img_list.append(
