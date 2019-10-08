@@ -370,6 +370,7 @@ class ImageViewset(viewsets.ViewSet):
         base64_data = request.data['base64_img']
         user_id = request.data['user_id']
         img_name = request.data['img_name']
+        type = request.data['img_type']
 
         if not base64_data:
             result = {
@@ -410,6 +411,7 @@ class ImageViewset(viewsets.ViewSet):
                     name=name,
                     oss_object=img,
                     img=image_url,
+                    img_type=type,
                     merchant=merchant
                 )
 
@@ -436,7 +438,8 @@ class ImageViewset(viewsets.ViewSet):
             }
 
         else:
-            img_list = MerchantImage.get_point_merchant_images(pk)
+            img_type = request.GET.get('img_type')
+            img_list = MerchantImage.get_point_merchant_images(pk, img_type)
 
             result = {
                 'code': 1,
@@ -618,6 +621,11 @@ class CommodityViewset(viewsets.ViewSet):
 
     @classmethod
     def save_base64_image(cls, base64_img, user_id, type):
+        if type == 'cover':
+            img_type = 0
+        else:
+            img_type = 1
+
         base64_img = base64_img.split(',')[1]
         img_name = ''.join(random.sample(string.ascii_letters + string.digits, 8)) + '.jpg'
         name = MerchantImage.get_name(img_name, str(user_id))
@@ -639,7 +647,9 @@ class CommodityViewset(viewsets.ViewSet):
 
         MerchantImage.objects.create(
             name=name,
+            oss_object=img,
             img=image_url,
+            img_type=img_type,
             merchant=merchant
         )
 

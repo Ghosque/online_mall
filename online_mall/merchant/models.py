@@ -156,10 +156,16 @@ class Merchant(models.Model):
 
 # 商家上传图片
 class MerchantImage(models.Model):
+    TYPE_ITEM = (
+        (settings.COVER_IMAGE, '封面'),
+        (settings.DISPLAY_IMAGE, '照片墙'),
+        (settings.COLOR_IMAGE, '颜色分类'),
+    )
+
     name = models.CharField(max_length=500, verbose_name='文件名')
     oss_object = models.CharField(max_length=500, verbose_name='oss对象')
     img = models.CharField(max_length=500, verbose_name='图片链接')
-    status = models.BooleanField(default=True, verbose_name='状态')
+    img_type = models.SmallIntegerField(choices=TYPE_ITEM, verbose_name='状态')
     is_display = models.BooleanField(default=True, verbose_name='是否为展示图片')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
@@ -183,9 +189,9 @@ class MerchantImage(models.Model):
         return image_url
 
     @classmethod
-    def get_point_merchant_images(cls, user_id):
+    def get_point_merchant_images(cls, user_id, img_type):
         merchant = User.objects.get(pk=user_id).mall_user.merchant
-        image_list = cls.objects.filter(merchant=merchant, status=True, is_display=True)
+        image_list = cls.objects.filter(merchant=merchant, img_type=img_type, is_display=True)
         img_list = []
         for image in image_list:
             img_list.append(
