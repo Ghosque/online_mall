@@ -29,7 +29,7 @@ router = routers.DefaultRouter()
 
 router.register(r'token_verify', c_views.TokenVerifyViewset, base_name='token_verify')
 router.register(r'code', c_views.PhoneCodeViewset, base_name='verify_code')
-router.register(r'colorSelector', c_views.ColorSelectorViewset, base_name='color_selector')
+router.register(r'color', c_views.ColorViewset, base_name='color')
 
 router.register(r'merchant', m_views.MerchantViewset, base_name='merchant')
 router.register(r'shop', m_views.ShopViewset, base_name='shop_info')

@@ -69,7 +69,7 @@ class TokenVerifyViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
 
-class ColorSelectorViewset(viewsets.ViewSet):
+class ColorViewset(viewsets.ViewSet):
 
     def create(self, request):
         color = request.data['color']
