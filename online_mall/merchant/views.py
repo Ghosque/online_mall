@@ -483,11 +483,6 @@ class CommodityViewset(viewsets.ViewSet):
             commodity_id = GetId.getDigitId()
         # 封面
         cover = self.save_base64_image(request.data['cover'], user_id, 'cover')
-        # 展示图片
-        display_image_list = []
-        for item in request.data['display_images']:
-            new = MerchantImage.get_point_image(item)
-            display_image_list.append(new)
         # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
 
@@ -512,7 +507,7 @@ class CommodityViewset(viewsets.ViewSet):
                     title=request.data['title'],
                     title_desc=request.data['title_desc'],
                     cover=cover,
-                    display_images=display_image_list,
+                    display_images=request.data['display_images'],
                     inventory=int(float(request.data['inventory'])),
                     price=float(request.data['price']),
                     category=category,
