@@ -142,6 +142,6 @@ class SecondColorSelector(models.Model):
         code_name_dict = dict()
 
         for item in color_obj_list:
-            code_name_dict[str(item.color_code)] = item.name
+            code_name_dict[item.color_code] = item.name
 
         return code_name_dict
