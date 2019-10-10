@@ -485,14 +485,6 @@ class CommodityViewset(viewsets.ViewSet):
         cover = self.save_base64_image(request.data['cover'], user_id, 'cover')
         # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
-
-        # 颜色分类
-        color_item = request.data['color_item']
-        for item in color_item:
-            color_list = item['color']
-            item['color'][0] = FirstColorSelector.get_point_color(color_list[0])
-            item['color'][1] = SecondColorSelector.get_point_color(color_list[1])
-
         # 自定义属性
         attribute_item = request.data['attribute_item']
 
@@ -513,7 +505,7 @@ class CommodityViewset(viewsets.ViewSet):
                 )
                 # 插入 CommodityColor 数据
                 CommodityColor.objects.create(
-                    commodity_class=json.dumps(color_item, ensure_ascii=False),
+                    commodity_class=json.dumps(request.data['color_item'], ensure_ascii=False),
                     commodity=commodity,
                 )
                 # 插入 Specification 数据

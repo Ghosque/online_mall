@@ -224,10 +224,6 @@ class MerchantImage(models.Model):
             item_obj.status = False
             item_obj.save()
 
-    @classmethod
-    def get_point_image(cls, pk):
-        return cls.objects.get(pk=pk).img
-
 
 # 商店
 class Shop(models.Model):

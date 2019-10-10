@@ -90,6 +90,7 @@ class ColorViewset(viewsets.ViewSet):
         :return: code data(color_selector_list) message
         """
         color_selector_list = SecondColorSelector.get_color_selector()
+        color_code_name_dict = SecondColorSelector.get_code_name_dict()
         if not color_selector_list:
             result = {
                 'code': 0,
@@ -99,7 +100,10 @@ class ColorViewset(viewsets.ViewSet):
         else:
             result = {
                 'code': 1,
-                'data': color_selector_list,
+                'data': {
+                    'selector_list': color_selector_list,
+                    'code_name_dict': color_code_name_dict,
+                },
                 'message': '请求成功'
             }
 

@@ -135,3 +135,13 @@ class SecondColorSelector(models.Model):
         color_obj = cls.objects.get(color_code=color_code)
 
         return color_obj.name
+
+    @classmethod
+    def get_code_name_dict(cls):
+        color_obj_list = cls.objects.filter(status=True)
+        code_name_dict = dict()
+
+        for item in color_obj_list:
+            code_name_dict[item.color_code] = item.name
+
+        return code_name_dict
