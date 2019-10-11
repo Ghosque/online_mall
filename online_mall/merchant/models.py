@@ -290,6 +290,10 @@ class Commodity(models.Model):
     def get_commodity(cls, user_id, status):
         return cls.objects.filter(shop=User.objects.get(pk=user_id).mall_user.merchant.shop, status=status)
 
+    @classmethod
+    def get_appoint_commodity(cls, id):
+        return cls.objects.get(pk=id)
+
 
 # 商品颜色（分类）
 class CommodityColor(models.Model):

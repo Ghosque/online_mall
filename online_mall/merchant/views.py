@@ -595,7 +595,23 @@ class CommodityViewset(viewsets.ViewSet):
         :return:
         """
         print('yes, you succeed!')
-        return Response(status=status.HTTP_200_OK)
+        try:
+            commodity = Commodity.get_appoint_commodity(pk)
+
+            result = {
+                'code': 1,
+                'data': commodity,
+                'message': '请求成功'
+            }
+
+        except:
+            result = {
+                'code': 1,
+                'data': None,
+                'message': '没有该商品'
+            }
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def destroy(self, request):
         """
