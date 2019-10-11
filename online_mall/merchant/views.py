@@ -588,7 +588,7 @@ class CommodityViewset(viewsets.ViewSet):
         """
         pass
 
-    def update(self, request):
+    def update(self, request, pk):
         """
         更新商品数据
         :param request:
