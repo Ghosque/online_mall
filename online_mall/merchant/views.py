@@ -597,10 +597,11 @@ class CommodityViewset(viewsets.ViewSet):
         print('yes, you succeed!')
         try:
             commodity = Commodity.get_appoint_commodity(pk)
+            print(commodity)
 
             result = {
                 'code': 1,
-                'data': commodity,
+                'data': None,
                 'message': '请求成功'
             }
 
