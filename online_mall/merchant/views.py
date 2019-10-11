@@ -594,7 +594,8 @@ class CommodityViewset(viewsets.ViewSet):
         :param request:
         :return:
         """
-        pass
+        print('yes, you succeed!')
+        return Response(status=status.HTTP_200_OK)
 
     def destroy(self, request):
         """
