@@ -224,6 +224,14 @@ class MerchantImage(models.Model):
             item_obj.status = False
             item_obj.save()
 
+    @classmethod
+    def get_image_base64_data(cls, image):
+        with open(image, 'rb') as f:
+            base64_data = base64.b64encode(f.read())
+            image_data = base64.b64decode(base64_data)
+
+        return image_data
+
 
 # 商店
 class Shop(models.Model):
