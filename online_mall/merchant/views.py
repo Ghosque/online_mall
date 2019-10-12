@@ -560,7 +560,7 @@ class CommodityViewset(viewsets.ViewSet):
                     'name': item.name,
                     'title': item.title,
                     'title_desc': item.title_desc,
-                    'cover': settings.OSS_BUCKET.sign_url('GET', item.cover, 5*365*24*60*60),
+                    'cover': item.cover,
                     'display_images': item.display_images,
                     'inventory': item.inventory,
                     'price': item.price,
