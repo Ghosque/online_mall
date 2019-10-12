@@ -20,7 +20,7 @@ from django.core.cache import cache
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
 from .models import Merchant, Shop, BackStageSecond, Commodity, FirstCategory, SecondCategory, ThirdCategory,\
     MerchantImage, CommodityColor, Specification
-from common.models import MallUser, FirstColorSelector, SecondColorSelector
+from common.models import MallUser
 from common_function.get_id import GetId
 
 
@@ -596,14 +596,38 @@ class CommodityViewset(viewsets.ViewSet):
         """
         try:
             commodity = Commodity.get_appoint_commodity(pk)
-            print(request.data)
-            print(type(request.data))
+            data = request.data
+            with transaction.atomic():
+                # 单独取出颜色分类
+                if 'color_item' in data.keys():
+                    color_item = data['color_item']
+                    commodity_color_obj = CommodityColor.objects.filter(commodity=commodity)
+                    commodity_color_obj.commodity_class = color_item
+                    commodity_color_obj.save()
 
-            result = {
-                'code': 1,
-                'data': None,
-                'message': '请求成功'
-            }
+                    del data['color_item']
+                # 单独取出自定义属性
+                if 'attribute_item' in data.keys():
+                    attribute_item = data['attribute_item']
+                    specification_obj = Specification.objects.filter(commodity=commodity)
+                    specification_obj.information = attribute_item
+                    specification_obj.save()
+
+                    del data['attribute_item']
+
+                # 商品类别作为外键需要进一步处理
+                if 'category' in data.keys():
+                    category = data['category']
+                    category_object = ThirdCategory.objects.get(pk=category[-1])
+                    data['category'] = category_object
+
+                commodity.update(**data)
+
+                result = {
+                    'code': 1,
+                    'data': None,
+                    'message': '请求成功'
+                }
 
         except:
             result = {
