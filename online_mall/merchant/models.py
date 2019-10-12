@@ -225,10 +225,10 @@ class MerchantImage(models.Model):
             item_obj.save()
 
     @classmethod
-    def get_image_base64_data(cls, image):
-        with open(image, 'rb') as f:
-            base64_data = base64.b64encode(f.read())
-            image_data = base64.b64decode(base64_data)
+    def get_image_base64_data(cls, image_obj):
+        image = settings.OSS_BUCKET.get_object(image_obj)
+        base64_data = base64.b64encode(image.read())
+        image_data = 'data:image/png;base64,' + base64_data.decode('utf-8')
 
         return image_data
 
