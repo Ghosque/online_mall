@@ -597,6 +597,7 @@ class CommodityViewset(viewsets.ViewSet):
         try:
             commodity = Commodity.get_appoint_commodity(pk)
             data = request.data
+            print(data)
             with transaction.atomic():
                 # 单独取出颜色分类
                 if 'color_item' in data.keys():
