@@ -644,7 +644,7 @@ class CommodityViewset(viewsets.ViewSet):
                 }
 
         except Exception as e:
-            print(e)
+            print(str(e))
             result = {
                 'code': 1,
                 'data': None,
