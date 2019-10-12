@@ -634,7 +634,7 @@ class CommodityViewset(viewsets.ViewSet):
                     data['category'] = category_object
 
                 commodity.__dict__.update(**data)
-                # commodity.save()
+                commodity.save()
 
                 result = {
                     'code': 1,
