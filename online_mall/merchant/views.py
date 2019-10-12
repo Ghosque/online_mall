@@ -594,10 +594,10 @@ class CommodityViewset(viewsets.ViewSet):
         :param request:
         :return:
         """
-        print('yes, you succeed!')
         try:
             commodity = Commodity.get_appoint_commodity(pk)
-            print(commodity)
+            print(request.data)
+            print(type(request.data))
 
             result = {
                 'code': 1,
