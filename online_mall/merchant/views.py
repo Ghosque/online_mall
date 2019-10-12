@@ -597,7 +597,6 @@ class CommodityViewset(viewsets.ViewSet):
         try:
             commodity = Commodity.get_appoint_commodity(pk)
             data = request.data
-            print(data)
             with transaction.atomic():
                 # 单独取出颜色分类
                 if 'color_item' in data.keys():
@@ -619,11 +618,14 @@ class CommodityViewset(viewsets.ViewSet):
                 # 封面需要与原封面的base64数据进行对比
                 if 'cover' in data.keys():
                     cover = data['cover']
-                    cover_name = data['cover_name']
 
                     original_cover = commodity.cover
                     base64_data = MerchantImage.get_image_base64_data(original_cover)
-                    print(base64_data)
+                    if base64_data == cover:
+                        del data['cover']
+                    else:
+                        cover_url = self.save_base64_image(base64_data, commodity.merchant.mall_user.user.id, 'cover')
+                        data['cover'] = cover_url
 
                 # 商品类别作为外键需要进一步处理
                 if 'category' in data.keys():
