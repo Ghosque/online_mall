@@ -633,8 +633,9 @@ class CommodityViewset(viewsets.ViewSet):
                     category_object = ThirdCategory.objects.get(pk=category[-1])
                     data['category'] = category_object
 
-                commodity.__dict__.update(**data)
-                commodity.save()
+                if data:
+                    commodity.__dict__.update(**data)
+                    commodity.save()
 
                 result = {
                     'code': 1,
@@ -642,7 +643,8 @@ class CommodityViewset(viewsets.ViewSet):
                     'message': '请求成功'
                 }
 
-        except:
+        except Exception as e:
+            print(e)
             result = {
                 'code': 1,
                 'data': None,
