@@ -296,7 +296,7 @@ class Commodity(models.Model):
         verbose_name = verbose_name_plural = '商品'
 
     def __str__(self):
-        return self.title
+        return self.name
 
     @classmethod
     def get_commodity(cls, user_id, status):
@@ -304,7 +304,8 @@ class Commodity(models.Model):
 
     @classmethod
     def get_appoint_commodity(cls, id):
-        print(cls.objects.all())
+        for item in cls.objects.all():
+            print(item.id)
         return cls.objects.get(pk=id)
 
 
