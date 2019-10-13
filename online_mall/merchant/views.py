@@ -560,7 +560,7 @@ class CommodityViewset(viewsets.ViewSet):
                     'name': item.name,
                     'title': item.title,
                     'title_desc': item.title_desc,
-                    'cover': MerchantImage.objects.get(oss_object=item.cover).img,
+                    'cover': item.cover,
                     'display_images': item.display_images,
                     'inventory': item.inventory,
                     'price': item.price,
