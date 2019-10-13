@@ -622,8 +622,10 @@ class CommodityViewset(viewsets.ViewSet):
                     original_cover = MerchantImage.get_image_oss_object(commodity.cover)
                     base64_data = MerchantImage.get_image_base64_data(original_cover)
                     if base64_data == cover:
+                        print(1)
                         del data['cover']
                     else:
+                        print(2)
                         cover = self.save_base64_image(base64_data, commodity.shop.merchant.mall_user.user.id, 'cover')
                         data['cover'] = cover
 
