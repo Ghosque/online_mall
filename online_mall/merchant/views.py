@@ -624,7 +624,7 @@ class CommodityViewset(viewsets.ViewSet):
                     if base64_data == cover:
                         del data['cover']
                     else:
-                        cover = self.save_base64_image(base64_data, commodity.merchant.mall_user.user.id, 'cover')
+                        cover = self.save_base64_image(base64_data, commodity.shop.merchant.mall_user.user.id, 'cover')
                         data['cover'] = cover
 
                 # 商品类别作为外键需要进一步处理

@@ -304,8 +304,6 @@ class Commodity(models.Model):
 
     @classmethod
     def get_appoint_commodity(cls, id):
-        for item in cls.objects.all():
-            print(item.id)
         return cls.objects.get(pk=id)
 
 
