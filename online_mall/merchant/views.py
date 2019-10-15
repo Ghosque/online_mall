@@ -664,7 +664,7 @@ class CommodityViewset(viewsets.ViewSet):
         try:
             commodity_obj = Commodity.objects.get(id=pk)
 
-            if delete_type == 1:
+            if delete_type == '1':
                 commodity_obj.status = 3
                 commodity_obj.save()
 
@@ -674,7 +674,7 @@ class CommodityViewset(viewsets.ViewSet):
                     'message': '请求成功'
                 }
 
-            elif delete_type == 2:
+            elif delete_type == '2':
                 commodity_obj.status = 0
                 commodity_obj.save()
 
@@ -684,7 +684,7 @@ class CommodityViewset(viewsets.ViewSet):
                     'message': '请求成功'
                 }
 
-            elif delete_type == 3:
+            elif delete_type == '3':
                 commodity_obj.status = 2
                 commodity_obj.save()
 
