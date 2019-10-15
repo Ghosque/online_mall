@@ -482,7 +482,7 @@ class CommodityViewset(viewsets.ViewSet):
         while Commodity.objects.filter(commodity_id=commodity_id):
             commodity_id = GetId.getDigitId()
         # 封面
-        cover_obj = self.save_base64_image(request.data['cover'], user_id, 'cover')
+        cover = self.save_base64_image(request.data['cover'], user_id, 'cover')
         # 分类
         category = ThirdCategory.objects.get(id=request.data['category'])
         # 自定义属性
@@ -496,7 +496,7 @@ class CommodityViewset(viewsets.ViewSet):
                     name=request.data['name'],
                     title=request.data['title'],
                     title_desc=request.data['title_desc'],
-                    cover=cover_obj,
+                    cover=cover,
                     display_images=request.data['display_images'],
                     inventory=int(float(request.data['inventory'])),
                     price=float(request.data['price']),
@@ -560,7 +560,7 @@ class CommodityViewset(viewsets.ViewSet):
                     'name': item.name,
                     'title': item.title,
                     'title_desc': item.title_desc,
-                    'cover': MerchantImage.objects.get(oss_object=item.cover).img,
+                    'cover': item.cover,
                     'display_images': item.display_images,
                     'inventory': item.inventory,
                     'price': item.price,
@@ -619,13 +619,13 @@ class CommodityViewset(viewsets.ViewSet):
                 if 'cover' in data.keys():
                     cover = data['cover']
 
-                    original_cover = settings.OSS_BUCKET.get_object(commodity.cover)
+                    original_cover = MerchantImage.get_image_oss_object(commodity.cover)
                     base64_data = MerchantImage.get_image_base64_data(original_cover)
                     if base64_data == cover:
                         del data['cover']
                     else:
-                        cover_obj = self.save_base64_image(base64_data, commodity.merchant.mall_user.user.id, 'cover')
-                        data['cover'] = cover_obj
+                        cover = self.save_base64_image(cover, commodity.shop.merchant.mall_user.user.id, 'cover')
+                        data['cover'] = cover
 
                 # 商品类别作为外键需要进一步处理
                 if 'category' in data.keys():
@@ -634,6 +634,7 @@ class CommodityViewset(viewsets.ViewSet):
                     data['category'] = category_object
 
                 if data:
+                    print(data)
                     commodity.__dict__.update(**data)
                     commodity.save()
 
@@ -741,4 +742,4 @@ class CommodityViewset(viewsets.ViewSet):
             merchant=merchant
         )
 
-        return img
+        return image_url

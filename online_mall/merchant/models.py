@@ -232,6 +232,10 @@ class MerchantImage(models.Model):
 
         return image_data
 
+    @classmethod
+    def get_image_oss_object(cls, image):
+        return cls.objects.get(img=image).oss_object
+
 
 # 商店
 class Shop(models.Model):
@@ -292,7 +296,7 @@ class Commodity(models.Model):
         verbose_name = verbose_name_plural = '商品'
 
     def __str__(self):
-        return self.title
+        return self.name
 
     @classmethod
     def get_commodity(cls, user_id, status):
