@@ -644,22 +644,68 @@ class CommodityViewset(viewsets.ViewSet):
                 }
 
         except Exception as e:
-            print(str(e))
             result = {
-                'code': 1,
+                'code': 0,
                 'data': None,
                 'message': '没有该商品'
             }
 
         return Response(result, status=status.HTTP_200_OK)
 
-    def destroy(self, request):
+    def destroy(self, request, pk):
         """
         删除商品
         :param request:
         :return:
         """
-        pass
+        delete_type = request.GET.get('delete_type')
+        try:
+            commodity_obj = Commodity.objects.get(id=pk)
+        except Commodity.DoesNotExist:
+            result = {
+                'code': 0,
+                'data': None,
+                'message': '没有该商品'
+            }
+        else:
+            if delete_type == 1:
+                commodity_obj.status = 3
+                commodity_obj.save()
+
+                result = {
+                    'code': 1,
+                    'data': None,
+                    'message': '请求成功'
+                }
+
+            elif delete_type == 2:
+                commodity_obj.status = 0
+                commodity_obj.save()
+
+                result = {
+                    'code': 1,
+                    'data': None,
+                    'message': '请求成功'
+                }
+
+            elif delete_type == 3:
+                commodity_obj.status = 2
+                commodity_obj.save()
+
+                result = {
+                    'code': 1,
+                    'data': None,
+                    'message': '请求成功'
+                }
+
+            else:
+                result = {
+                    'code': 0,
+                    'data': None,
+                    'message': '类型错误'
+                }
+
+        return Response(result, status=status.HTTP_200_OK)
 
     @classmethod
     def save_base64_image(cls, base64_img, user_id, type):
