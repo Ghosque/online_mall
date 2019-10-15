@@ -653,58 +653,53 @@ class CommodityViewset(viewsets.ViewSet):
 
         return Response(result, status=status.HTTP_200_OK)
 
-    def destroy(self, request, pk):
+    def destroy(self, request):
         """
         删除商品
         :param request:
         :return:
         """
-        delete_type = request.GET.get('delete_type')
+        delete_type = request.data['delete_type']
+        delete_list = request.data['delete_list']
+
         try:
-            commodity_obj = Commodity.objects.get(id=pk)
+            with transaction.atomic():
+                for item in delete_list:
+                    id = item.id
+                    commodity_obj = Commodity.objects.get(id=id)
+
+                    if delete_type == 1:
+                        commodity_obj.status = 3
+                        commodity_obj.save()
+
+                    elif delete_type == 2:
+                        commodity_obj.status = 0
+                        commodity_obj.save()
+
+                    elif delete_type == 3:
+                        commodity_obj.status = 2
+                        commodity_obj.save()
+
+                    else:
+                        result = {
+                            'code': 0,
+                            'data': None,
+                            'message': '类型错误'
+                        }
+                        return Response(result, status=status.HTTP_200_OK)
+
+                result = {
+                    'code': 1,
+                    'data': None,
+                    'message': '请求成功'
+                }
+
         except Commodity.DoesNotExist:
             result = {
                 'code': 0,
                 'data': None,
                 'message': '没有该商品'
             }
-        else:
-            if delete_type == 1:
-                commodity_obj.status = 3
-                commodity_obj.save()
-
-                result = {
-                    'code': 1,
-                    'data': None,
-                    'message': '请求成功'
-                }
-
-            elif delete_type == 2:
-                commodity_obj.status = 0
-                commodity_obj.save()
-
-                result = {
-                    'code': 1,
-                    'data': None,
-                    'message': '请求成功'
-                }
-
-            elif delete_type == 3:
-                commodity_obj.status = 2
-                commodity_obj.save()
-
-                result = {
-                    'code': 1,
-                    'data': None,
-                    'message': '请求成功'
-                }
-
-            else:
-                result = {
-                    'code': 0,
-                    'data': None,
-                    'message': '类型错误'
-                }
 
         return Response(result, status=status.HTTP_200_OK)
 
