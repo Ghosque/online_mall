@@ -154,8 +154,12 @@ class MerchantViewset(viewsets.ViewSet):
 
         merchant_id = cls.get_merchant_id()
 
-        user = User.objects.create_user(username=merchant_id, password=request.data['password'], is_superuser=0,
-                                        is_staff=1)
+        user = User.objects.create_user(
+            username=merchant_id,
+            password=request.data['password'],
+            is_superuser=0,
+            is_staff=1
+        )
 
         mall_user = MallUser.objects.create(
             name=request.data['name'],
@@ -165,7 +169,10 @@ class MerchantViewset(viewsets.ViewSet):
             is_merchant=1,
             user=user
         )
-        Merchant.objects.create(mall_user=mall_user)
+        Merchant.objects.create(
+            merchant_id=merchant_id,
+            mall_user=mall_user
+        )
 
         result = {
             'code': 1,

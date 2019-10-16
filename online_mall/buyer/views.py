@@ -10,6 +10,7 @@ from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handl
 from .serializers import BuyerLoginSerializer, BuyerRegSerializer
 from .models import Buyer
 from common.models import MallUser
+from common_function.get_id import GetId
 
 
 class BuyerViewset(viewsets.ViewSet):
@@ -57,7 +58,11 @@ class BuyerViewset(viewsets.ViewSet):
 
     @classmethod
     def get_buyer_id(cls):
-        pass
+        buyer_id = GetId.getId()
+        while User.objects.filter(username=buyer_id):
+            buyer_id = GetId.getId()
+
+        return buyer_id
 
     @classmethod
     def handle_register(cls, request):
@@ -75,10 +80,14 @@ class BuyerViewset(viewsets.ViewSet):
             }
             return Response(result, status=status.HTTP_200_OK)
 
-        merchant_id = cls.get_buyer_id()
+        buyer_id = cls.get_buyer_id()
 
-        user = User.objects.create_user(username=merchant_id, password=request.data['password'], is_superuser=0,
-                                        is_staff=1)
+        user = User.objects.create_user(
+            username=buyer_id,
+            password=request.data['password'],
+            is_superuser=0,
+            is_staff=1
+        )
 
         mall_user = MallUser.objects.create(
             name=request.data['name'],
@@ -88,7 +97,11 @@ class BuyerViewset(viewsets.ViewSet):
             is_merchant=1,
             user=user
         )
-        Buyer.objects.create()  # TODO
+        Buyer.objects.create(
+            buyer_id=buyer_id,
+            nickname=request.data['nickname'],
+            mall_user=mall_user,
+        )
 
         result = {
             'code': 1,
