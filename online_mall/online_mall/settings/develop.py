@@ -48,11 +48,10 @@ CACHES = {
         'LOCATION': 'redis://localhost:6379',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-             "PASSWORD": "redisserver",
+             "PASSWORD": "Ghosque2580",
         },
     },
 }
-
 
 REDIS_TIMEOUT = 7 * 24 * 60 * 60
 CUBES_REDIS_TIMEOUT = 60 * 60
