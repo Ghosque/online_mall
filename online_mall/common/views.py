@@ -50,7 +50,6 @@ class TokenVerifyViewset(viewsets.ViewSet):
 
     def create(self, request):
         serializer = TokenVerifySerializer(data=request.data)
-        print(serializer)
         if not serializer.is_valid():
             if serializer.errors.get('user_id'):
                 message = str(serializer.errors.get('user_id')[0])
