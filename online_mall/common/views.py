@@ -50,13 +50,14 @@ class TokenVerifyViewset(viewsets.ViewSet):
 
     def create(self, request):
         serializer = TokenVerifySerializer(data=request.data)
+        print(serializer)
         if not serializer.is_valid():
             result = {
                 'code': 0,
                 'data': None,
                 'message': str(serializer.errors.get('token')[0])
             }
-            return Response(result, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+            return Response(result, status=status.HTTP_200_OK)
 
         result = {
             'code': 1,
