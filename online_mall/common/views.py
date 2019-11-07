@@ -52,10 +52,15 @@ class TokenVerifyViewset(viewsets.ViewSet):
         serializer = TokenVerifySerializer(data=request.data)
         print(serializer)
         if not serializer.is_valid():
+            if serializer.errors.get('user_id'):
+                message = str(serializer.errors.get('user_id')[0])
+            else:
+                message = str(serializer.errors.get('user_id')[0])
+
             result = {
                 'code': 0,
                 'data': None,
-                'message': str(serializer.errors.get('token')[0])
+                'message': message
             }
             return Response(result, status=status.HTTP_200_OK)
 
