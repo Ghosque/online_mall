@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'import_export',
     'rest_framework',
     'corsheaders',
+
+    'werkzeug_debugger_runserver',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
