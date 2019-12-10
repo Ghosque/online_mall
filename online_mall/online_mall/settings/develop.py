@@ -83,9 +83,6 @@ CORS_ORIGIN_WHITELIST = (
 CORS_ALLOW_CREDENTIALS = True  # 指明在跨域访问中，后端是否支持对cookie的操作
 CORS_ORIGIN_ALLOW_ALL = True
 
-# 图片库缓存时间
-IMAGES_REFRESH_SECONDS = 4 * 60 * 60
-
 # 分类状态码
 CATEGORY_DELETE_STATUS = 0
 CATEGORY_NORMAL_STATUS = 1
@@ -106,8 +103,7 @@ COLOR_IMAGE = 2
 # Ali OSS
 ACCESS_KEY_ID = "LTAI4FwfrskcFinuqtNADg8Y"
 ACCESS_KEY_SECRET = "LrI2TbPEl467zC8qSgDpA87qIpDzsA"
-END_POINT = "oss-cn-shenzhen.aliyuncs.com"
-PREFIX_URL = 'http://'
+END_POINT = "http://oss-cn-shenzhen.aliyuncs.com"
 BUCKET_NAME = "ghosque-online-mall"
 BUCKET_ACL_TYPE = "private"
 DEFAULT_FILE_STORAGE = 'aliyun_oss2_storage.backends.AliyunMediaStorage'
@@ -115,5 +111,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = "media"
 
 OSS_AUTH = oss2.Auth(ACCESS_KEY_ID, ACCESS_KEY_SECRET)
-OSS_ENDPOINT = PREFIX_URL + END_POINT
+OSS_ENDPOINT = END_POINT
 OSS_BUCKET = oss2.Bucket(OSS_AUTH, OSS_ENDPOINT, BUCKET_NAME)
