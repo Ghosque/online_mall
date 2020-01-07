@@ -1,21 +1,16 @@
 from django.db import models
 
-from common.models import MallUser
 from merchant.models import Commodity
-from common_function.get_id import GetId
 
 
 # 买家
 class Buyer(models.Model):
-    buyer_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='买家ID')
-    nickname = models.CharField(max_length=30, verbose_name='昵称')
+    open_id = models.CharField(max_length=500, verbose_name='应用ID')
+    union_id = models.CharField(max_length=500, verbose_name='唯一ID')
     reward_points = models.IntegerField(default=0, verbose_name='积分')
-    head = models.ImageField(verbose_name='头像', upload_to='buyer/head/', null=True, blank=True)
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
-
-    mall_user = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='mall_user', related_name='buyer')
 
     class Meta:
         verbose_name = verbose_name_plural = '买家'

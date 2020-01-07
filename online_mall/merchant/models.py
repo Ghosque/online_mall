@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django_mysql.models import ListTextField
 
-from common.models import MallUser
 from common_function.get_id import GetId
 
 logger = logging.getLogger('scripts')
@@ -78,6 +77,7 @@ class ThirdCategory(models.Model):
     )
 
     name = models.CharField(max_length=20, verbose_name='类别名')
+    image = models.CharField(max_length=500, verbose_name='图片')
     status = models.SmallIntegerField(default=settings.CATEGORY_NORMAL_STATUS, choices=STATUS_ITEMS, verbose_name='状态')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
@@ -141,17 +141,28 @@ class ThirdCategory(models.Model):
 
 # 商家
 class Merchant(models.Model):
+    GENDER_ITEMS = (
+        (0, '女'),
+        (1, '男'),
+        (2, '保密')
+    )
+
     merchant_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='商家ID')
+    name = models.CharField(max_length=50, verbose_name='姓名')
+    gender = models.SmallIntegerField(choices=GENDER_ITEMS, verbose_name='性别')
+    phone = models.CharField(max_length=15, verbose_name='手机号码', unique=True)
+    id_card = models.CharField(max_length=18, verbose_name='身份证号码', unique=True)
+
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    mall_user = models.OneToOneField(MallUser, on_delete=models.CASCADE, verbose_name='mall_user', related_name='merchant')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User', related_name='mall_user')
 
     class Meta:
         verbose_name = verbose_name_plural = '商家'
 
     def __str__(self):
-        return self.mall_user
+        return self.name
 
 
 # 商家上传图片

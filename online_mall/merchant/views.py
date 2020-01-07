@@ -161,17 +161,13 @@ class MerchantViewset(viewsets.ViewSet):
             is_staff=1
         )
 
-        mall_user = MallUser.objects.create(
+        Merchant.objects.create(
+            merchant_id=merchant_id,
             name=request.data['name'],
             gender=request.data['gender'],
             phone=request.data['phone'],
             id_card=request.data['id_card'],
-            is_merchant=1,
             user=user
-        )
-        Merchant.objects.create(
-            merchant_id=merchant_id,
-            mall_user=mall_user
         )
 
         result = {

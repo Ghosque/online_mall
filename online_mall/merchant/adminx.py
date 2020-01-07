@@ -7,8 +7,8 @@ from adminx import *
 
 @xadmin.sites.register(Merchant)
 class MerchantAdmin:
-    list_display = ('id', 'mall_user', 'create_time', 'update_time',)
-    search_fields = ('mall_user',)
+    list_display = ('id', 'merchant_id', 'name', 'gender', 'phone', 'user', 'create_time', 'update_time',)
+    search_fields = ('user',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
