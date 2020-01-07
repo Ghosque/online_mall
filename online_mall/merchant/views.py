@@ -20,7 +20,6 @@ from django.core.cache import cache
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
 from .models import Merchant, Shop, BackStageSecond, Commodity, FirstCategory, SecondCategory, ThirdCategory,\
     MerchantImage, CommodityColor, Specification
-from common.models import MallUser
 from common_function.get_id import GetId
 
 
@@ -55,9 +54,9 @@ class MerchantViewset(viewsets.ViewSet):
         token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
         try:
             user = User.objects.get(id=pk)
-            mall_user = MallUser.objects.get(user_id=user.id, is_merchant=1)
+            merchant = Merchant.objects.get(user_id=user.id)
 
-        except (User.DoesNotExist, MallUser.DoesNotExist):
+        except (User.DoesNotExist, merchant.DoesNotExist):
             result = {
                 'code': 0,
                 'message': '查无此用户'
@@ -65,8 +64,8 @@ class MerchantViewset(viewsets.ViewSet):
             return Response(result, status=status.HTTP_200_OK)
 
         try:
-            shop_name = mall_user.merchant.shop.name
-            shop_status = Shop.STATUS_ITEMS[mall_user.merchant.shop.status][1]
+            shop_name = merchant.shop.name
+            shop_status = Shop.STATUS_ITEMS[merchant.shop.status][1]
         except (Shop.DoesNotExist):
             shop_name = None
             shop_status = None
@@ -86,11 +85,11 @@ class MerchantViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': {
-                'merchant_id': mall_user.merchant.merchant_id,
-                'name': mall_user.name,
-                'gender': MallUser.GENDER_ITEMS[mall_user.gender][1],
-                'phone': mall_user.phone,
-                'id_card': mall_user.id_card,
+                'merchant_id': merchant.merchant_id,
+                'name': merchant.name,
+                'gender': Merchant.GENDER_ITEMS[merchant.gender][1],
+                'phone': merchant.phone,
+                'id_card': merchant.id_card,
                 'token': token,
                 'shop_name': shop_name,
                 'shop_status': shop_status
@@ -110,8 +109,8 @@ class MerchantViewset(viewsets.ViewSet):
             }
             return Response(result, status=status.HTTP_200_OK)
 
-        mall_user = MallUser.objects.get(phone=request.data['phone'])
-        user = mall_user.user
+        merchant = Merchant.objects.get(phone=request.data['phone'])
+        user = merchant.user
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
 
@@ -232,9 +231,9 @@ class ShopViewset(viewsets.ViewSet):
         token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
         try:
             user = User.objects.get(id=pk)
-            mall_user = MallUser.objects.get(user_id=user.id, is_merchant=1)
+            merchant = Merchant.objects.get(user_id=user.id, is_merchant=1)
 
-        except (User.DoesNotExist, MallUser.DoesNotExist):
+        except (User.DoesNotExist, merchant.DoesNotExist):
             result = {
                 'code': 0,
                 'message': '查无此用户'
@@ -255,14 +254,14 @@ class ShopViewset(viewsets.ViewSet):
             return Response(result, status=status.HTTP_200_OK)
 
         try:
-            shop_id = mall_user.merchant.shop.shop_id
-            shop_status = mall_user.merchant.shop.status
+            shop_id = merchant.shop.shop_id
+            shop_status = merchant.shop.status
             result = {
                 'code': 1,
                 'data': {
                     'shop_id': shop_id,
-                    'name': mall_user.merchant.shop.name,
-                    'star': mall_user.merchant.shop.star,
+                    'name': merchant.shop.name,
+                    'star': merchant.shop.star,
                     'status': Shop.STATUS_ITEMS[shop_status][1],
                     'token': token,
                 },
