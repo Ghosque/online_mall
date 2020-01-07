@@ -6,7 +6,6 @@ from django.contrib.auth import authenticate
 from rest_framework_jwt.utils import jwt_decode_handler
 
 from .models import Merchant, Shop
-from common.models import MallUser
 
 
 class MerchantRegSerializer(serializers.Serializer):
@@ -42,7 +41,7 @@ class MerchantRegSerializer(serializers.Serializer):
     def validate_phone(self, phone):
 
         # 手机是否注册
-        if MallUser.objects.filter(phone=phone).count():
+        if Merchant.objects.filter(phone=phone).count():
             raise serializers.ValidationError("用户已经存在")
 
         # 验证手机号码是否合法
@@ -58,7 +57,7 @@ class MerchantRegSerializer(serializers.Serializer):
         if not settings.REMAINDER_DICT.get(remainder) == id_card[-1]:
             raise serializers.ValidationError("身份证错误")
 
-        merchant_info = MallUser.objects.filter(id_card=id_card)
+        merchant_info = Merchant.objects.filter(id_card=id_card)
         if merchant_info:
             raise serializers.ValidationError("该身份证已被注册")
 
@@ -100,9 +99,9 @@ class MerchantLoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, write_only=True, max_length=500, label='密码', help_text="密码")
 
     def validate_password(self, password):
-        MallUser_list = MallUser.objects.filter(phone=self.initial_data["phone"], is_merchant=1)
-        if MallUser_list:
-            mall_user = MallUser_list[0]
+        Merchant_list = Merchant.objects.filter(phone=self.initial_data["phone"], is_merchant=1)
+        if Merchant_list:
+            mall_user = Merchant_list[0]
             username = mall_user.user.username
             if not authenticate(username=username,password=password):
                 raise serializers.ValidationError("密码错误")
