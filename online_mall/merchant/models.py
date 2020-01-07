@@ -119,9 +119,11 @@ class ThirdCategory(models.Model):
                 for third_category in third_category_list:
                     t_name = third_category.name
                     t_id = third_category.id
+                    t_image = third_category.image
                     temp_t_dict = {
                         'value': t_id,
-                        'label': t_name
+                        'label': t_name,
+                        'image':t_image
                     }
 
                     temp_s_dict['children'].append(temp_t_dict)

@@ -77,7 +77,7 @@ class SecondCategoryAdmin:
 
 @xadmin.sites.register(ThirdCategory)
 class ThirdCategoryAdmin:
-    list_display = ('id', 'name', 'status', 'second_category', 'create_time', 'update_time',)
+    list_display = ('id', 'name', 'image', 'status', 'second_category', 'create_time', 'update_time',)
     list_filter = ('second_category', 'status',)
     search_fields = ('name',)
     ordering = ('id',)
