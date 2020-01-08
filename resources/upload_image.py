@@ -5,7 +5,7 @@ import pymysql
 
 update_sql = "UPDATE `{}` SET image='{}' WHERE id='{}'"
 table = 'merchant_thirdcategory'
-first = '3'
+first = '5'
 
 db = pymysql.connect(host="47.107.183.166", user="root", password="mysql", database="online_mall", charset="utf8")
 cursor = db.cursor()
