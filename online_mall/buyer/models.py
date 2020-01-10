@@ -6,7 +6,11 @@ from merchant.models import Commodity
 # 买家
 class Buyer(models.Model):
     open_id = models.CharField(max_length=500, verbose_name='应用ID')
-    union_id = models.CharField(max_length=500, verbose_name='唯一ID')
+    nickname = models.CharField(max_length=500, verbose_name='昵称')
+    gender = models.IntegerField(verbose_name='性别')
+    avatar = models.CharField(max_length=500, verbose_name='头像')
+    language = models.CharField(max_length=100, verbose_name='语言')
+    area = models.CharField(max_length=100, verbose_name='地区')
     reward_points = models.IntegerField(default=0, verbose_name='积分')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')

@@ -8,9 +8,9 @@ from adminx import *
 
 @xadmin.sites.register(Buyer)
 class BuyerAdmin:
-    list_display = ('id', 'open_id', 'union_id', 'reward_points', 'create_time', 'update_time',)
-    list_filter = ('open_id',)
-    search_fields = ('open_id', 'union_id',)
+    list_display = ('id', 'open_id', 'nickname', 'gender', 'avatar', 'language', 'area', 'reward_points', 'create_time', 'update_time',)
+    list_filter = ('gender', 'language', 'area',)
+    search_fields = ('open_id', 'nickname',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)
 
