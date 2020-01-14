@@ -103,7 +103,7 @@ class MerchantLoginSerializer(serializers.Serializer):
         if Merchant_list:
             mall_user = Merchant_list[0]
             username = mall_user.user.username
-            if not authenticate(username=username,password=password):
+            if not authenticate(username=username, password=password):
                 raise serializers.ValidationError("密码错误")
         else:
             raise serializers.ValidationError("手机号码错误")
