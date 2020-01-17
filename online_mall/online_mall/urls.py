@@ -39,6 +39,8 @@ router.register(r'category', m_views.CategoryViewset, base_name='category')
 router.register(r'image', m_views.ImageViewset, base_name='image_upload')
 router.register(r'commodity', m_views.CommodityViewset, base_name='commodity')
 
+router.register(r'buyer', b_views.BuyerViewset, base_name='buyer')
+
 
 urlpatterns = [
     path('admin/', xadmin.site.urls, name='xadmin'),
