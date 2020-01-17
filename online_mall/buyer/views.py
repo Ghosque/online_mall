@@ -1,5 +1,5 @@
 from rest_framework import status
-from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework import viewsets
 
 from .models import Buyer
@@ -11,10 +11,10 @@ class BuyerViewset(viewsets.ViewSet):
         type = request.GET.get('type')
 
         if type == 'auth':
-            self.handle_auth(request)
+            result = self.handle_auth(request)
 
         elif type == 'login':
-            self.handle_login(request)
+            result = self.handle_login(request)
 
         else:
             result = {
@@ -22,6 +22,8 @@ class BuyerViewset(viewsets.ViewSet):
                 'data': None,
                 'message': '类型错误'
             }
+
+        return Response(result, status=status.HTTP_200_OK)
 
     @classmethod
     def handle_auth(cls, request):
@@ -34,7 +36,6 @@ class BuyerViewset(viewsets.ViewSet):
             'area': ','.join([request.data.get('country'), request.data.get('province'), request.data.get('city')])
         }
         res = Buyer.create_or_update_user(user_data)
-        print(res)
         if res:
             result = {
                 'code': res,
@@ -42,7 +43,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据成功'
             }
 
-            return JsonResponse(result)
+            return result
 
         else:
             result = {
@@ -51,7 +52,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据失败'
             }
 
-            return JsonResponse(result)
+            return result
 
     @classmethod
     def handle_login(cls, request):
