@@ -5,9 +5,15 @@ from merchant.models import Commodity
 
 # 买家
 class Buyer(models.Model):
+    GENDER_ITEM = (
+        (0, '未知'),
+        (1, '男'),
+        (2, '女')
+    )
+
     open_id = models.CharField(max_length=500, verbose_name='应用ID')
     nickname = models.CharField(max_length=500, verbose_name='昵称')
-    gender = models.IntegerField(verbose_name='性别')
+    gender = models.IntegerField(choices=GENDER_ITEM, verbose_name='性别')
     avatar = models.CharField(max_length=500, verbose_name='头像')
     language = models.CharField(max_length=100, verbose_name='语言')
     area = models.CharField(max_length=100, verbose_name='地区')
@@ -21,6 +27,16 @@ class Buyer(models.Model):
 
     def __str__(self):
         return self.nickname
+
+    @classmethod
+    def create_or_update_user(cls, user_data):
+        defaults = {'open_id': user_data['open_id']}
+        try:
+            cls.objects.update_or_create(user_data, defaults=defaults)
+        except Exception:
+            return 0
+        else:
+            return 1
 
 
 # 买家关注商品
