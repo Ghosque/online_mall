@@ -33,7 +33,7 @@ class Buyer(models.Model):
         print(user_data)
         defaults = {'open_id': user_data['open_id']}
         try:
-            cls.objects.update_or_create(user_data, defaults=defaults)
+            cls.objects.update_or_create(user_data, defaults=defaults,)
         except Exception as e:
             print(e)
             return 0
