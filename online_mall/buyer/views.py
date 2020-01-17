@@ -23,7 +23,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '类型错误'
             }
 
-        return Response(result, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result, status=status.HTTP_200_OK)
 
     @classmethod
     def handle_auth(cls, request):
