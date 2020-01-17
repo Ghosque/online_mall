@@ -26,12 +26,12 @@ class BuyerViewset(viewsets.ViewSet):
     @classmethod
     def handle_auth(cls, request):
         user_data = {
-            'open_id': request.GET.get('openId'),
-            'nickname': request.GET.get('nickName'),
-            'gender': request.GET.get('gender'),
-            'avatar': request.GET.get('avatarUrl'),
-            'language': request.GET.get('language'),
-            'area': ','.join([request.GET.get('country'), request.GET.get('province'), request.GET.get('city')])
+            'open_id': request.data.get('openId'),
+            'nickname': request.data.get('nickName'),
+            'gender': request.data.get('gender'),
+            'avatar': request.data.get('avatarUrl'),
+            'language': request.data.get('language'),
+            'area': ','.join([request.data.get('country'), request.data.get('province'), request.data.get('city')])
         }
         res = Buyer.create_or_update_user(user_data)
         if res:
