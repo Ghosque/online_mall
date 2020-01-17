@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework import viewsets
 
 from .models import Buyer
@@ -42,7 +42,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据成功'
             }
 
-            return Response(result, status=status.HTTP_200_OK)
+            return JsonResponse(result, status=status.HTTP_200_OK)
 
         else:
             result = {
@@ -51,7 +51,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据失败'
             }
 
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(result, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def handle_login(cls, request):
