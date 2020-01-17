@@ -30,10 +30,12 @@ class Buyer(models.Model):
 
     @classmethod
     def create_or_update_user(cls, user_data):
+        print(user_data)
         defaults = {'open_id': user_data['open_id']}
         try:
             cls.objects.update_or_create(user_data, defaults=defaults)
-        except Exception:
+        except Exception as e:
+            print(e)
             return 0
         else:
             return 1
