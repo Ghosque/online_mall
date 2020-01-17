@@ -34,6 +34,7 @@ class BuyerViewset(viewsets.ViewSet):
             'area': ','.join([request.data.get('country'), request.data.get('province'), request.data.get('city')])
         }
         res = Buyer.create_or_update_user(user_data)
+        print(res)
         if res:
             result = {
                 'code': res,
