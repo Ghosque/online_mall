@@ -33,9 +33,11 @@ class Buyer(models.Model):
         print(user_data)
         defaults = {'open_id': user_data['open_id']}
         try:
-            cls.objects.update_or_create(open_id=user_data['open_id'], nickname=user_data['nickname'],
-                                         gender=user_data['gender'], avatar=user_data['avatar'],
-                                         language=user_data['language'], area=user_data['area'], defaults=defaults,)
+            obj, created = cls.objects.update_or_create(open_id=user_data['open_id'], nickname=user_data['nickname'],
+                                                        gender=user_data['gender'], avatar=user_data['avatar'],
+                                                        language=user_data['language'], area=user_data['area'],
+                                                        defaults={'open_id': user_data['open_id']},)
+
         except Exception as e:
             print(e)
             return 0
