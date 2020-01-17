@@ -42,7 +42,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据成功'
             }
 
-            return JsonResponse(result, status=status.HTTP_200_OK)
+            return JsonResponse(result)
 
         else:
             result = {
@@ -51,7 +51,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据失败'
             }
 
-            return JsonResponse(result, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(result)
 
     @classmethod
     def handle_login(cls, request):
