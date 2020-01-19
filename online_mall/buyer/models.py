@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 import datetime
 
-from merchant.models import Commodity
+from merchant.models import Commodity, Shop, ThirdCategory
 
 
 # 买家
@@ -66,9 +66,35 @@ class FollowCommodity(models.Model):
         verbose_name = verbose_name_plural = '商品关注'
 
     @classmethod
-    def get_follow_num(cls, buyer):
-        follow_list = cls.objects.filter(buyer=buyer)
-        return len(follow_list)
+    def get_follow(cls, buyer):
+        follow_list = cls.objects.filter(buyer=buyer, status=1)
+
+        return follow_list
+
+
+# 买家关注商家
+class FollowShop(models.Model):
+    STATUS_ITEMS = (
+        (1, '正常'),
+        (0, '删除'),
+    )
+
+    status = models.SmallIntegerField(choices=STATUS_ITEMS, verbose_name='状态')
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
+    shop = models.ForeignKey(Shop, on_delete=models.DO_NOTHING, verbose_name='商家')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '商家关注'
+
+    @classmethod
+    def get_follow(cls, buyer):
+        follow_list = cls.objects.filter(buyer=buyer, status=1)
+
+        return follow_list
 
 
 # 商品浏览
@@ -91,6 +117,54 @@ class CommodityView(models.Model):
         view_list = cls.objects.filter(buyer=buyer, update_time__gte=date_limit_days_ago)
 
         return view_list
+
+
+# 满减类卡券
+class ReduceCardTicket(models.Model):
+    quota = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='额度')
+    min_price_limit = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='满减限制')
+    deadline = models.DateTimeField(editable=True, verbose_name='截止时间')
+
+    commodity_limit = models.ManyToManyField(Commodity, verbose_name='商品')
+    category_limit = models.ManyToManyField(ThirdCategory, verbose_name='种类')
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '满减类卡券'
+
+    @classmethod
+    def get_card(cls, buyer):
+        card_list = cls.objects.filter(buyer=buyer)
+
+        return card_list
+
+
+# 折扣类卡券
+class DiscountCardTicket(models.Model):
+    quota = models.DecimalField(max_digits=3, decimal_places=2, verbose_name='额度')
+    min_price_limit = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='折扣限制')
+    deadline = models.DateTimeField(editable=True, verbose_name='截止时间')
+
+    commodity_limit = models.ManyToManyField(Commodity, verbose_name='商品')
+    category_limit = models.ManyToManyField(ThirdCategory, verbose_name='种类')
+
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
+
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
+
+    class Meta:
+        verbose_name = verbose_name_plural = '折扣类卡券'
+
+    @classmethod
+    def get_card(cls, buyer):
+        card_list = cls.objects.filter(buyer=buyer)
+
+        return card_list
 
 
 # 省
