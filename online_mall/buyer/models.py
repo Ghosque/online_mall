@@ -85,7 +85,7 @@ class CommodityView(models.Model):
     @classmethod
     def get_user_view(cls, buyer):
         date_limit_days_ago = datetime.timedelta(days=-settings.TRACE_LIMIT_DAY)
-        view_list = cls.objects.filter(buyer=buyer, update_time__lte=date_limit_days_ago)
+        view_list = cls.objects.filter(buyer=buyer, update_time__gte=date_limit_days_ago)
 
         return view_list
 
