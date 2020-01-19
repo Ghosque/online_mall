@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+import datetime
 
 from merchant.models import Commodity
 
@@ -63,6 +65,11 @@ class FollowCommodity(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '商品关注'
 
+    @classmethod
+    def get_follow_num(cls, buyer):
+        follow_list = cls.objects.filter(buyer=buyer)
+        return len(follow_list)
+
 
 # 商品浏览
 class CommodityView(models.Model):
@@ -74,6 +81,13 @@ class CommodityView(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = '商品浏览'
+
+    @classmethod
+    def get_user_view(cls, buyer):
+        date_limit_days_ago = datetime.timedelta(days=-settings.TRACE_LIMIT_DAY)
+        view_list = cls.objects.filter(buyer=buyer, update_time__lte=date_limit_days_ago)
+
+        return view_list
 
 
 # 省
