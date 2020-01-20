@@ -80,6 +80,8 @@ class CommodityViewset(viewsets.ViewSet):
                 commodity['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
             # 处理属性数据
             commodity['attribute_item'] = json.loads(commodity['attribute_item'])
+            for index, attribute_item in enumerate(commodity['attribute_item']):
+                commodity['attribute_item'][index] = {attribute_item['attribute']: attribute_item['content']}
 
         result = {
             'code': 1,
