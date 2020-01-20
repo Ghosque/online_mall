@@ -2,8 +2,7 @@ import xadmin
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 
-from .models import Buyer, FollowCommodity, FollowShop, CommodityView, ReduceCardTicket, DiscountCardTicket,\
-    Province, City, Area, Address
+from .models import Buyer, FollowCommodity, FollowShop, CommodityView, CardTicket, Province, City, Area, Address
 from adminx import *
 
 
@@ -43,18 +42,9 @@ class CommodityViewAdmin:
     readonly_fields = ('create_time', 'update_time',)
 
 
-@xadmin.sites.register(ReduceCardTicket)
+@xadmin.sites.register(CardTicket)
 class ReduceCardTicketAdmin:
-    list_display = ('id', 'quota', 'min_price_limit', 'deadline', 'commodity_limit', 'category_limit', 'buyer', 'create_time', 'update_time',)
-    list_filter = ('buyer', 'commodity_limit', 'category_limit',)
-    search_fields = ('buyer', 'commodity_limit', 'category_limit',)
-    ordering = ('id',)
-    readonly_fields = ('create_time', 'update_time',)
-
-
-@xadmin.sites.register(DiscountCardTicket)
-class DiscountCardTicketAdmin:
-    list_display = ('id', 'quota', 'min_price_limit', 'deadline', 'commodity_limit', 'category_limit', 'buyer', 'create_time', 'update_time',)
+    list_display = ('id', 'type', 'quota', 'min_price_limit', 'deadline', 'commodity_limit', 'category_limit', 'buyer', 'create_time', 'update_time',)
     list_filter = ('buyer', 'commodity_limit', 'category_limit',)
     search_fields = ('buyer', 'commodity_limit', 'category_limit',)
     ordering = ('id',)

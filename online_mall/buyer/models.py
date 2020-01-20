@@ -32,19 +32,18 @@ class Buyer(models.Model):
 
     @classmethod
     def create_or_update_user(cls, user_data):
-        print(user_data)
-        defaults = {'open_id': user_data['open_id']}
         try:
             obj, created = cls.objects.update_or_create(open_id=user_data['open_id'], nickname=user_data['nickname'],
                                                         gender=user_data['gender'], avatar=user_data['avatar'],
                                                         language=user_data['language'], area=user_data['area'],
                                                         defaults={'open_id': user_data['open_id']},)
+            print(obj, type(obj))
+            print(created)
 
         except Exception as e:
-            print(e)
             return 0
         else:
-            return 1
+            return obj.id
 
 
 # 买家关注商品
@@ -119,8 +118,14 @@ class CommodityView(models.Model):
         return view_list
 
 
-# 满减类卡券
-class ReduceCardTicket(models.Model):
+# 卡券
+class CardTicket(models.Model):
+    TYPE_ITEM = (
+        (0, '满减类'),
+        (1, '折扣类')
+    )
+
+    type = models.SmallIntegerField(choices=TYPE_ITEM, verbose_name='卡券类型')
     quota = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='额度')
     min_price_limit = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='满减限制')
     deadline = models.DateTimeField(editable=True, verbose_name='截止时间')
@@ -134,31 +139,7 @@ class ReduceCardTicket(models.Model):
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
 
     class Meta:
-        verbose_name = verbose_name_plural = '满减类卡券'
-
-    @classmethod
-    def get_card(cls, buyer):
-        card_list = cls.objects.filter(buyer=buyer)
-
-        return card_list
-
-
-# 折扣类卡券
-class DiscountCardTicket(models.Model):
-    quota = models.DecimalField(max_digits=3, decimal_places=2, verbose_name='额度')
-    min_price_limit = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='折扣限制')
-    deadline = models.DateTimeField(editable=True, verbose_name='截止时间')
-
-    commodity_limit = models.ManyToManyField(Commodity, verbose_name='商品')
-    category_limit = models.ManyToManyField(ThirdCategory, verbose_name='种类')
-
-    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
-
-    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
-
-    class Meta:
-        verbose_name = verbose_name_plural = '折扣类卡券'
+        verbose_name = verbose_name_plural = '卡券'
 
     @classmethod
     def get_card(cls, buyer):
