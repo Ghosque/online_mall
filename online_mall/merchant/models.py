@@ -158,7 +158,7 @@ class Merchant(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User', related_name='mall_user')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User', related_name='merchant')
 
     class Meta:
         verbose_name = verbose_name_plural = '商家'
@@ -203,7 +203,7 @@ class MerchantImage(models.Model):
 
     @classmethod
     def get_point_merchant_images(cls, user_id, img_type):
-        merchant = User.objects.get(pk=user_id).mall_user.merchant
+        merchant = User.objects.get(pk=user_id).merchant
         image_list = cls.objects.filter(merchant=merchant, img_type=img_type, status=True)
         img_list = []
         for image in image_list:
@@ -248,6 +248,10 @@ class MerchantImage(models.Model):
     @classmethod
     def get_image_oss_object(cls, image):
         return cls.objects.get(img=image).oss_object
+
+    @classmethod
+    def get_image_img(cls, id):
+        return cls.objects.get(id=id).img
 
 
 # 商店
@@ -298,6 +302,7 @@ class Commodity(models.Model):
     status = models.SmallIntegerField(default=settings.COMMODITY_IN_REVIEW_STATUS, choices=STATUS_ITEMS, verbose_name='状态')
     inventory = models.IntegerField(verbose_name='库存')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='价格')
+    score = models.DecimalField(default=4.0, max_digits=4, decimal_places=2, verbose_name='评分')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -313,11 +318,49 @@ class Commodity(models.Model):
 
     @classmethod
     def get_commodity(cls, user_id, status):
-        return cls.objects.filter(shop=User.objects.get(pk=user_id).mall_user.merchant.shop, status=status)
+        commodity_list = cls.objects.filter(shop=User.objects.get(pk=user_id).merchant.shop, status=status)
+        data_list = cls.serialize_data(commodity_list)
+
+        return data_list
+
+    @classmethod
+    def get_hot_commodity(cls):
+        commodity_list = cls.objects.filter(status=1).order_by('-score')[:100]
+        data_list = cls.serialize_data(commodity_list)
+
+        return data_list
 
     @classmethod
     def get_appoint_commodity(cls, id):
         return cls.objects.get(pk=id)
+
+    @classmethod
+    def serialize_data(cls, commodity_list):
+        data_list = list()
+        for item in commodity_list:
+            # 获取颜色分类
+            color_obj = CommodityColor.get_appoint_color(item)
+            # 获取自定义属性
+            specification_obj = Specification.get_point_spectification(item)
+
+            single_data = {
+                'id': item.id,
+                'name': item.name,
+                'title': item.title,
+                'title_desc': item.title_desc,
+                'cover': item.cover,
+                'display_images': item.display_images,
+                'inventory': item.inventory,
+                'price': item.price,
+                'category': item.category.id,
+                'category_name': item.category.name,
+                'color_item': color_obj.commodity_class,
+                'attribute_item': specification_obj.information,
+            }
+
+            data_list.append(single_data)
+
+        return data_list
 
 
 # 商品颜色（分类）

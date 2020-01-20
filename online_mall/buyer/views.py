@@ -1,8 +1,12 @@
+import json
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
 
 from .models import Buyer, FollowCommodity, FollowShop, CommodityView, CardTicket
+from merchant.models import Commodity, MerchantImage
+from common.models import SecondColorSelector
 
 
 class BuyerViewset(viewsets.ViewSet):
@@ -59,6 +63,33 @@ class BuyerViewset(viewsets.ViewSet):
         pass
 
 
+class CommodityViewset(viewsets.ViewSet):
+
+    def list(self, request):
+        type = request.GET.get('type')
+
+        commodity_list = Commodity.get_hot_commodity()
+        for commodity in commodity_list:
+            # 处理照片墙数据
+            for index, image_id in enumerate(commodity['display_images']):
+                commodity['display_images'][index] = MerchantImage.get_image_img(image_id)
+            # 处理颜色分类数据
+            commodity['color_item'] = json.loads(commodity['color_item'])
+            for index, color_item in enumerate(commodity['color_item']):
+                commodity['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
+                commodity['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
+            # 处理属性数据
+            commodity['attribute_item'] = json.loads(commodity['attribute_item'])
+
+        result = {
+            'code': 1,
+            'data': commodity_list,
+            'message': '获取commodity成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
 class NoteViewset(viewsets.ViewSet):
 
     def list(self, request):
@@ -67,20 +98,17 @@ class NoteViewset(viewsets.ViewSet):
 
         buyer = Buyer.objects.get(id=id)
 
-        commodity_follow_list = FollowCommodity.get_follow(buyer)
-        shop_follow_list = FollowShop.get_follow(buyer)
-        commodity_view_list = CommodityView.get_user_view(buyer)
-        card_list = CardTicket.get_card(buyer)
+        commodity_follow = FollowCommodity.get_follow(buyer, type)
+        shop_follow = FollowShop.get_follow(buyer, type)
+        commodity_view = CommodityView.get_user_view(buyer, type)
+        card = CardTicket.get_card(buyer, type)
 
-        if type == 'num':
-            data = [len(commodity_follow_list), len(shop_follow_list), len(commodity_view_list), len(card_list)]
-        else:
-            data = [commodity_follow_list, shop_follow_list, commodity_view_list, card_list]
+        data = [commodity_follow, shop_follow, commodity_view, card]
 
         result = {
             'code': 1,
             'data': data,
-            'message': '新增数据成功'
+            'message': '获取note成功'
         }
 
         return Response(result, status=status.HTTP_200_OK)

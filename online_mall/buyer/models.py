@@ -65,10 +65,11 @@ class FollowCommodity(models.Model):
         verbose_name = verbose_name_plural = '商品关注'
 
     @classmethod
-    def get_follow(cls, buyer):
-        follow_list = cls.objects.filter(buyer=buyer, status=1)
-
-        return follow_list
+    def get_follow(cls, buyer, type):
+        if type == 'num':
+            return cls.objects.filter(buyer=buyer, status=1).count()
+        else:
+            return cls.objects.filter(buyer=buyer, status=1)
 
 
 # 买家关注商家
@@ -90,10 +91,11 @@ class FollowShop(models.Model):
         verbose_name = verbose_name_plural = '商家关注'
 
     @classmethod
-    def get_follow(cls, buyer):
-        follow_list = cls.objects.filter(buyer=buyer, status=1)
-
-        return follow_list
+    def get_follow(cls, buyer, type):
+        if type == 'num':
+            return cls.objects.filter(buyer=buyer, status=1).count()
+        else:
+            return  cls.objects.filter(buyer=buyer, status=1)
 
 
 # 商品浏览
@@ -108,14 +110,15 @@ class CommodityView(models.Model):
         verbose_name = verbose_name_plural = '商品浏览'
 
     @classmethod
-    def get_user_view(cls, buyer):
+    def get_user_view(cls, buyer, type):
         today = datetime.datetime.now()
         offset = datetime.timedelta(days=-settings.TRACE_LIMIT_DAY)
         date_limit_days_ago = (today+offset).strftime('%Y-%m-%d')
-        print(date_limit_days_ago)
-        view_list = cls.objects.filter(buyer=buyer, update_time__gte=date_limit_days_ago)
 
-        return view_list
+        if type == 'num':
+            return cls.objects.filter(buyer=buyer, update_time__gte=date_limit_days_ago).count()
+        else:
+            return cls.objects.filter(buyer=buyer, update_time__gte=date_limit_days_ago)
 
 
 # 卡券
@@ -142,10 +145,11 @@ class CardTicket(models.Model):
         verbose_name = verbose_name_plural = '卡券'
 
     @classmethod
-    def get_card(cls, buyer):
-        card_list = cls.objects.filter(buyer=buyer)
-
-        return card_list
+    def get_card(cls, buyer, type):
+        if type == 'num':
+            return cls.objects.filter(buyer=buyer).count()
+        else:
+            return cls.objects.filter(buyer=buyer)
 
 
 # 省

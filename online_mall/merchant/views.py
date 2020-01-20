@@ -199,7 +199,7 @@ class ShopViewset(viewsets.ViewSet):
                 return Response(result, status=status.HTTP_200_OK)
 
             user = User.objects.get(pk=request.data['user_id'])
-            merchant = user.mall_user.merchant
+            merchant = user.merchant
             Shop.objects.create(
                 name=request.data['name'],
                 merchant=merchant
@@ -231,7 +231,7 @@ class ShopViewset(viewsets.ViewSet):
         token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
         try:
             user = User.objects.get(id=pk)
-            merchant = Merchant.objects.get(user_id=user.id, is_merchant=1)
+            merchant = Merchant.objects.get(user_id=user.id)
 
         except (User.DoesNotExist, merchant.DoesNotExist):
             result = {
@@ -390,7 +390,7 @@ class ImageViewset(viewsets.ViewSet):
 
             try:
                 user = User.objects.get(pk=user_id)
-                merchant = user.mall_user.merchant
+                merchant = user.merchant
 
             except (User.DoesNotExist, Merchant.DoesNotExist):
                 result = {
@@ -503,7 +503,7 @@ class CommodityViewset(viewsets.ViewSet):
                     inventory=int(float(request.data['inventory'])),
                     price=float(request.data['price']),
                     category=category,
-                    shop=user.mall_user.merchant.shop,
+                    shop=user.merchant.shop,
                 )
                 # 插入 CommodityColor 数据
                 CommodityColor.objects.create(
@@ -516,6 +516,7 @@ class CommodityViewset(viewsets.ViewSet):
                     commodity=commodity,
                 )
         except Exception as e:
+            print(e)
             result = {
                 'code': 0,
                 'data': None,
@@ -548,35 +549,12 @@ class CommodityViewset(viewsets.ViewSet):
             }
 
         else:
-            data_list = []
             # 获取目标status的商品列表
             commodity_list = Commodity.get_commodity(user_id, commodity_status)
-            for item in commodity_list:
-                # 获取颜色分类
-                color_obj = CommodityColor.get_appoint_color(item)
-                # 获取自定义属性
-                specification_obj = Specification.get_point_spectification(item)
-
-                single_data = {
-                    'id': item.id,
-                    'name': item.name,
-                    'title': item.title,
-                    'title_desc': item.title_desc,
-                    'cover': item.cover,
-                    'display_images': item.display_images,
-                    'inventory': item.inventory,
-                    'price': item.price,
-                    'category': item.category.id,
-                    'category_name': item.category.name,
-                    'color_item': color_obj.commodity_class,
-                    'attribute_item': specification_obj.information,
-                }
-
-                data_list.append(single_data)
 
             result = {
                 'code': 1,
-                'data': data_list,
+                'data': commodity_list,
                 'message': '请求成功'
             }
 
@@ -626,7 +604,7 @@ class CommodityViewset(viewsets.ViewSet):
                     if base64_data == cover:
                         del data['cover']
                     else:
-                        cover = self.save_base64_image(cover, commodity.shop.merchant.mall_user.user.id, 'cover')
+                        cover = self.save_base64_image(cover, commodity.shop.merchant.user.id, 'cover')
                         data['cover'] = cover
 
                 # 商品类别作为外键需要进一步处理
@@ -727,7 +705,7 @@ class CommodityViewset(viewsets.ViewSet):
         img = 'media/{}/{}'.format(type, name)
 
         user = User.objects.get(pk=user_id)
-        merchant = user.mall_user.merchant
+        merchant = user.merchant
 
         img_data = base64.b64decode(base64_img)
         if not os.path.isdir(img_dir):

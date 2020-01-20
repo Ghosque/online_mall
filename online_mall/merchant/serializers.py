@@ -99,7 +99,7 @@ class MerchantLoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, write_only=True, max_length=500, label='密码', help_text="密码")
 
     def validate_password(self, password):
-        Merchant_list = Merchant.objects.filter(phone=self.initial_data["phone"], is_merchant=1)
+        Merchant_list = Merchant.objects.filter(phone=self.initial_data["phone"])
         if Merchant_list:
             mall_user = Merchant_list[0]
             username = mall_user.user.username
