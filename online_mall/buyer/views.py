@@ -67,11 +67,12 @@ class CommodityViewset(viewsets.ViewSet):
 
     def list(self, request):
         type = request.GET.get('type')
+        name = None
 
         if type == 'hot':
             commodity_list = Commodity.get_hot_commodity()
         else:
-            commodity_list = Commodity.get_appoint_category_commodity(request.data.get('category_id'))
+            commodity_list, name = Commodity.get_appoint_category_commodity(request.GET.get('category_id'))
 
         for commodity in commodity_list:
             # 处理照片墙数据
@@ -90,6 +91,7 @@ class CommodityViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': commodity_list,
+            'name': name,
             'message': '获取commodity成功'
         }
 
