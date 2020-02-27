@@ -335,6 +335,11 @@ class Commodity(models.Model):
         return cls.objects.get(pk=id)
 
     @classmethod
+    def get_appoint_category_commodity(cls, category_id):
+        category = ThirdCategory.objects.get(pk=category_id)
+        return cls.objects.filter(category=category, status=settings.COMMODITY_NORMAL_STATUS).order_by('-score')
+
+    @classmethod
     def serialize_data(cls, commodity_list):
         data_list = list()
         for item in commodity_list:
