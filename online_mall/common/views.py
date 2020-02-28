@@ -16,7 +16,8 @@ from rest_framework_jwt.utils import jwt_decode_handler
 from random import choice
 import string
 
-from .models import SecondColorSelector, Commodity, CommodityColor, Specification, FollowCommodity, FollowShop, CommodityView, CardTicket
+from .models import SecondColorSelector, Commodity, CommodityColor, Specification, FollowCommodity, FollowShop,\
+    CommodityView, CardTicket, CommodityComment
 from .serializers import TokenVerifySerializer
 from common_function import get_verify_code
 from common_function.get_id import GetId
@@ -400,7 +401,7 @@ class BuyerCommodityViewset(viewsets.ViewSet):
         else:
             commodity_list, name = Commodity.get_appoint_category_commodity(request.GET.get('category_id'))
 
-        for commodity in commodity_list:
+        for i, commodity in enumerate(commodity_list):
             # 处理照片墙数据
             for index, image_id in enumerate(commodity['display_images']):
                 commodity['display_images'][index] = MerchantImage.get_image_img(image_id)
@@ -413,6 +414,10 @@ class BuyerCommodityViewset(viewsets.ViewSet):
             commodity['attribute_item'] = json.loads(commodity['attribute_item'])
             for index, attribute_item in enumerate(commodity['attribute_item']):
                 commodity['attribute_item'][index] = {attribute_item['attribute']: attribute_item['content']}
+            # 获取评价数据
+            all_comments, good_rate = CommodityComment.get_data(commodity['id'])
+            commodity_list[i]['comment_count'] = all_comments
+            commodity_list[i]['good_rate'] = good_rate
 
         result = {
             'code': 1,

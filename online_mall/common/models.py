@@ -108,6 +108,7 @@ class Commodity(models.Model):
                 'category_name': item.category.name,
                 'color_item': color_obj.commodity_class,
                 'attribute_item': specification_obj.information,
+                'shop': item.shop.name
             }
 
             data_list.append(single_data)
@@ -157,7 +158,7 @@ class Specification(models.Model):
 
 # 商品评价
 class CommodityComment(models.Model):
-    content = models.CharField(max_length=1000, verbose_name='内容')
+    content = models.CharField(max_length=1000, verbose_name='内容', null=True, blank=True)
     score = models.IntegerField(verbose_name='评分')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
@@ -171,6 +172,19 @@ class CommodityComment(models.Model):
 
     def __str__(self):
         return self.content
+
+    @classmethod
+    def get_data(cls, commodity_id):
+        commodity = Commodity.objects.get(id=commodity_id)
+        all_comments = cls.objects.filter(commodity=commodity).count()
+        all_comments = all_comments // 10 * 10
+        good_comments = cls.objects.filter(commodity=commodity, score__gte=4)
+        if not all_comments:
+            good_rate = 0
+        else:
+            good_rate = format(good_comments/all_comments, '.3f')*100
+
+        return all_comments, good_rate
 
 
 # 颜色分类器大类
