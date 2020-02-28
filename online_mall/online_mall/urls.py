@@ -34,6 +34,7 @@ router.register(r'color', c_views.ColorViewset, base_name='color')
 router.register(r'merchantCommodity', c_views.CommodityViewset, base_name='commodity')
 router.register(r'buyerNote', c_views.NoteViewset, base_name='note')
 router.register(r'buyerCommodity', c_views.BuyerCommodityViewset, base_name='buyer_commodity')
+router.register(r'followCommodity', c_views.CommodityFollowViewset, base_name='follow_commodity')
 
 router.register(r'merchant', m_views.MerchantViewset, base_name='merchant')
 router.register(r'merchantShop', m_views.ShopViewset, base_name='shop_info')
