@@ -176,13 +176,13 @@ class CommodityComment(models.Model):
     @classmethod
     def get_data(cls, commodity_id):
         commodity = Commodity.objects.get(id=commodity_id)
-        all_comments = cls.objects.filter(commodity=commodity).count()
-        all_comments = all_comments // 10 * 10
+        all_comments = cls.objects.filter(commodity=commodity)
+        all_comments_count = len(all_comments) // 10 * 10
         good_comments = cls.objects.filter(commodity=commodity, score__gte=4)
         if not all_comments:
             good_rate = 0
         else:
-            good_rate = format(good_comments/all_comments, '.3f')*100
+            good_rate = format(good_comments/all_comments_count, '.3f')*100
 
         return all_comments, good_rate
 

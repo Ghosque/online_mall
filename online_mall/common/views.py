@@ -416,13 +416,61 @@ class BuyerCommodityViewset(viewsets.ViewSet):
                 commodity['attribute_item'][index] = {attribute_item['attribute']: attribute_item['content']}
             # 获取评价数据
             all_comments, good_rate = CommodityComment.get_data(commodity['id'])
-            commodity_list[i]['comment_count'] = all_comments
+            commodity_list[i]['comment_count'] = len(all_comments)
             commodity_list[i]['good_rate'] = good_rate
 
         result = {
             'code': 1,
             'data': commodity_list,
             'name': name,
+            'message': '获取commodity成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None):
+        commodity = Commodity.get_appoint_commodity(pk)
+        # 获取颜色分类
+        color_obj = CommodityColor.get_appoint_color(commodity)
+        # 获取自定义属性
+        specification_obj = Specification.get_point_spectification(commodity)
+        # 获取评价数据
+        all_comments, good_rate = CommodityComment.get_data(commodity.id)
+
+        single_data = {
+            'id': commodity.id,
+            'name': commodity.name,
+            'title': commodity.title,
+            'title_desc': commodity.title_desc,
+            'cover': commodity.cover,
+            'display_images': commodity.display_images,
+            'inventory': commodity.inventory,
+            'price': commodity.price,
+            'category': commodity.category.id,
+            'category_name': commodity.category.name,
+            'color_item': color_obj.commodity_class,
+            'attribute_item': specification_obj.information,
+            'shop': commodity.shop.name,
+            'comments': all_comments,
+            'good_rate': good_rate
+        }
+
+        # 处理照片墙数据
+        for index, image_id in enumerate(single_data['display_images']):
+            single_data['display_images'][index] = MerchantImage.get_image_img(image_id)
+        # 处理颜色分类数据
+        single_data['color_item'] = json.loads(single_data['color_item'])
+        for index, color_item in enumerate(single_data['color_item']):
+            single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
+            single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
+        # 处理属性数据
+        single_data['attribute_item'] = json.loads(single_data['attribute_item'])
+        for index, attribute_item in enumerate(single_data['attribute_item']):
+            single_data['attribute_item'][index] = {attribute_item['attribute']: attribute_item['content']}
+
+        result = {
+            'code': 1,
+            'data': single_data,
             'message': '获取commodity成功'
         }
 
