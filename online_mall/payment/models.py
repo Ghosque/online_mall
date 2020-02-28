@@ -2,7 +2,7 @@ from django.db import models
 from django_mysql.models import JSONField, ListTextField
 
 from buyer.models import Buyer, Address
-from merchant.models import Commodity
+from common.models import Commodity
 from common_function.get_id import GetId
 
 

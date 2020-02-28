@@ -31,17 +31,17 @@ router = routers.DefaultRouter()
 router.register(r'token_verify', c_views.TokenVerifyViewset, base_name='token_verify')
 router.register(r'code', c_views.PhoneCodeViewset, base_name='verify_code')
 router.register(r'color', c_views.ColorViewset, base_name='color')
+router.register(r'merchantCommodity', c_views.CommodityViewset, base_name='commodity')
+router.register(r'buyerNote', c_views.NoteViewset, base_name='note')
+router.register(r'buyerCommodity', c_views.BuyerCommodityViewset, base_name='buyer_commodity')
 
 router.register(r'merchant', m_views.MerchantViewset, base_name='merchant')
 router.register(r'merchantShop', m_views.ShopViewset, base_name='shop_info')
 router.register(r'merchantNavigation', m_views.NavigationViewset, base_name='navigation')
 router.register(r'merchantCategory', m_views.CategoryViewset, base_name='category')
 router.register(r'merchantImage', m_views.ImageViewset, base_name='image_upload')
-router.register(r'merchantCommodity', m_views.CommodityViewset, base_name='commodity')
 
 router.register(r'buyer', b_views.BuyerViewset, base_name='buyer')
-router.register(r'buyerNote', b_views.NoteViewset, base_name='note')
-router.register(r'buyerCommodity', b_views.CommodityViewset, base_name='buyer_commodity')
 
 
 urlpatterns = [
