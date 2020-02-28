@@ -429,6 +429,8 @@ class BuyerCommodityViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
+        buyer_id = request.GET.get('buyer_id')
+
         commodity = Commodity.get_appoint_commodity(pk)
         # 获取颜色分类
         color_obj = CommodityColor.get_appoint_color(commodity)
@@ -436,6 +438,8 @@ class BuyerCommodityViewset(viewsets.ViewSet):
         specification_obj = Specification.get_point_spectification(commodity)
         # 获取评价数据
         all_comments, good_rate = CommodityComment.get_data(commodity.id)
+        # 获取买家是否关注商品
+        is_follow = FollowCommodity.judge_follow(buyer_id, pk)
 
         single_data = {
             'id': commodity.id,
@@ -452,7 +456,8 @@ class BuyerCommodityViewset(viewsets.ViewSet):
             'attribute_item': specification_obj.information,
             'shop': commodity.shop.name,
             'comments': all_comments,
-            'good_rate': good_rate
+            'good_rate': good_rate,
+            'is_follow': is_follow
         }
 
         # 处理照片墙数据
@@ -472,6 +477,21 @@ class BuyerCommodityViewset(viewsets.ViewSet):
             'code': 1,
             'data': single_data,
             'message': '获取commodity成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class CommodityFollowViewset(viewsets.ViewSet):
+
+    def update(self, request, pk):
+        buyer_id = request.GET.get('buyer_id')
+        commodity_id = request.GET.get('commodity_id')
+
+        FollowCommodity.update_follow(pk, buyer_id, commodity_id)
+
+        result = {
+            'code': 1
         }
 
         return Response(result, status=status.HTTP_200_OK)

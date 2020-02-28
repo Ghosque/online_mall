@@ -297,6 +297,30 @@ class FollowCommodity(models.Model):
         else:
             return cls.objects.filter(buyer=buyer, status=1)
 
+    @classmethod
+    def judge_follow(cls, buyer_id, commodity_id):
+        buyer = Buyer.objects.get(pk=buyer_id)
+        commodity = Commodity.objects.get(pk=commodity_id)
+
+        follow_list = cls.objects.filter(buyer=buyer, commodity=commodity, status=1)
+        if follow_list:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def update_follow(cls, status, buyer_id, commodity_id):
+        buyer = Buyer.objects.get(pk=buyer_id)
+        commodity = Commodity.objects.get(pk=commodity_id)
+
+        follow_list = cls.objects.filter(buyer=buyer, commodity=commodity)
+        if follow_list:
+            follow_item = follow_list[0]
+            follow_item.status = status
+            follow_item.save()
+        else:
+            cls.objects.create(status=status, buyer=buyer, commodity=commodity)
+
 
 # 买家关注商家
 class FollowShop(models.Model):
