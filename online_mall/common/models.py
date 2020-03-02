@@ -299,13 +299,16 @@ class FollowCommodity(models.Model):
 
     @classmethod
     def judge_follow(cls, buyer_id, commodity_id):
-        buyer = Buyer.objects.get(pk=buyer_id)
-        commodity = Commodity.objects.get(pk=commodity_id)
+        try:
+            buyer = Buyer.objects.get(pk=buyer_id)
+            commodity = Commodity.objects.get(pk=commodity_id)
 
-        follow_list = cls.objects.filter(buyer=buyer, commodity=commodity, status=1)
-        if follow_list:
-            return True
-        else:
+            follow_list = cls.objects.filter(buyer=buyer, commodity=commodity, status=1)
+            if follow_list:
+                return True
+            else:
+                return False
+        except:
             return False
 
     @classmethod

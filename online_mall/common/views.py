@@ -484,8 +484,16 @@ class BuyerCommodityViewset(viewsets.ViewSet):
 
 class CommodityFollowViewset(viewsets.ViewSet):
 
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        buyer_id = request.GEET.get('buyer_id')
+
     def update(self, request, pk):
-        buyer_id = request.GET.get('buyer_id')
+        token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
+        token_info = jwt_decode_handler(token)
+        buyer_id = token_info['user_id']
+
         commodity_id = request.GET.get('commodity_id')
 
         FollowCommodity.update_follow(pk, buyer_id, commodity_id)
