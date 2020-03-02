@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
 from .models import Buyer
 
@@ -12,9 +13,6 @@ class BuyerViewset(viewsets.ViewSet):
 
         if type == 'auth':
             result = self.handle_auth(request)
-
-        elif type == 'login':
-            result = self.handle_login(request)
 
         else:
             result = {
@@ -29,7 +27,7 @@ class BuyerViewset(viewsets.ViewSet):
     def handle_auth(cls, request):
         user_data = {
             'open_id': request.data.get('openId'),
-            'nickname': request.data.get('nickName'),
+            'username': request.data.get('nickName'),
             'gender': request.data.get('gender'),
             'avatar': request.data.get('avatarUrl'),
             'language': request.data.get('language'),
@@ -37,9 +35,14 @@ class BuyerViewset(viewsets.ViewSet):
         }
         res = Buyer.create_or_update_user(user_data)
         if res:
+            payload = jwt_payload_handler(res)
+            token = jwt_encode_handler(payload)
             result = {
                 'code': 1,
-                'data': res,
+                'data': {
+                    'id': res.id,
+                    'token': token
+                },
                 'message': '新增数据成功'
             }
 
@@ -53,7 +56,3 @@ class BuyerViewset(viewsets.ViewSet):
             }
 
             return result
-
-    @classmethod
-    def handle_login(cls, request):
-        pass

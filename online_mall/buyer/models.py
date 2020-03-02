@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # 买家
@@ -10,7 +11,7 @@ class Buyer(models.Model):
     )
 
     open_id = models.CharField(max_length=500, verbose_name='应用ID')
-    nickname = models.CharField(max_length=500, verbose_name='昵称')
+    username = models.CharField(max_length=500, verbose_name='昵称')
     gender = models.IntegerField(choices=GENDER_ITEM, verbose_name='性别')
     avatar = models.CharField(max_length=500, verbose_name='头像')
     language = models.CharField(max_length=100, verbose_name='语言')
@@ -20,26 +21,27 @@ class Buyer(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User', related_name='buyer')
+
     class Meta:
         verbose_name = verbose_name_plural = '买家'
 
     def __str__(self):
-        return self.nickname
+        return self.username
 
     @classmethod
     def create_or_update_user(cls, user_data):
         try:
-            obj, created = cls.objects.update_or_create(open_id=user_data['open_id'], nickname=user_data['nickname'],
+            user, created_1 = User.objects.update_or_create(password='nothing', username=user_data['open_id'],
+                                                            is_superuser=0, is_staff=1)
+            obj, created_2 = cls.objects.update_or_create(open_id=user_data['open_id'], username=user_data['username'],
                                                         gender=user_data['gender'], avatar=user_data['avatar'],
                                                         language=user_data['language'], area=user_data['area'],
-                                                        defaults={'open_id': user_data['open_id']},)
-            print(obj, type(obj))
-            print(created)
-
+                                                        user=user, defaults={'open_id': user_data['open_id']})
         except Exception as e:
-            return 0
+            return None
         else:
-            return obj.id
+            return obj
 
 
 # 省
