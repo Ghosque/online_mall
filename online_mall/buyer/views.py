@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.cache import cache
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -37,6 +39,7 @@ class BuyerViewset(viewsets.ViewSet):
         if res:
             payload = jwt_payload_handler(res[0])
             token = jwt_encode_handler(payload)
+            cache.set(res[0].id, token, settings.REFRESH_SECONDS)
             result = {
                 'code': 1,
                 'data': {
@@ -47,8 +50,6 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据成功'
             }
 
-            return result
-
         else:
             result = {
                 'code': 0,
@@ -56,4 +57,4 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '新增数据失败'
             }
 
-            return result
+        return result

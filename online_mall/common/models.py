@@ -291,7 +291,7 @@ class FollowCommodity(models.Model):
         verbose_name = verbose_name_plural = '商品关注'
 
     @classmethod
-    def get_follow(cls, buyer, type):
+    def get_follow(cls, buyer, type=None):
         if type == 'num':
             return cls.objects.filter(buyer=buyer, status=1).count()
         else:

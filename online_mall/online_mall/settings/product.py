@@ -1,7 +1,6 @@
 from .develop import *
 
 
-
 log_path = '/home/ghosque/django/online_mall/online_mall/log'
 LOGGING = {
     'version': 1,

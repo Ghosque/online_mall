@@ -74,16 +74,16 @@ class TokenVerifyViewset(viewsets.ViewSet):
                 'data': None,
                 'message': message
             }
-            return Response(result, status=status.HTTP_200_OK)
+        else:
+            result = {
+                'code': 1,
+                'data': {
+                    'token': serializer.data['token'],
+                    'user_id': serializer.data['user_id']
+                },
+                'message': '请求成功'
+            }
 
-        result = {
-            'code': 1,
-            'data': {
-                'token': serializer.data['token'],
-                'user_id': serializer.data['user_id']
-            },
-            'message': '请求成功'
-        }
         return Response(result, status=status.HTTP_200_OK)
 
 
@@ -488,7 +488,9 @@ class CommodityFollowViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request):
-        buyer_id = request.GEET.get('buyer_id')
+        buyer_id = request.GET.get('buyer_id')
+        follow_list = FollowCommodity.get_follow(buyer_id)
+        print(follow_list)
 
     def update(self, request, pk):
         buyer_id = request.GET.get('buyer_id')
