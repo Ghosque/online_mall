@@ -61,12 +61,13 @@ class PhoneCodeViewset(viewsets.ViewSet):
 class TokenVerifyViewset(viewsets.ViewSet):
 
     def create(self, request):
+        print(request.data)
         serializer = TokenVerifySerializer(data=request.data)
         if not serializer.is_valid():
             if serializer.errors.get('user_id'):
                 message = str(serializer.errors.get('user_id')[0])
             else:
-                message = str(serializer.errors.get('user_id')[0])
+                message = str(serializer.errors.get('token')[0])
 
             result = {
                 'code': 0,
@@ -490,10 +491,7 @@ class CommodityFollowViewset(viewsets.ViewSet):
         buyer_id = request.GEET.get('buyer_id')
 
     def update(self, request, pk):
-        token = re.search(settings.REGEX_TOKEN, request.environ.get('HTTP_AUTHORIZATION')).group(1)
-        token_info = jwt_decode_handler(token)
-        buyer_id = token_info['user_id']
-
+        buyer_id = request.GET.get('buyer_id')
         commodity_id = request.GET.get('commodity_id')
 
         FollowCommodity.update_follow(pk, buyer_id, commodity_id)
@@ -509,9 +507,9 @@ class NoteViewset(viewsets.ViewSet):
 
     def list(self, request):
         type = request.GET.get('type')
-        id = request.GET.get('id')
+        buyer_id = request.GET.get('buyer_id')
 
-        buyer = Buyer.objects.get(id=id)
+        buyer = Buyer.objects.get(pk=buyer_id)
 
         commodity_follow = FollowCommodity.get_follow(buyer, type)
         shop_follow = FollowShop.get_follow(buyer, type)

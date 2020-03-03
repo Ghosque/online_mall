@@ -34,14 +34,14 @@ class Buyer(models.Model):
         try:
             user, created_1 = User.objects.update_or_create(password='nothing', username=user_data['open_id'],
                                                             is_superuser=0, is_staff=1)
-            obj, created_2 = cls.objects.update_or_create(open_id=user_data['open_id'], username=user_data['username'],
-                                                        gender=user_data['gender'], avatar=user_data['avatar'],
-                                                        language=user_data['language'], area=user_data['area'],
-                                                        user=user, defaults={'open_id': user_data['open_id']})
+            buyer, created_2 = cls.objects.update_or_create(open_id=user_data['open_id'], username=user_data['username'],
+                                                            gender=user_data['gender'], avatar=user_data['avatar'],
+                                                            language=user_data['language'], area=user_data['area'],
+                                                            user=user, defaults={'open_id': user_data['open_id']})
         except Exception as e:
             return None
         else:
-            return obj
+            return user, buyer
 
 
 # 省

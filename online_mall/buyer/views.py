@@ -35,12 +35,13 @@ class BuyerViewset(viewsets.ViewSet):
         }
         res = Buyer.create_or_update_user(user_data)
         if res:
-            payload = jwt_payload_handler(res)
+            payload = jwt_payload_handler(res[0])
             token = jwt_encode_handler(payload)
             result = {
                 'code': 1,
                 'data': {
-                    'id': res.id,
+                    'buyer_id': res[1].id,
+                    'user_id': res[0].id,
                     'token': token
                 },
                 'message': '新增数据成功'
