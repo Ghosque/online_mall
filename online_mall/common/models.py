@@ -299,6 +299,8 @@ class FollowCommodity(models.Model):
 
     @classmethod
     def judge_follow(cls, buyer_id, commodity_id):
+        if buyer_id == 'null':
+            return False
         buyer = Buyer.objects.get(pk=buyer_id)
         commodity = Commodity.objects.get(pk=commodity_id)
 
