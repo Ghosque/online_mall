@@ -62,10 +62,11 @@ class MerchantRegSerializer(serializers.Serializer):
             raise serializers.ValidationError("该身份证已被注册")
 
     def validate_code(self, code):
-        if not cache.get(self.initial_data['code_key']):
+        key = 'merchant:code:'+self.initial_data['code_key']
+        if not cache.get(key):
             raise serializers.ValidationError("该验证码已过期，请重新获取")
 
-        true_code = cache.get(self.initial_data['code_key'])
+        true_code = cache.get(key)
         if true_code.lower() != code.lower():
             raise serializers.ValidationError("验证码错误")
 

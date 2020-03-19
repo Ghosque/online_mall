@@ -39,7 +39,7 @@ class BuyerViewset(viewsets.ViewSet):
         if res:
             payload = jwt_payload_handler(res[0])
             token = jwt_encode_handler(payload)
-            cache.set(res[0].id, token, settings.REFRESH_SECONDS)
+            cache.set('user:token:'+str(res[0].id), token, settings.APPLET_REFRESH_SECONDS)
             result = {
                 'code': 1,
                 'data': {

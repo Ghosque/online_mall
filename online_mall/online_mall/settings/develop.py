@@ -32,6 +32,7 @@ REST_FRAMEWORK = {
 EXPIRE_SECONDS = 2 * 60 * 60
 # Token刷新有效期：七天（当Token已过期但不超过七天则刷新新Token）
 REFRESH_SECONDS = 7 * 24 * 60 * 60
+APPLET_REFRESH_SECONDS = 100 * 365 * 24 * 60 * 60  # 小程序token为无限时
 
 # 自定义token过期时间
 from _datetime import timedelta
@@ -45,10 +46,10 @@ JWT_AUTH = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://localhost:6379',
+        'LOCATION': 'redis://localhost:6379/9',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-             "PASSWORD": "Ghosque2580",
+             "PASSWORD": "yanggan2580",
         },
     },
 }
@@ -56,6 +57,7 @@ CACHES = {
 REDIS_TIMEOUT = 7 * 24 * 60 * 60
 CUBES_REDIS_TIMEOUT = 60 * 60
 NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
+CACHE_PAGE_TIME = 15 * 60
 
 # 身份证最后一位校验数据
 COEFFICIENT_LIST = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]

@@ -29,11 +29,12 @@ class TokenVerifySerializer(serializers.Serializer):
                 raise serializers.ValidationError("Token认证失败，请重新登录")
 
         except ExpiredSignatureError:
-            if cache.get(self.initial_data['user_id']) and cache.get(self.initial_data['user_id']) == token:
+            key = 'user:token:'+str(self.initial_data['user_id'])
+            if cache.get(key) and cache.get(key) == token:
                 user = User.objects.get(pk=self.initial_data['user_id'])
                 payload = jwt_payload_handler(user)
                 token = jwt_encode_handler(payload)
-                cache.set(self.initial_data['user_id'], token, settings.REFRESH_SECONDS)
+                cache.set(key, token, settings.REFRESH_SECONDS)
             else:
                 raise serializers.ValidationError("Token过期，请重新登录")
 

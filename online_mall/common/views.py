@@ -40,12 +40,12 @@ class PhoneCodeViewset(viewsets.ViewSet):
     def list(self, request):
 
         code_key = self.generate_code_key()
-        while cache.get(code_key):
+        while cache.get('merchant:code:'+code_key):
             code_key = self.generate_code_key()
 
         code_img, code = get_verify_code.gene_code(code_key)
 
-        cache.set(code_key, code, settings.CODE_VALIDATION)
+        cache.set('merchant:code:'+code_key, code, settings.CODE_VALIDATION)
 
         result = {
             'code': 1,
@@ -129,6 +129,9 @@ class ColorViewset(viewsets.ViewSet):
 
 
 class CommodityViewset(viewsets.ViewSet):
+    """
+    商家商品接口
+    """
 
     permission_classes = (IsAuthenticated,)
 
