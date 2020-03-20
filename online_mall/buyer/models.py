@@ -58,6 +58,15 @@ class Province(models.Model):
     def __str__(self):
         return self.province
 
+    @classmethod
+    def get_all(cls):
+        p_objects = cls.objects.all()
+        p_dict = dict()
+        for item in p_objects:
+            p_dict[item.id] = item.province
+
+        return p_dict
+
 
 # 市
 class City(models.Model):
@@ -75,6 +84,18 @@ class City(models.Model):
     def __str__(self):
         return self.city
 
+    @classmethod
+    def get_all(cls):
+        c_objects = cls.objects.all()
+        c_dict = dict()
+        for item in c_objects:
+            if item.province.id not in c_dict:
+                c_dict[item.province.id] = [{item.id: item.city}]
+            else:
+                c_dict[item.province.id].append({item.id: item.city})
+
+        return c_dict
+
 
 # 区/县
 class Area(models.Model):
@@ -91,6 +112,18 @@ class Area(models.Model):
 
     def __str__(self):
         return self.area
+
+    @classmethod
+    def get_all(cls):
+        a_objects = cls.objects.all()
+        a_dict = dict()
+        for item in a_objects:
+            if item.city.id not in a_dict:
+                a_dict[item.city.id] = [{item.id: item.area}]
+            else:
+                a_dict[item.city.id].append({item.id: item.area})
+
+        return a_dict
 
 
 # 地址

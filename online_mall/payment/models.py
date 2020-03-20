@@ -28,7 +28,7 @@ class Order(models.Model):
         (2, '已支付'),
     )
 
-    order_id = models.CharField(default=GetId.getId(), max_length=15, verbose_name='订单ID')
+    order_id = models.CharField(default=GetId.getOrderId(), max_length=15, verbose_name='订单ID')
     info = JSONField(verbose_name='订单内容')
     price = models.IntegerField(verbose_name='总价格')
     status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')

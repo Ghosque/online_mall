@@ -32,6 +32,9 @@ class GetId:
     def hex36(num):
         # 正常36进制字符应为'0123456789abcdefghijklmnopqrstuvwxyz'，这里我打乱了顺序
         key = 't5hrwop6ksq9mvfx8g3c4dzu01n72yeabijl'
+        key_list = list(key)
+        shuffle(key_list)
+        key = ''.join(key_list)
         a = []
         while num != 0:
             a.append(key[num % 36])

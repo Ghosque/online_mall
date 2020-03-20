@@ -43,6 +43,7 @@ router.register(r'merchantCategory', m_views.CategoryViewset, base_name='categor
 router.register(r'merchantImage', m_views.ImageViewset, base_name='image_upload')
 
 router.register(r'buyer', b_views.BuyerViewset, base_name='buyer')
+router.register(r'address', b_views.AddressViewset, base_name='address')
 
 
 urlpatterns = [
