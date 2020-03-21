@@ -67,3 +67,18 @@ class Address(models.Model):
                                      addressee=data['addressee'], buyer=data['buyer'])
 
         return address.id
+
+    @classmethod
+    def get_data(cls, buyer):
+        addresses = cls.objects.filter(buyer=buyer)
+        address_list = list()
+
+        for item in addresses:
+            address_list.append({
+                'id': item.id,
+                'name': item.addressee,
+                'phone': item.contact,
+                'address': item.detail_address,
+            })
+
+        return address_list

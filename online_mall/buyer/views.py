@@ -79,10 +79,20 @@ class AddressViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': None,
-            'message': '新增数据成功'
+            'message': '新增地址数据成功'
         }
 
         return Response(result, status=status.HTTP_200_OK)
 
     def list(self, request):
-        pass
+        buyer_id = request.GET.get('buyer_id')
+        buyer = Buyer.objects.get(id=buyer_id)
+        address_list = Address.get_data(buyer)
+
+        result = {
+            'code': 1,
+            'address_list': address_list,
+            'message': '获取地址数据成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
