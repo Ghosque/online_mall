@@ -49,7 +49,6 @@ class Address(models.Model):
     detail_address = models.CharField(max_length=300, verbose_name='详细地址')
     contact = models.CharField(max_length=15, verbose_name='联系方式')
     addressee = models.CharField(max_length=15, verbose_name='收件人')
-    is_default = models.BooleanField(verbose_name='是否为默认地址')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -61,3 +60,10 @@ class Address(models.Model):
 
     def __str__(self):
         return  self.detail_address
+
+    @classmethod
+    def save_data(cls, data):
+        address = cls.objects.create(detail_address=data['detail_address'], contact=data['contact'],
+                                     addressee=data['addressee'], buyer=data['buyer'])
+
+        return address.id

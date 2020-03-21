@@ -3,9 +3,10 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
-from .models import Buyer
+from .models import Buyer, Address
 
 
 class BuyerViewset(viewsets.ViewSet):
@@ -62,6 +63,26 @@ class BuyerViewset(viewsets.ViewSet):
 
 class AddressViewset(viewsets.ViewSet):
 
-    def list(self, request):
+    permission_classes = (IsAuthenticated,)
 
+    def create(self, request):
+        buyer = Buyer.objects.get(id=request.data.get('buyer_id'))
+        data = {
+            'addressee': request.data.get('name'),
+            'contact': request.data.get('phone'),
+            'detail_address': request.data.get('address'),
+            'buyer': buyer
+        }
+        address_id = Address.save_data(data)
+        cache.set('user:address:{}'.format(request.data.get('buyer_id')), address_id, settings.APPLET_REFRESH_SECONDS)
+
+        result = {
+            'code': 1,
+            'data': None,
+            'message': '新增数据成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+    def list(self, request):
         pass
