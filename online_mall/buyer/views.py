@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
-from .models import Buyer, Province, City, Area
+from .models import Buyer
 
 
 class BuyerViewset(viewsets.ViewSet):
@@ -63,18 +63,5 @@ class BuyerViewset(viewsets.ViewSet):
 class AddressViewset(viewsets.ViewSet):
 
     def list(self, request):
-        p_dict = Province.get_all()
-        c_dict = City.get_all()
-        a_dict = Area.get_all()
 
-        result = {
-            'code': 1,
-            'data': {
-                'province': p_dict,
-                'city': c_dict,
-                'area': a_dict
-            },
-            'message': '获取省市区数据成功'
-        }
-
-        return Response(result, status=status.HTTP_200_OK)
+        pass
