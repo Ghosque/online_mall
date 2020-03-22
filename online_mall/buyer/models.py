@@ -77,13 +77,34 @@ class Address(models.Model):
         address_list = list()
 
         for item in addresses:
-            print(item.region, type(item.region))
             region = eval(item.region)
+            phone = item.phone[:3] + '*' * 4 + item.phone[-4:]
             address_list.append({
                 'id': item.id,
                 'name': item.name,
-                'phone': item.phone,
+                'phone': phone,
                 'address': ''.join(region)+item.detail,
             })
 
         return address_list
+
+    @classmethod
+    def get_single_data(cls, id):
+        address = cls.objects.get(id=id)
+        data = {
+            'name': address.name,
+            'phone': address.phone,
+            'region': eval(address.region),
+            'detail': address.detail,
+        }
+
+        return data
+
+    @classmethod
+    def update_data(cls, id):
+        pass
+
+    @classmethod
+    def delete_data(cls, id):
+        address = cls.objects.get(id=id)
+        address.delete()
