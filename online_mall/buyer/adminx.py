@@ -17,8 +17,8 @@ class BuyerAdmin:
 
 @xadmin.sites.register(Address)
 class AddressAdmin:
-    list_display = ('id', 'detail_address', 'contact', 'addressee', 'is_default', 'buyer', 'create_time', 'update_time',)
-    list_filter = ('buyer', 'is_default',)
-    search_fields = ('buyer',)
+    list_display = ('id', 'name', 'phone', 'region', 'detail', 'buyer', 'create_time', 'update_time',)
+    list_filter = ('buyer', 'phone',)
+    search_fields = ('buyer', 'name', 'phone',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)

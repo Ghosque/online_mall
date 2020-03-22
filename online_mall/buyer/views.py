@@ -68,13 +68,15 @@ class AddressViewset(viewsets.ViewSet):
     def create(self, request):
         buyer = Buyer.objects.get(id=request.data.get('buyer_id'))
         data = {
-            'addressee': request.data.get('name'),
-            'contact': request.data.get('phone'),
-            'detail_address': request.data.get('address'),
+            'name': request.data.get('name'),
+            'phone': request.data.get('phone'),
+            'region': request.data.get('region'),
+            'detail': request.data.get('detail'),
             'buyer': buyer
         }
         address_id = Address.save_data(data)
-        cache.set('user:address:{}'.format(request.data.get('buyer_id')), address_id, settings.APPLET_REFRESH_SECONDS)
+        if request.data.get('isDefault'):
+            cache.set('user:defaultAddress:{}'.format(request.data.get('buyer_id')), address_id, settings.APPLET_REFRESH_SECONDS)
 
         result = {
             'code': 1,

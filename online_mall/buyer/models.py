@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -46,9 +48,10 @@ class Buyer(models.Model):
 
 # 地址
 class Address(models.Model):
-    detail_address = models.CharField(max_length=300, verbose_name='详细地址')
-    contact = models.CharField(max_length=15, verbose_name='联系方式')
-    addressee = models.CharField(max_length=15, verbose_name='收件人')
+    name = models.CharField(max_length=15, verbose_name='收件人')
+    phone = models.CharField(max_length=15, verbose_name='联系方式')
+    region = models.CharField(max_length=300, verbose_name='地区')
+    detail = models.CharField(max_length=300, verbose_name='详细地址')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -59,12 +62,12 @@ class Address(models.Model):
         verbose_name = verbose_name_plural = '地址'
 
     def __str__(self):
-        return  self.detail_address
+        return  self.detail
 
     @classmethod
     def save_data(cls, data):
-        address = cls.objects.create(detail_address=data['detail_address'], contact=data['contact'],
-                                     addressee=data['addressee'], buyer=data['buyer'])
+        address = cls.objects.create(name=data['name'], phone=data['phone'], region=data['region'],
+                                     detail=data['detail'], buyer=data['buyer'])
 
         return address.id
 
@@ -74,11 +77,13 @@ class Address(models.Model):
         address_list = list()
 
         for item in addresses:
+            print(item.region, type(item.region))
+            region = eval(item.region)
             address_list.append({
                 'id': item.id,
-                'name': item.addressee,
-                'phone': item.contact,
-                'address': item.detail_address,
+                'name': item.name,
+                'phone': item.phone,
+                'address': ''.join(region)+item.detail,
             })
 
         return address_list
