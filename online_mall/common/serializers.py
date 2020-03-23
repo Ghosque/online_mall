@@ -22,20 +22,36 @@ class TokenVerifySerializer(serializers.Serializer):
             return user_id
 
     def validate_token(self, token):
-        try:
-            token_info = jwt_decode_handler(token)
-            user_id = token_info['user_id']
-            if user_id != int(self.initial_data['user_id']):
-                raise serializers.ValidationError("Token认证失败，请重新登录")
+        if self.initial_data['type'] == 'applet':
+            print(111)
+            try:
+                token_info = jwt_decode_handler(token)
+                user_id = token_info['user_id']
+                if user_id != int(self.initial_data['user_id']):
+                    raise serializers.ValidationError("Token认证失败，请重新登录")
 
-        except ExpiredSignatureError:
-            key = 'user:token:'+str(self.initial_data['user_id'])
-            if cache.get(key) and cache.get(key) == token:
+            except ExpiredSignatureError:
+                key = 'user:token:' + str(self.initial_data['user_id'])
                 user = User.objects.get(pk=self.initial_data['user_id'])
                 payload = jwt_payload_handler(user)
                 token = jwt_encode_handler(payload)
                 cache.set(key, token, settings.REFRESH_SECONDS)
-            else:
-                raise serializers.ValidationError("Token过期，请重新登录")
+        else:
+            print(222)
+            try:
+                token_info = jwt_decode_handler(token)
+                user_id = token_info['user_id']
+                if user_id != int(self.initial_data['user_id']):
+                    raise serializers.ValidationError("Token认证失败，请重新登录")
+
+            except ExpiredSignatureError:
+                key = 'user:token:'+str(self.initial_data['user_id'])
+                if cache.get(key) and cache.get(key) == token:
+                    user = User.objects.get(pk=self.initial_data['user_id'])
+                    payload = jwt_payload_handler(user)
+                    token = jwt_encode_handler(payload)
+                    cache.set(key, token, settings.REFRESH_SECONDS)
+                else:
+                    raise serializers.ValidationError("Token过期，请重新登录")
 
         return token
