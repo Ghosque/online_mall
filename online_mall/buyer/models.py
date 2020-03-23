@@ -101,8 +101,19 @@ class Address(models.Model):
         return data
 
     @classmethod
-    def update_data(cls, id):
-        pass
+    def update_data(cls, data_dict):
+        try:
+            address = cls.objects.get(pk=data_dict['id'])
+            address.name = data_dict['name']
+            address.phone = data_dict['phone']
+            address.region = data_dict['region']
+            address.detail = data_dict['detail']
+            address.isDefault = data_dict['isDefault']
+            address.save()
+        except:
+            return 0
+        else:
+            return 1
 
     @classmethod
     def delete_data(cls, id):

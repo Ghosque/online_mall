@@ -95,10 +95,12 @@ class AddressViewset(viewsets.ViewSet):
         buyer_id = request.GET.get('buyer_id')
         buyer = Buyer.objects.get(id=buyer_id)
         address_list = Address.get_data(buyer)
+        default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
 
         result = {
             'code': 1,
             'address_list': address_list,
+            'default_id': default_id,
             'message': '获取地址数据成功'
         }
 
@@ -124,13 +126,32 @@ class AddressViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def update(self, request, pk):
-        print(pk)
-        data = QueryDict(request.body)
-        print(data)
+        print(request.data)
+        data = {
+            'id': pk,
+            'name': request.data['name'],
+            'phone': request.data['phone'],
+            'region': request.data['region'],
+            'detail': request.data['detail'],
+            'isDefault': request.data['isDefault']
+        }
+        code = Address.update_data(data)
+
+        if code:
+            buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+            default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
+            if default_id == int(pk) and not request.data['isDefault']:
+                cache.delete('user:defaultAddress:{}'.format(buyer_id))
+            elif request.data['isDefault']:
+                cache.set('user:defaultAddress:{}'.format(buyer_id), int(pk), settings.APPLET_REFRESH_SECONDS)
+
+            msg = '修改地址数据成功'
+        else:
+            msg = '修改地址数据失败'
 
         result = {
-            'code': 1,
-            'message': '修改地址数据成功'
+            'code': code,
+            'message': msg
         }
 
         return Response(result, status=status.HTTP_200_OK)
