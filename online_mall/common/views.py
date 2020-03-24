@@ -45,8 +45,6 @@ class PhoneCodeViewset(viewsets.ViewSet):
 
         code_img, code = get_verify_code.gene_code(code_key)
 
-        cache.set('merchant:code:'+code_key, code, settings.CODE_VALIDATION)
-
         result = {
             'code': 1,
             'data': {
@@ -78,11 +76,14 @@ class TokenVerifyViewset(viewsets.ViewSet):
                 'message': message
             }
         else:
+            user_id = serializer.data['user_id']
+            buyer_id = User.objects.get(pk=user_id).buyer.id
             result = {
                 'code': 1,
                 'data': {
-                    'token': serializer.data['token'],
-                    'user_id': serializer.data['user_id']
+                    'buyer_id': buyer_id,
+                    'user_id': user_id,
+                    'token': serializer.data['token']
                 },
                 'message': '请求成功'
             }

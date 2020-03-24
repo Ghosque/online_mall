@@ -123,7 +123,7 @@ class CommodityColor(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    commodity = models.ForeignKey(Commodity, on_delete=models.CASCADE, verbose_name='商品')
+    commodity = models.OneToOneField(Commodity, on_delete=models.CASCADE, verbose_name='商品')
 
     class Meta:
         verbose_name = verbose_name_plural = '商品分类'
@@ -143,7 +143,7 @@ class Specification(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
-    commodity = models.ForeignKey(Commodity, on_delete=models.CASCADE, verbose_name='商品')
+    commodity = models.OneToOneField(Commodity, on_delete=models.CASCADE, verbose_name='商品')
 
     class Meta:
         verbose_name = verbose_name_plural = '商品详情'

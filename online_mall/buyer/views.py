@@ -3,7 +3,6 @@ import re
 from django.conf import settings
 from django.core.cache import cache
 from django.contrib.auth.models import User
-from django.http import QueryDict
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
