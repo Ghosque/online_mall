@@ -2,7 +2,6 @@ from django_redis import get_redis_connection
 
 
 def parse_redis(obj):
-    print(obj, isinstance(obj, dict))
     if isinstance(obj, bytes):
         return obj.decode('utf-8')
     elif isinstance(obj, set):
