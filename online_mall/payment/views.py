@@ -7,11 +7,11 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.utils import jwt_decode_handler
-from django_redis import get_redis_connection
 
 from common.models import Commodity
+from common_function.django_redis_cache import Redis
 
-con = get_redis_connection()
+cache = Redis('default')
 
 
 class ShoppingCartViewset(viewsets.ViewSet):
@@ -27,7 +27,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
             'number': request.data.get('number')
         }
         cache_key = 'user:cart:{}:{}'.format(buyer_id, request.data.get('id'))
-        con.set(cache_key, json.dumps(data), settings.APPLET_REFRESH_SECONDS)
+        cache.set(cache_key, json.dumps(data), settings.APPLET_REFRESH_SECONDS)
 
         result = {
             'code': 1,
@@ -43,10 +43,10 @@ class ShoppingCartViewset(viewsets.ViewSet):
 
         buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         cache_key_model = 'user:cart:{}:*'.format(buyer_id)
-        keys = con.keys(cache_key_model)
+        keys = cache.keys(cache_key_model)
         for key in keys:
             single_dict = dict()
-            data = eval(con.get(key))
+            data = eval(cache.get(key))
             id = data['id']
             item_index = data['item_index']
             number = data['number']

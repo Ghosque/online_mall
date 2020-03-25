@@ -4,9 +4,10 @@ from rest_framework import serializers
 from django.conf import settings
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
-from django_redis import get_redis_connection
 
-con = get_redis_connection()
+from common_function.django_redis_cache import Redis
+
+cache = Redis('default')
 
 
 # 验证Token是否过期，若过期且在安全期内则返回新的Token
@@ -37,7 +38,7 @@ class TokenVerifySerializer(serializers.Serializer):
                 user = User.objects.get(pk=self.initial_data['user_id'])
                 payload = jwt_payload_handler(user)
                 token = jwt_encode_handler(payload)
-                con.set(key, token, settings.REFRESH_SECONDS)
+                cache.set(key, token, settings.REFRESH_SECONDS)
         else:
             print(222)
             try:
@@ -48,11 +49,11 @@ class TokenVerifySerializer(serializers.Serializer):
 
             except ExpiredSignatureError:
                 key = 'user:token:'+str(self.initial_data['user_id'])
-                if con.get(key) and con.get(key) == token:
+                if cache.get(key) and cache.get(key) == token:
                     user = User.objects.get(pk=self.initial_data['user_id'])
                     payload = jwt_payload_handler(user)
                     token = jwt_encode_handler(payload)
-                    con.set(key, token, settings.REFRESH_SECONDS)
+                    cache.set(key, token, settings.REFRESH_SECONDS)
                 else:
                     raise serializers.ValidationError("Token过期，请重新登录")
 

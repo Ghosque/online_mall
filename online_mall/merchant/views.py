@@ -10,13 +10,13 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 from rest_framework.decorators import permission_classes
-from django_redis import get_redis_connection
 
 from .serializers import MerchantRegSerializer, MerchantLoginSerializer, MerchantInfoSerializer, ShopRegSerializer
 from .models import Merchant, Shop, BackStageSecond, FirstCategory, SecondCategory, ThirdCategory, MerchantImage
 from common_function.get_id import GetId
+from common_function.django_redis_cache import Redis
 
-con = get_redis_connection()
+cache = Redis('default')
 
 
 class MerchantViewset(viewsets.ViewSet):
@@ -110,7 +110,7 @@ class MerchantViewset(viewsets.ViewSet):
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
 
-        con.set('merchant:token:'+str(user.id), token, settings.REFRESH_SECONDS)
+        cache.set('merchant:token:'+str(user.id), token, settings.REFRESH_SECONDS)
 
         result = {
             'code': 1,

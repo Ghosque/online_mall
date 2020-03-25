@@ -45,11 +45,11 @@ JWT_AUTH = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',  # redis_cache.RedisCache
+        'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': 'redis://localhost:6379/9',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-             "PASSWORD": "yanggan2580",
+            "PASSWORD": "yanggan2580"
         },
     },
 }
