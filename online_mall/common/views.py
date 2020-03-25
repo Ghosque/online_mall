@@ -6,12 +6,12 @@ import random
 
 from django.conf import settings
 from django.db import transaction
-from django.core.cache import cache
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.utils import jwt_decode_handler
+from django_redis import get_redis_connection
 
 from random import choice
 import string
@@ -23,6 +23,9 @@ from common_function import get_verify_code
 from common_function.get_id import GetId
 from merchant.models import Merchant, Shop, BackStageSecond, FirstCategory, SecondCategory, ThirdCategory, MerchantImage
 from buyer.models import Buyer
+
+
+con = get_redis_connection()
 
 
 # 获取验证码图片
@@ -40,7 +43,7 @@ class PhoneCodeViewset(viewsets.ViewSet):
     def list(self, request):
 
         code_key = self.generate_code_key()
-        while cache.get('merchant:code:'+code_key):
+        while con.get('merchant:code:'+code_key):
             code_key = self.generate_code_key()
 
         code_img, code = get_verify_code.gene_code(code_key)

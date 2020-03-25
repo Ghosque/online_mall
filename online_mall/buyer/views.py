@@ -1,7 +1,6 @@
 import re
 
 from django.conf import settings
-from django.core.cache import cache
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,8 +8,11 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+from django_redis import get_redis_connection
 
 from .models import Buyer, Address
+
+con = get_redis_connection()
 
 
 class BuyerViewset(viewsets.ViewSet):
@@ -44,7 +46,7 @@ class BuyerViewset(viewsets.ViewSet):
         if res:
             payload = jwt_payload_handler(res[0])
             token = jwt_encode_handler(payload)
-            cache.set('user:token:'+str(res[0].id), token, settings.APPLET_REFRESH_SECONDS)
+            con.set('user:token:'+str(res[0].id), token, settings.APPLET_REFRESH_SECONDS)
             result = {
                 'code': 1,
                 'data': {
@@ -80,7 +82,7 @@ class AddressViewset(viewsets.ViewSet):
         }
         address_id = Address.save_data(data)
         if request.data.get('isDefault'):
-            cache.set('user:defaultAddress:{}'.format(request.data.get('buyer_id')), address_id, settings.APPLET_REFRESH_SECONDS)
+            con.set('user:defaultAddress:{}'.format(request.data.get('buyer_id')), address_id, settings.APPLET_REFRESH_SECONDS)
 
         result = {
             'code': 1,
@@ -94,7 +96,7 @@ class AddressViewset(viewsets.ViewSet):
         buyer_id = request.GET.get('buyer_id')
         buyer = Buyer.objects.get(id=buyer_id)
         address_list = Address.get_data(buyer)
-        default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
+        default_id = con.get('user:defaultAddress:{}'.format(buyer_id))
 
         result = {
             'code': 1,
@@ -107,7 +109,7 @@ class AddressViewset(viewsets.ViewSet):
 
     def retrieve(self, request, pk):
         buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
-        default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
+        default_id = con.get('user:defaultAddress:{}'.format(buyer_id))
         if default_id == int(pk):
             isDefault = True
         else:
@@ -138,11 +140,11 @@ class AddressViewset(viewsets.ViewSet):
 
         if code:
             buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
-            default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
+            default_id = con.get('user:defaultAddress:{}'.format(buyer_id))
             if default_id == int(pk) and not request.data['isDefault']:
-                cache.delete('user:defaultAddress:{}'.format(buyer_id))
+                con.delete('user:defaultAddress:{}'.format(buyer_id))
             elif request.data['isDefault']:
-                cache.set('user:defaultAddress:{}'.format(buyer_id), int(pk), settings.APPLET_REFRESH_SECONDS)
+                con.set('user:defaultAddress:{}'.format(buyer_id), int(pk), settings.APPLET_REFRESH_SECONDS)
 
             msg = '修改地址数据成功'
         else:
@@ -159,9 +161,9 @@ class AddressViewset(viewsets.ViewSet):
         Address.delete_data(pk)
 
         buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
-        default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
+        default_id = con.get('user:defaultAddress:{}'.format(buyer_id))
         if default_id == int(pk):
-            cache.delete('user:defaultAddress:{}'.format(buyer_id))
+            con.delete('user:defaultAddress:{}'.format(buyer_id))
 
         result = {
             'code': 1,

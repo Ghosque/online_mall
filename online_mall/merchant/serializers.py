@@ -1,11 +1,13 @@
 import re
-from django.core.cache import cache
 from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework_jwt.utils import jwt_decode_handler
+from django_redis import get_redis_connection
 
 from .models import Merchant, Shop
+
+con = get_redis_connection()
 
 
 class MerchantRegSerializer(serializers.Serializer):
@@ -63,10 +65,10 @@ class MerchantRegSerializer(serializers.Serializer):
 
     def validate_code(self, code):
         key = 'merchant:code:'+self.initial_data['code_key']
-        if not cache.get(key):
+        if not con.get(key):
             raise serializers.ValidationError("该验证码已过期，请重新获取")
 
-        true_code = cache.get(key)
+        true_code = con.get(key)
         if true_code.lower() != code.lower():
             raise serializers.ValidationError("验证码错误")
 
