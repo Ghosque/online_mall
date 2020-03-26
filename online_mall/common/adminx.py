@@ -1,7 +1,7 @@
 import xadmin
 
 from .models import DisplayImage, FirstColorSelector, SecondColorSelector, Commodity, CommodityColor, Specification,\
-    FollowCommodity, FollowShop, CommodityView, CardTicket, CommodityComment
+    CardTicket, CommodityComment
 
 
 @xadmin.sites.register(DisplayImage)
@@ -53,33 +53,6 @@ class CommodityColorAdmin:
 class SpecificationAdmin:
     list_display = ('id', 'information', 'commodity', 'create_time', 'update_time',)
     list_filter = ('commodity',)
-    search_fields = ('commodity',)
-    ordering = ('id',)
-    readonly_fields = ('create_time', 'update_time',)
-
-
-@xadmin.sites.register(FollowCommodity)
-class FollowCommodityAdmin:
-    list_display = ('id', 'status', 'buyer', 'commodity', 'create_time', 'update_time',)
-    list_filter = ('status', 'buyer', 'commodity',)
-    search_fields = ('commodity',)
-    ordering = ('id',)
-    readonly_fields = ('create_time', 'update_time',)
-
-
-@xadmin.sites.register(FollowShop)
-class FollowShopAdmin:
-    list_display = ('id', 'status', 'buyer', 'shop', 'create_time', 'update_time',)
-    list_filter = ('status', 'buyer', 'shop',)
-    search_fields = ('shop',)
-    ordering = ('id',)
-    readonly_fields = ('create_time', 'update_time',)
-
-
-@xadmin.sites.register(CommodityView)
-class CommodityViewAdmin:
-    list_display = ('id', 'buyer', 'commodity', 'create_time', 'update_time',)
-    list_filter = ('buyer', 'commodity',)
     search_fields = ('commodity',)
     ordering = ('id',)
     readonly_fields = ('create_time', 'update_time',)

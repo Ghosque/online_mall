@@ -26,7 +26,6 @@ class TokenVerifySerializer(serializers.Serializer):
 
     def validate_token(self, token):
         if self.initial_data['type'] == 'applet':
-            print(111)
             try:
                 token_info = jwt_decode_handler(token)
                 user_id = token_info['user_id']
@@ -40,7 +39,6 @@ class TokenVerifySerializer(serializers.Serializer):
                 token = jwt_encode_handler(payload)
                 cache.set(key, token, settings.REFRESH_SECONDS)
         else:
-            print(222)
             try:
                 token_info = jwt_decode_handler(token)
                 user_id = token_info['user_id']

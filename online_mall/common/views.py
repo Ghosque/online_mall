@@ -15,8 +15,7 @@ from rest_framework_jwt.utils import jwt_decode_handler
 from random import choice
 import string
 
-from .models import SecondColorSelector, Commodity, CommodityColor, Specification, FollowCommodity, FollowShop,\
-    CommodityView, CardTicket, CommodityComment
+from .models import SecondColorSelector, Commodity, CommodityColor, Specification, CardTicket, CommodityComment
 from .serializers import TokenVerifySerializer
 from common_function import get_verify_code
 from common_function.get_id import GetId
@@ -411,12 +410,6 @@ class BuyerCommodityViewset(viewsets.ViewSet):
         else:
             commodity_list, name = Commodity.get_appoint_category_commodity(request.GET.get('category_id'))
 
-        key_list = cache.keys('list00*')
-        for key in key_list:
-            print(key)
-            data = cache.hgetall(key)
-            print(data)
-
         for i, commodity in enumerate(commodity_list):
             # 处理照片墙数据
             for index, image_id in enumerate(commodity['display_images']):
@@ -455,7 +448,12 @@ class BuyerCommodityViewset(viewsets.ViewSet):
         # 获取评价数据
         all_comments, good_rate = CommodityComment.get_data(commodity.id)
         # 获取买家是否关注商品
-        is_follow = FollowCommodity.judge_follow(buyer_id, pk)
+        cache_key = 'user:follow:commodity:{}'.format(buyer_id)
+        follow_list = cache.lrange(cache_key, 0, -1)
+        if pk in follow_list:
+            is_follow = True
+        else:
+            is_follow = False
 
         single_data = {
             'id': commodity.id,
@@ -502,22 +500,38 @@ class CommodityFollowViewset(viewsets.ViewSet):
 
     permission_classes = (IsAuthenticated,)
 
-    def list(self, request):
-        buyer_id = request.GET.get('buyer_id')
-        follow_list = FollowCommodity.get_follow(buyer_id)
-        print(follow_list)
+    def create(self, request):
+        buyer_id = request.data.get('buyer_id')
+        commodity_id = request.data.get('commodity_id')
+        follow_status = request.data.get('follow_status')
 
-    def update(self, request, pk):
-        buyer_id = request.GET.get('buyer_id')
-        commodity_id = request.GET.get('commodity_id')
+        print(commodity_id)
 
-        FollowCommodity.update_follow(pk, buyer_id, commodity_id)
+        cache_key = 'user:follow:commodity:{}'.format(buyer_id)
+        if follow_status:
+            cache.lpush(cache_key, commodity_id)
+        else:
+            cache.lrem(cache_key, 0, commodity_id)
 
         result = {
             'code': 1
         }
 
         return Response(result, status=status.HTTP_200_OK)
+
+    def list(self, request):
+        buyer_id = request.GET.get('buyer_id')
+        cache_key = 'user:follow:commodity:{}'.format(buyer_id)
+        follow_list = cache.lrange(cache_key, 0, -1)
+        print(follow_list)
+
+
+class ShopFollowViewset(viewsets.ViewSet):
+    pass
+
+
+class BuyerTraceViewset(viewsets.ViewSet):
+    pass
 
 
 class NoteViewset(viewsets.ViewSet):
@@ -528,9 +542,12 @@ class NoteViewset(viewsets.ViewSet):
 
         buyer = Buyer.objects.get(pk=buyer_id)
 
-        commodity_follow = FollowCommodity.get_follow(buyer, type)
-        shop_follow = FollowShop.get_follow(buyer, type)
-        commodity_view = CommodityView.get_user_view(buyer, type)
+        cache_key = 'user:follow:{}:{}'
+        commodity_follow = cache.llen(cache_key.format('commodity', buyer_id))
+        shop_follow = cache.llen(cache_key.format('shop', buyer_id))
+
+        commodity_view = cache.llen('user:view:{}'.format(buyer_id))
+
         card = CardTicket.get_card(buyer, type)
 
         data = [commodity_follow, shop_follow, commodity_view, card]
