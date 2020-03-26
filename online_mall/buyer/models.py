@@ -34,7 +34,7 @@ class Buyer(models.Model):
     @classmethod
     def create_or_update_user(cls, user_data):
         try:
-            user, created_1 = User.objects.update_or_create(password='nothing', username=user_data['open_id'],
+            user, created_1 = User.objects.update_or_create(password='youhavenopassword', username=user_data['open_id'],
                                                             is_superuser=0, is_staff=1)
             buyer, created_2 = cls.objects.update_or_create(open_id=user_data['open_id'], username=user_data['username'],
                                                             gender=user_data['gender'], avatar=user_data['avatar'],
