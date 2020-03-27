@@ -1,8 +1,8 @@
 import os
-import re
 import json
 import base64
 import random
+import re
 
 from django.conf import settings
 from django.db import transaction
@@ -15,6 +15,7 @@ from rest_framework_jwt.utils import jwt_decode_handler
 from random import choice
 import string
 
+
 from .models import SecondColorSelector, Commodity, CommodityColor, Specification, CardTicket, CommodityComment
 from .serializers import TokenVerifySerializer
 from common_function import get_verify_code
@@ -22,6 +23,7 @@ from common_function.get_id import GetId
 from merchant.models import Merchant, Shop, BackStageSecond, FirstCategory, SecondCategory, ThirdCategory, MerchantImage
 from buyer.models import Buyer
 from common_function.django_redis_cache import Redis
+from common_function.get_buyer_id import get_buyer_id
 
 cache = Redis('default')
 
@@ -501,11 +503,11 @@ class CommodityFollowViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request):
-        buyer_id = request.data.get('buyer_id')
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         commodity_id = request.data.get('commodity_id')
         follow_status = request.data.get('follow_status')
 
-        print(commodity_id)
+        print(buyer_id, commodity_id, follow_status)
 
         cache_key = 'user:follow:commodity:{}'.format(buyer_id)
         if follow_status:
@@ -531,10 +533,16 @@ class ShopFollowViewset(viewsets.ViewSet):
 
 
 class BuyerTraceViewset(viewsets.ViewSet):
-    pass
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
 
 
 class NoteViewset(viewsets.ViewSet):
+
+    permission_classes = (IsAuthenticated,)
 
     def list(self, request):
         type = request.GET.get('type')

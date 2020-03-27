@@ -1,15 +1,13 @@
-import re
 import json
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.utils import jwt_decode_handler
 
 from common.models import Commodity
 from common_function.django_redis_cache import Redis
+from common_function.get_buyer_id import get_buyer_id
 
 cache = Redis('default')
 
@@ -20,7 +18,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
 
     def create(self, request):
         # 商品id colorItem_index 个数
-        buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         data = {
             'id': request.data.get('id'),
             'item_index': request.data.get('item_index'),
@@ -41,7 +39,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
         # 商品id 商品封面 标题 colorItem colorItem_index 单价 个数 商家店铺名
         data_list = list()
 
-        buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         cache_key_model = 'user:cart:{}:*'.format(buyer_id)
         keys = cache.keys(cache_key_model)
         for key in keys:
@@ -69,12 +67,3 @@ class ShoppingCartViewset(viewsets.ViewSet):
 
     def destroy(self, request, pk):
         pass
-
-    @staticmethod
-    def get_buyer_id(token):
-        token = re.search(settings.REGEX_TOKEN, token).group(1)
-        token_info = jwt_decode_handler(token)
-        user_id = token_info['user_id']
-        buyer_id = User.objects.get(pk=user_id).buyer.id
-
-        return buyer_id

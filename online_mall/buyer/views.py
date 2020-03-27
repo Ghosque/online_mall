@@ -1,16 +1,13 @@
-import re
-
 from django.conf import settings
-from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
 from .models import Buyer, Address
 from common_function.django_redis_cache import Redis
+from common_function.get_buyer_id import get_buyer_id
 
 cache = Redis('default')
 
@@ -108,7 +105,7 @@ class AddressViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk):
-        buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
         if default_id == int(pk):
             isDefault = True
@@ -139,7 +136,7 @@ class AddressViewset(viewsets.ViewSet):
         code = Address.update_data(data)
 
         if code:
-            buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+            buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
             default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
             if default_id == int(pk) and not request.data['isDefault']:
                 cache.delete('user:defaultAddress:{}'.format(buyer_id))
@@ -160,7 +157,7 @@ class AddressViewset(viewsets.ViewSet):
     def destroy(self, request, pk):
         Address.delete_data(pk)
 
-        buyer_id = self.get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         default_id = cache.get('user:defaultAddress:{}'.format(buyer_id))
         if default_id == int(pk):
             cache.delete('user:defaultAddress:{}'.format(buyer_id))
@@ -171,12 +168,3 @@ class AddressViewset(viewsets.ViewSet):
         }
 
         return Response(result, status=status.HTTP_200_OK)
-
-    @staticmethod
-    def get_buyer_id(token):
-        token = re.search(settings.REGEX_TOKEN, token).group(1)
-        token_info = jwt_decode_handler(token)
-        user_id = token_info['user_id']
-        buyer_id = User.objects.get(pk=user_id).buyer.id
-
-        return buyer_id
