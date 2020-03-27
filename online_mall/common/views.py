@@ -24,6 +24,7 @@ from merchant.models import Merchant, Shop, BackStageSecond, FirstCategory, Seco
 from buyer.models import Buyer
 from common_function.django_redis_cache import Redis
 from common_function.get_buyer_id import get_buyer_id
+from common_function.get_timestamp import get_after_30_days_timestamp, get_today_timestamp
 
 cache = Redis('default')
 
@@ -501,15 +502,14 @@ class BuyerCommodityViewset(viewsets.ViewSet):
 class CommodityFollowViewset(viewsets.ViewSet):
 
     permission_classes = (IsAuthenticated,)
+    cache_key_model = 'user:follow:commodity:{}'
 
     def create(self, request):
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         commodity_id = request.data.get('commodity_id')
         follow_status = request.data.get('follow_status')
 
-        print(buyer_id, commodity_id, follow_status)
-
-        cache_key = 'user:follow:commodity:{}'.format(buyer_id)
+        cache_key = self.cache_key_model.format(buyer_id)
         if follow_status:
             cache.lpush(cache_key, commodity_id)
         else:
@@ -523,7 +523,7 @@ class CommodityFollowViewset(viewsets.ViewSet):
 
     def list(self, request):
         buyer_id = request.GET.get('buyer_id')
-        cache_key = 'user:follow:commodity:{}'.format(buyer_id)
+        cache_key = self.cache_key_model.format(buyer_id)
         follow_list = cache.lrange(cache_key, 0, -1)
         print(follow_list)
 
@@ -535,9 +535,21 @@ class ShopFollowViewset(viewsets.ViewSet):
 class BuyerTraceViewset(viewsets.ViewSet):
 
     permission_classes = (IsAuthenticated,)
+    cache_key_model = 'user:trace:{}'
 
     def create(self, request):
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        commodity_id = request.data.get('commodity_id')
+        timestamp = get_after_30_days_timestamp()
+
+        cache.zadd(self.cache_key_model.format(buyer_id), {commodity_id: timestamp})
+
+        result = {
+            'code': 1,
+            'message': '记录浏览记录成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class NoteViewset(viewsets.ViewSet):
@@ -550,11 +562,10 @@ class NoteViewset(viewsets.ViewSet):
 
         buyer = Buyer.objects.get(pk=buyer_id)
 
-        cache_key = 'user:follow:{}:{}'
-        commodity_follow = cache.llen(cache_key.format('commodity', buyer_id))
-        shop_follow = cache.llen(cache_key.format('shop', buyer_id))
+        commodity_follow = cache.llen('user:follow:commodity:{}'.format(buyer_id))
+        shop_follow = cache.llen('user:follow:shop:{}'.format(buyer_id))
 
-        commodity_view = cache.llen('user:view:{}'.format(buyer_id))
+        commodity_view = cache.zcard('user:trace:{}'.format(buyer_id))
 
         card = CardTicket.get_card(buyer, type)
 
