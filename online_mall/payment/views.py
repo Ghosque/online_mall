@@ -24,7 +24,10 @@ class ShoppingCartViewset(viewsets.ViewSet):
         item_index = request.data.get('item_index')
         num = request.data.get('num')
         cache_key = 'user:cart:{}'.format(buyer_id)
-        cache.hset(cache_key, id, '{}:{}'.format(item_index, num))
+        if cache.hget(cache_key, '{}:{}'.format(id, item_index)):
+            cache.hincrby(cache_key, '{}:{}'.format(id, item_index), num)
+        else:
+            cache.hset(cache_key, '{}:{}'.format(id, item_index), num)
 
         result = {
             'code': 1,
@@ -41,8 +44,9 @@ class ShoppingCartViewset(viewsets.ViewSet):
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         cache_key = 'user:cart:{}'.format(buyer_id)
         data_dict = cache.hgetall(cache_key)
-        for key, values in data_dict.items():
-            commodity = Commodity.get_appoint_commodity(int(key))
+        for key, value in data_dict.items():
+            id, item_index  = key.split(':')
+            commodity = Commodity.get_appoint_commodity(int(id))
             # 获取颜色分类
             color_obj = CommodityColor.get_appoint_color(commodity)
 
@@ -57,8 +61,8 @@ class ShoppingCartViewset(viewsets.ViewSet):
                 'category_name': commodity.category.name,
                 'color_item': color_obj.commodity_class,
                 'shop': commodity.shop.name,
-                'item_index': values.split(':')[0],
-                'num': values.split(':')[1]
+                'item_index': int(item_index),
+                'num': int(value)
             }
 
             # 处理颜色分类数据
@@ -67,7 +71,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
                 single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
                 single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
 
-            data_list.append(single_data)
+            data_list.insert(0, single_data)
 
         result = {
             'code': 1,
