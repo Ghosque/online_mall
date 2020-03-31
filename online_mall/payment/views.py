@@ -32,7 +32,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
             'message': '购物车新增数据成功'
         }
 
-        return Response(result, status=status.HTTP_201_CREATED)
+        return Response(result, status=status.HTTP_200_OK)
 
     def list(self, request):
         # 商品id 商品封面 标题 colorItem colorItem_index 单价 个数 商家店铺名

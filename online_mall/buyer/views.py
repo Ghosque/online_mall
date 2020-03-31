@@ -27,7 +27,7 @@ class BuyerViewset(viewsets.ViewSet):
                 'message': '类型错误'
             }
 
-        return Response(result, status=status.HTTP_200_OK)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     @classmethod
     def handle_auth(cls, request):
@@ -88,7 +88,7 @@ class AddressViewset(viewsets.ViewSet):
             'message': '新增地址数据成功'
         }
 
-        return Response(result, status=status.HTTP_200_OK)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     def list(self, request):
         buyer_id = request.GET.get('buyer_id')

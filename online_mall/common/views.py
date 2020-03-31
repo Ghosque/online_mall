@@ -57,7 +57,7 @@ class PhoneCodeViewset(viewsets.ViewSet):
             },
             'message': '获取验证码成功'
         }
-        return Response(result, status=status.HTTP_201_CREATED)
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class TokenVerifyViewset(viewsets.ViewSet):
@@ -92,7 +92,7 @@ class TokenVerifyViewset(viewsets.ViewSet):
                 'message': '请求成功'
             }
 
-        return Response(result, status=status.HTTP_200_OK)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class ColorViewset(viewsets.ViewSet):
@@ -204,7 +204,7 @@ class CommodityViewset(viewsets.ViewSet):
                 'msssage': '上传成功'
             }
 
-        return Response(result, status=status.HTTP_200_OK)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     def list(self, request):
         """
