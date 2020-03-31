@@ -32,7 +32,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': None,
-            'message': '购物车新增数据成功'
+            'message': '购物车数据新增成功'
         }
 
         return Response(result, status=status.HTTP_200_OK)
@@ -76,14 +76,37 @@ class ShoppingCartViewset(viewsets.ViewSet):
         result = {
             'code': 1,
             'data': data_list,
-            'message': '获取购物车数据成功'
+            'message': '购物车数据获取成功'
         }
 
         return Response(result, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk):
         # 商品id colorItem_index 个数
-        pass
+        item_index = request.data.get('item_index')
+        num = request.data.get('num')
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        cache_key = 'user:cart:{}'.format(buyer_id)
+        cache.hset(cache_key, '{}:{}'.format(pk, item_index), num)
+
+        result = {
+            'code': 1,
+            'data': None,
+            'message': '购物车数据修改成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk):
-        pass
+        item_index = request.data.get('item_index')
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        cache_key = 'user:cart:{}'.format(buyer_id)
+        cache.hdel(cache_key, '{}:{}'.format(pk, item_index))
+
+        result = {
+            'code': 1,
+            'data': None,
+            'message': '购物车数据删除成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
