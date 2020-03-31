@@ -24,7 +24,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
         item_index = request.data.get('item_index')
         num = request.data.get('num')
         cache_key = 'user:cart:{}'.format(buyer_id)
-        if cache.hget(cache_key, '{}:{}'.format(id, item_index)):
+        if cache.hexists(cache_key, '{}:{}'.format(id, item_index)):
             cache.hincrby(cache_key, '{}:{}'.format(id, item_index), num)
         else:
             cache.hset(cache_key, '{}:{}'.format(id, item_index), num)
@@ -39,45 +39,53 @@ class ShoppingCartViewset(viewsets.ViewSet):
 
     def list(self, request):
         # 商品id 商品封面 标题 colorItem colorItem_index 单价 个数 商家店铺名
-        data_list = list()
-
+        type = request.GET.get('type')
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         cache_key = 'user:cart:{}'.format(buyer_id)
-        data_dict = cache.hgetall(cache_key)
-        for key, value in data_dict.items():
-            id, item_index  = key.split(':')
-            commodity = Commodity.get_appoint_commodity(int(id))
-            # 获取颜色分类
-            color_obj = CommodityColor.get_appoint_color(commodity)
-
-            single_data = {
-                'id': commodity.id,
-                'name': commodity.name,
-                'title': commodity.title,
-                'title_desc': commodity.title_desc,
-                'cover': commodity.cover,
-                'price': commodity.price,
-                'category': commodity.category.id,
-                'category_name': commodity.category.name,
-                'color_item': color_obj.commodity_class,
-                'shop': commodity.shop.name,
-                'item_index': int(item_index),
-                'num': int(value)
+        if type == 'getNum':
+            cartNum = cache.hlen(cache_key)
+            result = {
+                'code': 1,
+                'data': cartNum,
+                'message': '购物车数据获取成功'
             }
+        else:
+            data_list = list()
+            data_dict = cache.hgetall(cache_key)
+            for key, value in data_dict.items():
+                id, item_index  = key.split(':')
+                commodity = Commodity.get_appoint_commodity(int(id))
+                # 获取颜色分类
+                color_obj = CommodityColor.get_appoint_color(commodity)
 
-            # 处理颜色分类数据
-            single_data['color_item'] = json.loads(single_data['color_item'])
-            for index, color_item in enumerate(single_data['color_item']):
-                single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
-                single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
+                single_data = {
+                    'id': commodity.id,
+                    'name': commodity.name,
+                    'title': commodity.title,
+                    'title_desc': commodity.title_desc,
+                    'cover': commodity.cover,
+                    'price': commodity.price,
+                    'category': commodity.category.id,
+                    'category_name': commodity.category.name,
+                    'color_item': color_obj.commodity_class,
+                    'shop': commodity.shop.name,
+                    'item_index': int(item_index),
+                    'num': int(value)
+                }
 
-            data_list.insert(0, single_data)
+                # 处理颜色分类数据
+                single_data['color_item'] = json.loads(single_data['color_item'])
+                for index, color_item in enumerate(single_data['color_item']):
+                    single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
+                    single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
 
-        result = {
-            'code': 1,
-            'data': data_list,
-            'message': '购物车数据获取成功'
-        }
+                data_list.insert(0, single_data)
+
+            result = {
+                'code': 1,
+                'data': data_list,
+                'message': '购物车数据获取成功'
+            }
 
         return Response(result, status=status.HTTP_201_CREATED)
 

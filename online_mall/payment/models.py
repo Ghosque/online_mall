@@ -48,6 +48,8 @@ class SinglePurchaseOrder(models.Model):
 
     purchase_id = models.CharField(default=GetId.getOrderId(), max_length=18, verbose_name='单件商品订单号')
     status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    item_index = models.SmallIntegerField(verbose_name='选项索引')
+    num = models.SmallIntegerField(verbose_name='数量')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')

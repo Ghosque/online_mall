@@ -110,7 +110,7 @@ class MerchantViewset(viewsets.ViewSet):
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
 
-        cache.set('merchant:token:'+str(user.id), token, settings.REFRESH_SECONDS)
+        cache.set('merchant:token:{}'.format(user.id), token, settings.REFRESH_SECONDS)
 
         result = {
             'code': 1,
