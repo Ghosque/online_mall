@@ -6,20 +6,6 @@ from common.models import Commodity
 from common_function.get_id import GetId
 
 
-# 购物车
-class ShoppingCart(models.Model):
-    quantity = models.IntegerField(verbose_name='数量')
-
-    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
-    update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
-
-    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, verbose_name='买家')
-    commodity = models.ForeignKey(Commodity, on_delete=models.DO_NOTHING, verbose_name='商品')
-
-    class Meta:
-        verbose_name = verbose_name_plural = '购物车'
-
-
 # 订单
 class Order(models.Model):
     STATUS_ITEMS = (

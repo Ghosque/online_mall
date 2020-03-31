@@ -24,6 +24,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from common import views as c_views
 from merchant import views as m_views
 from buyer import views as b_views
+from payment import views as p_views
 
 
 router = routers.DefaultRouter()
@@ -45,6 +46,8 @@ router.register(r'merchantImage', m_views.ImageViewset, base_name='image_upload'
 
 router.register(r'buyer', b_views.BuyerViewset, base_name='buyer')
 router.register(r'address', b_views.AddressViewset, base_name='address')
+
+router.register(r'cart', p_views.ShoppingCartViewset, base_name='shopping_cart')
 
 
 urlpatterns = [

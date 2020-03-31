@@ -1,15 +1,6 @@
 import xadmin
 
-from .models import ShoppingCart, Order, SinglePurchaseOrder, CommodityComment, SecondComment, CommentPaise
-
-
-@xadmin.sites.register(ShoppingCart)
-class ShoppingCartAdmin:
-    list_display = ('id', 'quantity', 'buyer', 'commodity', 'create_time', 'update_time',)
-    list_filter = ('buyer', 'commodity',)
-    search_fields = ('commodity',)
-    ordering = ('id',)
-    readonly_fields = ('create_time', 'update_time',)
+from .models import Order, SinglePurchaseOrder, CommodityComment, SecondComment, CommentPaise
 
 
 @xadmin.sites.register(Order)

@@ -5,7 +5,8 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from common.models import Commodity
+from common.models import Commodity, CommodityColor, SecondColorSelector
+from merchant.models import MerchantImage
 from common_function.django_redis_cache import Redis
 from common_function.get_buyer_id import get_buyer_id
 
@@ -19,13 +20,11 @@ class ShoppingCartViewset(viewsets.ViewSet):
     def create(self, request):
         # 商品id colorItem_index 个数
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
-        data = {
-            'id': request.data.get('id'),
-            'item_index': request.data.get('item_index'),
-            'number': request.data.get('number')
-        }
-        cache_key = 'user:cart:{}:{}'.format(buyer_id, request.data.get('id'))
-        cache.set(cache_key, json.dumps(data), settings.APPLET_REFRESH_SECONDS)
+        id = request.data.get('id')
+        item_index = request.data.get('item_index')
+        num = request.data.get('num')
+        cache_key = 'user:cart:{}'.format(buyer_id)
+        cache.hset(cache_key, id, '{}:{}'.format(item_index, num))
 
         result = {
             'code': 1,
@@ -40,18 +39,35 @@ class ShoppingCartViewset(viewsets.ViewSet):
         data_list = list()
 
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
-        cache_key_model = 'user:cart:{}:*'.format(buyer_id)
-        keys = cache.keys(cache_key_model)
-        for key in keys:
-            single_dict = dict()
-            data = eval(cache.get(key))
-            id = data['id']
-            item_index = data['item_index']
-            number = data['number']
+        cache_key = 'user:cart:{}'.format(buyer_id)
+        data_dict = cache.hgetall(cache_key)
+        for key, values in data_dict.items():
+            commodity = Commodity.get_appoint_commodity(int(key))
+            # 获取颜色分类
+            color_obj = CommodityColor.get_appoint_color(commodity)
 
-            commodity = Commodity.get_appoint_commodity(id)
-            color_item = commodity.CommodityColor.commodity_class
-            # TODO
+            single_data = {
+                'id': commodity.id,
+                'name': commodity.name,
+                'title': commodity.title,
+                'title_desc': commodity.title_desc,
+                'cover': commodity.cover,
+                'price': commodity.price,
+                'category': commodity.category.id,
+                'category_name': commodity.category.name,
+                'color_item': color_obj.commodity_class,
+                'shop': commodity.shop.name,
+                'item_index': values.split(':')[0],
+                'num': values.split(':')[1]
+            }
+
+            # 处理颜色分类数据
+            single_data['color_item'] = json.loads(single_data['color_item'])
+            for index, color_item in enumerate(single_data['color_item']):
+                single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
+                single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
+
+            data_list.append(single_data)
 
         result = {
             'code': 1,
