@@ -91,11 +91,21 @@ class ShoppingCartViewset(viewsets.ViewSet):
 
     def update(self, request, pk):
         # 商品id colorItem_index 个数
+        original_item_index = request.data.get('original_item_index')
         item_index = request.data.get('item_index')
         num = request.data.get('num')
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         cache_key = 'user:cart:{}'.format(buyer_id)
-        cache.hset(cache_key, '{}:{}'.format(pk, item_index), num)
+        # 类型不变则直接修改
+        if original_item_index == item_index:
+            cache.hset(cache_key, '{}:{}'.format(pk, item_index), int(num))
+        else:
+            # 若存在修改后key值，则合并num
+            if cache.hexists(cache_key, '{}:{}'.format(pk, item_index)):
+                cache.hincrby(cache_key, '{}:{}'.format(pk, item_index), int(num))
+            else:
+                cache.hset(cache_key, '{}:{}'.format(pk, item_index), int(num))
+            cache.hdel(cache_key, '{}:{}'.format(pk, original_item_index))
 
         result = {
             'code': 1,
