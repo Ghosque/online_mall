@@ -5,6 +5,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from .models import Order, SinglePurchaseOrder
 from common.models import Commodity, CommodityColor, SecondColorSelector
 from merchant.models import MerchantImage
 from common_function.django_redis_cache import Redis
@@ -128,3 +129,28 @@ class ShoppingCartViewset(viewsets.ViewSet):
         }
 
         return Response(result, status=status.HTTP_200_OK)
+
+
+class OrderViewset(viewsets.ViewSet):
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        pass
+
+    def list(self, request):
+        pass
+
+    def retrieve(self, request, pk):
+        pass
+
+
+class SinglePurchaseOrderViewset(viewsets.ViewSet):
+
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        pass
+
+    def retrieve(self, request, pk):
+        pass

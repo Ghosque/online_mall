@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 from django_mysql.models import JSONField, ListTextField
 
@@ -31,19 +33,65 @@ class Order(models.Model):
     def __str__(self):
         return self.order_id
 
+    @classmethod
+    def save_data(cls, data_dict, buyer):
+        order_id = GetId.getOrderId()
+        address = Address.objects.get(pk=data_dict['address'])
+        while cls.objects.filter(order_id=order_id):
+            order_id = GetId.getOrderId()
+
+        order = cls.objects.create(
+            order_id=order_id,
+            info=json.dumps(data_dict['info']),
+            price=data_dict['price'],
+            status=1,
+            buyer=buyer,
+            address=address
+        )
+
+        return order
+
+    @classmethod
+    def get_all_data(cls, buyer):
+        data_list = list()
+        data = cls.objects.filter(status=1, buyer=buyer)
+        for item in data:
+            data_list.append(cls.serialize_data(item))
+
+        return data_list
+
+    @classmethod
+    def get_single_data(cls, id):
+        data = cls.objects.get(id=id)
+
+        return cls.serialize_data(data)
+
+    @classmethod
+    def serialize_data(cls, data):
+        info = json.loads(data.info)
+        address = ''.join(eval(data.address.region.region)) + data.address.region.detail
+
+        data_dict = {
+            'id': data.id,
+            'order_id': data.order_id,
+            'info': info,
+            'price': data.price,
+            'address': address,
+        }
+
+        return data_dict
+
 
 # 单件商品订单
 class SinglePurchaseOrder(models.Model):
     STATUS_ITEMS = (
-        (0, '删除'),
-        (1, '待支付'),
-        (2, '已支付'),
-        (3, '正在出库'),
-        (4, '已出库'),
-        (5, '派送中'),
-        (6, '确认收货'),
-        (7, '待评价'),
-        (8, '已完成'),
+        (1, '待发货'),
+        (2, '正在出库'),
+        (3, '已出库'),
+        (4, '派送中'),
+        (5, '确认收货'),
+        (6, '待评价'),
+        (7, '已完成'),
     )
 
     purchase_id = models.CharField(default=GetId.getOrderId(), max_length=18, verbose_name='单件商品订单号')
