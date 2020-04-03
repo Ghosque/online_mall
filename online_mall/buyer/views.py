@@ -92,6 +92,7 @@ class AddressViewset(viewsets.ViewSet):
 
     def list(self, request):
         buyer_id = request.GET.get('buyer_id')
+        print(buyer_id)
         buyer = Buyer.objects.get(id=buyer_id)
         address_list = Address.get_data(buyer)
         default_id = cache.get(self.cache_key_model.format(buyer_id))
@@ -108,7 +109,7 @@ class AddressViewset(viewsets.ViewSet):
     def retrieve(self, request, pk):
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         default_id = cache.get(self.cache_key_model.format(buyer_id))
-        if default_id == int(pk):
+        if default_id == pk:
             isDefault = True
         else:
             isDefault = False
@@ -131,15 +132,14 @@ class AddressViewset(viewsets.ViewSet):
             'name': request.data['name'],
             'phone': request.data['phone'],
             'region': request.data['region'],
-            'detail': request.data['detail'],
-            'isDefault': request.data['isDefault']
+            'detail': request.data['detail']
         }
         code = Address.update_data(data)
 
         if code:
             buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
             default_id = cache.get(self.cache_key_model.format(buyer_id))
-            if default_id == int(pk) and not request.data['isDefault']:
+            if default_id == pk and not request.data['isDefault']:
                 cache.delete(self.cache_key_model.format(buyer_id))
             elif request.data['isDefault']:
                 cache.set(self.cache_key_model.format(buyer_id), int(pk), settings.APPLET_REFRESH_SECONDS)
@@ -160,7 +160,7 @@ class AddressViewset(viewsets.ViewSet):
 
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         default_id = cache.get(self.cache_key_model.format(buyer_id))
-        if default_id == int(pk):
+        if default_id == pk:
             cache.delete(self.cache_key_model.format(buyer_id))
 
         result = {

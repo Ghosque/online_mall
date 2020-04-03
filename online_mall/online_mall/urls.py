@@ -48,6 +48,7 @@ router.register(r'buyer', b_views.BuyerViewset, base_name='buyer')
 router.register(r'address', b_views.AddressViewset, base_name='address')
 
 router.register(r'cart', p_views.ShoppingCartViewset, base_name='shopping_cart')
+router.register(r'order', p_views.OrderViewset, base_name='order')
 
 
 urlpatterns = [

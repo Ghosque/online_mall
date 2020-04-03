@@ -108,7 +108,6 @@ class Address(models.Model):
             address.phone = data_dict['phone']
             address.region = data_dict['region']
             address.detail = data_dict['detail']
-            address.isDefault = data_dict['isDefault']
             address.save()
         except:
             return 0

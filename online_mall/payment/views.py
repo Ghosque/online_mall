@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Order, SinglePurchaseOrder
 from common.models import Commodity, CommodityColor, SecondColorSelector
 from merchant.models import MerchantImage
+from buyer.models import Buyer
 from common_function.django_redis_cache import Redis
 from common_function.get_buyer_id import get_buyer_id
 
@@ -138,7 +139,17 @@ class OrderViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request):
-        pass
+        order_data = request.data.get('order_data')
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        buyer = Buyer.objects.get(pk=buyer_id)
+
+        result = {
+            'code': 1,
+            'data': None,
+            'message': '订单生成成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def list(self, request):
         pass
