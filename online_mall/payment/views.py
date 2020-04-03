@@ -117,10 +117,12 @@ class ShoppingCartViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk):
-        item_index = request.data.get('item_index')
+        delete_list = request.data.get('delete_list')
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        print(delete_list)
         cache_key = 'user:cart:{}'.format(buyer_id)
-        cache.hdel(cache_key, '{}:{}'.format(pk, item_index))
+        for item in delete_list:
+            cache.hdel(cache_key, item)
 
         result = {
             'code': 1,
