@@ -92,7 +92,6 @@ class AddressViewset(viewsets.ViewSet):
 
     def list(self, request):
         buyer_id = request.GET.get('buyer_id')
-        print(buyer_id)
         buyer = Buyer.objects.get(id=buyer_id)
         address_list = Address.get_data(buyer)
         default_id = cache.get(self.cache_key_model.format(buyer_id))
@@ -126,7 +125,6 @@ class AddressViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def update(self, request, pk):
-        print(request.data)
         data = {
             'id': pk,
             'name': request.data['name'],
