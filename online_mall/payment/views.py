@@ -81,7 +81,7 @@ class ShoppingCartViewset(viewsets.ViewSet):
                     single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
                     single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
 
-                data_list.insert(0, single_data)
+                data_list.append(single_data)
 
             result = {
                 'code': 1,
