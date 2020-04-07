@@ -424,8 +424,10 @@ class BuyerCommodityViewset(viewsets.ViewSet):
                 commodity['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
             # 处理属性数据
             commodity['attribute_item'] = json.loads(commodity['attribute_item'])
+            temp_dict = dict()
             for index, attribute_item in enumerate(commodity['attribute_item']):
-                commodity['attribute_item'][index] = {attribute_item['attribute']: attribute_item['content']}
+                temp_dict[attribute_item['attribute']] = attribute_item['content']
+            commodity['attribute_item'] = temp_dict
             # 获取评价数据
             all_comments, good_rate = CommodityComment.get_data(commodity['id'])
             commodity_list[i]['comment_count'] = len(all_comments)
@@ -487,8 +489,10 @@ class BuyerCommodityViewset(viewsets.ViewSet):
             single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
         # 处理属性数据
         single_data['attribute_item'] = json.loads(single_data['attribute_item'])
+        temp_dict = dict()
         for index, attribute_item in enumerate(single_data['attribute_item']):
-            single_data['attribute_item'][index] = {attribute_item['attribute']: attribute_item['content']}
+            temp_dict[attribute_item['attribute']] = attribute_item['content']
+        single_data['attribute_item'] = temp_dict
 
         result = {
             'code': 1,
