@@ -35,6 +35,7 @@ class Order(models.Model):
 
     @classmethod
     def save_data(cls, data_dict, buyer):
+        # 商品id item_index num
         order_id = GetId.getOrderId()
         address = Address.objects.get(pk=data_dict['address'])
         while cls.objects.filter(order_id=order_id):
