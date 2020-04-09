@@ -17,6 +17,13 @@ def get_today_timestamp():
     return today_timestamp
 
 
+def get_after_n_minutes_timestamp(minutes):
+    today_after_n_minutes = datetime.datetime.now() + datetime.timedelta(minutes=minutes)
+    today_after_n_minutes_timestamp = today_after_n_minutes.timestamp()
+
+    return today_after_n_minutes_timestamp
+
+
 if __name__ == '__main__':
     a = get_after_30_days_timestamp()
     print(a, type(a))

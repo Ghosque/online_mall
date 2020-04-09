@@ -11,6 +11,7 @@ from merchant.models import MerchantImage
 from buyer.models import Buyer
 from common_function.django_redis_cache import Redis
 from common_function.get_buyer_id import get_buyer_id
+from common_function.get_timestamp import get_after_n_minutes_timestamp
 
 cache = Redis('default')
 
@@ -137,15 +138,27 @@ class ShoppingCartViewset(viewsets.ViewSet):
 class OrderViewset(viewsets.ViewSet):
 
     permission_classes = (IsAuthenticated,)
+    cache_key_model = 'user:order:{}'
 
     def create(self, request):
-        order_data = request.data.get('order_data')
+        order_data = {
+            'info': request.data.get('info'),
+            'price': request.data.get('price'),
+            'address': request.data.get('address_id')
+        }
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         buyer = Buyer.objects.get(pk=buyer_id)
+        # MySQL保存订单数据
+        order = Order.save_data(order_data, buyer)
+        # Redis保存订单号的过期时间
+        expiration = get_after_n_minutes_timestamp(15)
+        cache.hset(self.cache_key_model.format(buyer_id), order.order_id, expiration)
 
         result = {
             'code': 1,
-            'data': None,
+            'data': {
+                'order_id': order.id
+            },
             'message': '订单生成成功'
         }
 
@@ -155,7 +168,50 @@ class OrderViewset(viewsets.ViewSet):
         pass
 
     def retrieve(self, request, pk):
-        pass
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        order_data = Order.get_single_data(pk)
+        info_list = list()
+        for item in order_data['info']:
+            id, item_index, num = [int(i) for i in item.split(':')]
+            commodity = Commodity.get_appoint_commodity(id)
+            # 获取颜色分类
+            color_obj = CommodityColor.get_appoint_color(commodity)
+
+            single_data = {
+                'id': commodity.id,
+                'name': commodity.name,
+                'title': commodity.title,
+                'title_desc': commodity.title_desc,
+                'cover': commodity.cover,
+                'price': commodity.price,
+                'category': commodity.category.id,
+                'category_name': commodity.category.name,
+                'color_item': color_obj.commodity_class,
+                'shop': commodity.shop.name,
+                'item_index': item_index,
+                'num': num
+            }
+
+            # 处理颜色分类数据
+            single_data['color_item'] = json.loads(single_data['color_item'])
+            for index, color_item in enumerate(single_data['color_item']):
+                single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
+                single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
+
+            info_list.append(single_data)
+
+        order_data['info'] = info_list
+
+        expiration = cache.hget(self.cache_key_model.format(buyer_id), order_data['order_id'])
+        order_data['expiration'] = expiration
+
+        result = {
+            'code': 1,
+            'data': order_data,
+            'message': '订单获取成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class SinglePurchaseOrderViewset(viewsets.ViewSet):

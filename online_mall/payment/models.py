@@ -43,7 +43,7 @@ class Order(models.Model):
 
         order = cls.objects.create(
             order_id=order_id,
-            info=json.dumps(data_dict['info']),
+            info=data_dict['info'],
             price=data_dict['price'],
             status=1,
             buyer=buyer,
@@ -69,13 +69,12 @@ class Order(models.Model):
 
     @classmethod
     def serialize_data(cls, data):
-        info = json.loads(data.info)
-        address = ''.join(eval(data.address.region.region)) + data.address.region.detail
+        address = ''.join(eval(data.address.region)) + data.address.detail
 
         data_dict = {
             'id': data.id,
             'order_id': data.order_id,
-            'info': info,
+            'info': data.info,
             'price': data.price,
             'address': address,
         }
