@@ -218,6 +218,9 @@ class SinglePurchaseOrderViewset(viewsets.ViewSet):
 
     permission_classes = (IsAuthenticated,)
 
+    def create(self, request):
+        pass
+
     def list(self, request):
         pass
 
