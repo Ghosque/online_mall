@@ -76,7 +76,12 @@ class Order(models.Model):
             'order_id': data.order_id,
             'info': data.info,
             'price': data.price,
-            'address': address,
+            'address': {
+                'id': data.address.id,
+                'name': data.address.name,
+                'address': address,
+                'phone': data.address.phone,
+            },
         }
 
         return data_dict
