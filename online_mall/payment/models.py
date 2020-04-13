@@ -11,7 +11,7 @@ from common_function.get_id import GetId
 # 订单
 class Order(models.Model):
     STATUS_ITEMS = (
-        (0, '删除'),
+        (0, '已取消'),
         (1, '待支付'),
         (2, '已支付'),
     )

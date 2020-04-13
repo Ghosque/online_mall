@@ -25,12 +25,14 @@ class ShoppingCartViewset(viewsets.ViewSet):
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         id = request.data.get('id')
         item_index = request.data.get('item_index')
-        num = request.data.get('num')
+        item_data = request.data.get('item_data')
         cache_key = 'user:cart:{}'.format(buyer_id)
         if cache.hexists(cache_key, '{}:{}'.format(id, item_index)):
-            cache.hincrby(cache_key, '{}:{}'.format(id, item_index), num)
+            data = json.loads(cache.hget(cache_key, '{}:{}'.format(id, item_index)))
+            item_data['num'] += data['num']
+            cache.hset(cache_key, '{}:{}'.format(id, item_index), json.dumps(item_data))
         else:
-            cache.hset(cache_key, '{}:{}'.format(id, item_index), num)
+            cache.hset(cache_key, '{}:{}'.format(id, item_index), json.dumps(item_data))
 
         result = {
             'code': 1,
@@ -53,36 +55,11 @@ class ShoppingCartViewset(viewsets.ViewSet):
                 'message': '购物车数据获取成功'
             }
         else:
+            field_list = cache.hkeys(cache_key)
             data_list = list()
-            data_dict = cache.hgetall(cache_key)
-            for key, value in data_dict.items():
-                id, item_index  = key.split(':')
-                commodity = Commodity.get_appoint_commodity(int(id))
-                # 获取颜色分类
-                color_obj = CommodityColor.get_appoint_color(commodity)
-
-                single_data = {
-                    'id': commodity.id,
-                    'name': commodity.name,
-                    'title': commodity.title,
-                    'title_desc': commodity.title_desc,
-                    'cover': commodity.cover,
-                    'price': commodity.price,
-                    'category': commodity.category.id,
-                    'category_name': commodity.category.name,
-                    'color_item': color_obj.commodity_class,
-                    'shop': commodity.shop.name,
-                    'item_index': int(item_index),
-                    'num': int(value)
-                }
-
-                # 处理颜色分类数据
-                single_data['color_item'] = json.loads(single_data['color_item'])
-                for index, color_item in enumerate(single_data['color_item']):
-                    single_data['color_item'][index]['color'] = SecondColorSelector.get_point_color(color_item['color'][1])
-                    single_data['color_item'][index]['img'] = MerchantImage.get_image_img(color_item['img'])
-
-                data_list.append(single_data)
+            for field in field_list:
+                data = json.loads(cache.hget(cache_key, field))
+                data_list.append(data)
 
             result = {
                 'code': 1,
@@ -101,13 +78,20 @@ class ShoppingCartViewset(viewsets.ViewSet):
         cache_key = 'user:cart:{}'.format(buyer_id)
         # 类型不变则直接修改
         if original_item_index == item_index:
-            cache.hset(cache_key, '{}:{}'.format(pk, item_index), int(num))
+            data = json.loads(cache.hget(cache_key, '{}:{}'.format(pk, item_index)))
+            data['num'] = int(num)
+            cache.hset(cache_key, '{}:{}'.format(pk, item_index), json.dumps(data))
         else:
-            # 若存在修改后key值，则合并num
+            # 若key值修改后存在，则合并num
             if cache.hexists(cache_key, '{}:{}'.format(pk, item_index)):
-                cache.hincrby(cache_key, '{}:{}'.format(pk, item_index), int(num))
+                original_data = json.loads(cache.hget(cache_key, '{}:{}'.format(pk, original_item_index)))
+                data = json.loads(cache.hget(cache_key, '{}:{}'.format(pk, item_index)))
+                data['num'] += original_data['num']
+                cache.hset(cache_key, '{}:{}'.format(pk, item_index), json.dumps(data))
             else:
-                cache.hset(cache_key, '{}:{}'.format(pk, item_index), int(num))
+                data = json.loads(cache.hget(cache_key, '{}:{}'.format(pk, original_item_index)))
+                data['item_index'] = item_index
+                cache.hset(cache_key, '{}:{}'.format(pk, item_index), json.dumps(data))
             cache.hdel(cache_key, '{}:{}'.format(pk, original_item_index))
 
         result = {
@@ -121,7 +105,6 @@ class ShoppingCartViewset(viewsets.ViewSet):
     def destroy(self, request, pk):
         delete_list = request.data.get('delete_list')
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
-        print(delete_list)
         cache_key = 'user:cart:{}'.format(buyer_id)
         for item in delete_list:
             cache.hdel(cache_key, item)
@@ -219,7 +202,7 @@ class SinglePurchaseOrderViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request):
-        pass
+        order_data = request.data.get('order_data')
 
     def list(self, request):
         pass
