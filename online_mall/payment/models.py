@@ -1,5 +1,3 @@
-import json
-
 from django.db import models
 from django_mysql.models import JSONField, ListTextField
 
