@@ -147,11 +147,48 @@ class OrderViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def list(self, request):
-        pass
+        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
+        buyer = Buyer.objects.get(pk=buyer_id)
+
+        canceled_data = Order.get_canceled_data(buyer)
+        to_be_paid_data = Order.get_to_be_paid_data(buyer)
+        to_be_received_data_list, completed_data_list = SinglePurchaseOrder.get_all_single_data(buyer)
+
+        all_data_list = canceled_data + to_be_paid_data + to_be_received_data_list + completed_data_list
+        all_data_list = sorted(all_data_list, key=lambda x:x['create_time'], reverse=True)
+
+        for index, item in enumerate(all_data_list):
+            all_data_list[index] = self.serialize_order_data(item)
+
+        result = {
+            'code': 1,
+            'data': {
+                'all_data': all_data_list,
+                'canceled_data': canceled_data,
+                'to_be_paid_data': to_be_paid_data,
+                'to_be_received_data': to_be_received_data_list,
+                'completed_data': completed_data_list
+            },
+            'message': '订单获取成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk):
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         order_data = Order.get_single_data(pk)
+        order_data = self.serialize_order_data(order_data)
+
+        result = {
+            'code': 1,
+            'data': order_data,
+            'message': '订单获取成功'
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def serialize_order_data(order_data):
         info_list = list()
         for item in order_data['info']:
             id, item_index, num = [int(i) for i in item.split(':')]
@@ -184,13 +221,7 @@ class OrderViewset(viewsets.ViewSet):
 
         order_data['info'] = info_list
 
-        result = {
-            'code': 1,
-            'data': order_data,
-            'message': '订单获取成功'
-        }
-
-        return Response(result, status=status.HTTP_200_OK)
+        return order_data
 
 
 class SinglePurchaseOrderViewset(viewsets.ViewSet):

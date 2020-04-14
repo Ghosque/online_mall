@@ -19,8 +19,8 @@ class Order(models.Model):
 
     order_id = models.CharField(default=GetId.getOrderId(), max_length=15, verbose_name='订单ID')
     info = JSONField(verbose_name='订单内容')
-    price = models.IntegerField(verbose_name='总价格')
     status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    price = models.IntegerField(verbose_name='总价格')
     expiration = models.CharField(max_length=20, verbose_name='过期时间')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
@@ -31,6 +31,7 @@ class Order(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = '订单'
+        ordering = ('-create_time',)
 
     def __str__(self):
         return self.order_id
@@ -56,14 +57,37 @@ class Order(models.Model):
         return order
 
     @classmethod
-    def get_all_data(cls, buyer):
+    def get_canceled_data(cls, buyer):
+        data_list = list()
+        data = cls.objects.filter(status__in=[0, 1], buyer=buyer)
+        print('===', data)
+        for item in data:
+            if item.status == 0:
+                data_list.append(cls.serialize_data(item))
+            else:
+                now_timestamp = get_now_timestamp()
+                if float(item.expiration) <= now_timestamp:
+                    data_list.append(cls.serialize_data(item))
+
+        return data_list
+
+    @classmethod
+    def get_to_be_paid_data(cls, buyer):
         data_list = list()
         data = cls.objects.filter(status=1, buyer=buyer)
         for item in data:
-            temp_data = cls.serialize_data(item)
             now_timestamp = get_now_timestamp()
-            if temp_data['expiration'] > now_timestamp:
-                data_list.append(temp_data)
+            if float(item.expiration) > now_timestamp:
+                data_list.append(cls.serialize_data(item))
+
+        return data_list
+
+    @classmethod
+    def get_paid_data(cls, buyer):
+        data_list = list()
+        data = cls.objects.filter(status=2, buyer=buyer)
+        for item in data:
+            data_list.append(item)
 
         return data_list
 
@@ -73,8 +97,8 @@ class Order(models.Model):
 
         return cls.serialize_data(data)
 
-    @classmethod
-    def serialize_data(cls, data):
+    @staticmethod
+    def serialize_data(data):
         address = ''.join(eval(data.address.region)) + data.address.detail
 
         data_dict = {
@@ -89,6 +113,8 @@ class Order(models.Model):
                 'address': address,
                 'phone': data.address.phone,
             },
+            'create_time': data.create_time,
+            'update_time': data.update_time
         }
 
         return data_dict
@@ -107,9 +133,8 @@ class SinglePurchaseOrder(models.Model):
     )
 
     purchase_id = models.CharField(default=GetId.getOrderId(), max_length=18, verbose_name='单件商品订单号')
+    info = JSONField(verbose_name='商品信息')
     status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
-    item_index = models.SmallIntegerField(verbose_name='选项索引')
-    num = models.SmallIntegerField(verbose_name='数量')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -119,9 +144,47 @@ class SinglePurchaseOrder(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = '单件商品订单'
+        ordering = ('-create_time',)
 
     def __str__(self):
         return self.purchase_id
+
+    @classmethod
+    def get_all_single_data(cls, buyer):
+        to_be_received_data_list = list()
+        completed_data_list = list()
+        order_data = Order.get_paid_data(buyer)
+        for order in order_data:
+            temp_data = cls.objects.get(order=order)
+            temp_data = cls.serialize_data(temp_data)
+            if temp_data['status'] == 7:
+                completed_data_list.append(temp_data)
+            else:
+                to_be_received_data_list.append(temp_data)
+
+        return to_be_received_data_list, completed_data_list
+
+    @staticmethod
+    def serialize_data(data):
+        address = ''.join(eval(data.order.address.region)) + data.order.address.detail
+
+        data_dict = {
+            'id': data.id,
+            'purchase_id': data.purchase_id,
+            'status': data.status,
+            'info': data.info,
+            'price': data.info['price'],
+            'address': {
+                'id': data.order.address.id,
+                'name': data.order.address.name,
+                'address': address,
+                'phone': data.order.address.phone
+            },
+            'create_time': data.create_time,
+            'update_time': data.update_time
+        }
+
+        return data_dict
 
 
 # 买家评论已收货订单的商品

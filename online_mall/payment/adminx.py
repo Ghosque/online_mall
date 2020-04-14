@@ -5,7 +5,7 @@ from .models import Order, SinglePurchaseOrder, CommodityComment, SecondComment,
 
 @xadmin.sites.register(Order)
 class OrderAdmin:
-    list_display = ('id', 'order_id', 'info', 'status', 'expiration', 'buyer', 'address', 'create_time', 'update_time',)
+    list_display = ('id', 'order_id', 'info', 'status', 'price', 'expiration', 'buyer', 'address', 'create_time', 'update_time',)
     list_filter = ('status', 'buyer',)
     search_fields = ('order_id', 'buyer',)
     ordering = ('id',)
@@ -14,7 +14,7 @@ class OrderAdmin:
 
 @xadmin.sites.register(SinglePurchaseOrder)
 class SinglePurchaseOrderAdmin:
-    list_display = ('id', 'purchase_id', 'status', 'item_index', 'num', 'commodity', 'order', 'create_time', 'update_time',)
+    list_display = ('id', 'purchase_id', 'info', 'status', 'commodity', 'order', 'create_time', 'update_time',)
     list_filter = ('status', 'commodity', 'order',)
     search_fields = ('purchase_id', 'commodity', 'order',)
     ordering = ('id',)
