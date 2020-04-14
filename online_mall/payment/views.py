@@ -124,18 +124,17 @@ class OrderViewset(viewsets.ViewSet):
     cache_key_model = 'user:order:{}'
 
     def create(self, request):
+        expiration = get_after_n_minutes_timestamp(15)
         order_data = {
             'info': request.data.get('info'),
             'price': request.data.get('price'),
-            'address': request.data.get('address_id')
+            'address': request.data.get('address_id'),
+            'expiration': expiration
         }
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         buyer = Buyer.objects.get(pk=buyer_id)
-        # MySQL保存订单数据
+        # 保存订单数据
         order = Order.save_data(order_data, buyer)
-        # Redis保存订单号的过期时间
-        expiration = get_after_n_minutes_timestamp(15)
-        cache.hset(self.cache_key_model.format(buyer_id), order.order_id, expiration)
 
         result = {
             'code': 1,
@@ -184,9 +183,6 @@ class OrderViewset(viewsets.ViewSet):
             info_list.append(single_data)
 
         order_data['info'] = info_list
-
-        expiration = cache.hget(self.cache_key_model.format(buyer_id), order_data['order_id'])
-        order_data['expiration'] = expiration
 
         result = {
             'code': 1,

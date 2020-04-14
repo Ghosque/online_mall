@@ -6,6 +6,7 @@ from django_mysql.models import JSONField, ListTextField
 from buyer.models import Buyer, Address
 from common.models import Commodity
 from common_function.get_id import GetId
+from common_function.get_timestamp import get_now_timestamp
 
 
 # 订单
@@ -20,6 +21,7 @@ class Order(models.Model):
     info = JSONField(verbose_name='订单内容')
     price = models.IntegerField(verbose_name='总价格')
     status = models.SmallIntegerField(default=1, choices=STATUS_ITEMS, verbose_name='状态')
+    expiration = models.CharField(max_length=20, verbose_name='过期时间')
 
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
@@ -46,6 +48,7 @@ class Order(models.Model):
             info=data_dict['info'],
             price=data_dict['price'],
             status=1,
+            expiration=data_dict['expiration'],
             buyer=buyer,
             address=address
         )
@@ -57,7 +60,10 @@ class Order(models.Model):
         data_list = list()
         data = cls.objects.filter(status=1, buyer=buyer)
         for item in data:
-            data_list.append(cls.serialize_data(item))
+            temp_data = cls.serialize_data(item)
+            now_timestamp = get_now_timestamp()
+            if temp_data['expiration'] > now_timestamp:
+                data_list.append(temp_data)
 
         return data_list
 
@@ -76,6 +82,7 @@ class Order(models.Model):
             'order_id': data.order_id,
             'info': data.info,
             'price': data.price,
+            'expiration': data.expiration,
             'address': {
                 'id': data.address.id,
                 'name': data.address.name,
