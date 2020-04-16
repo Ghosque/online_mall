@@ -175,7 +175,6 @@ class OrderViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk):
-        buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         order_data = Order.get_single_data(pk)
         order_data = self.serialize_order_data(order_data)
 
@@ -230,6 +229,7 @@ class SinglePurchaseOrderViewset(viewsets.ViewSet):
 
     def create(self, request):
         order_data = request.data.get('order_data')
+        SinglePurchaseOrder.save_data(order_data)
 
     def list(self, request):
         pass

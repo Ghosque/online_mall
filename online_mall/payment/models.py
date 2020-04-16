@@ -37,8 +37,8 @@ class Order(models.Model):
     @classmethod
     def save_data(cls, data_dict, buyer):
         # 商品id item_index num
-        order_id = GetId.getOrderId()
         address = Address.objects.get(pk=data_dict['address'])
+        order_id = GetId.getOrderId()
         while cls.objects.filter(order_id=order_id):
             order_id = GetId.getOrderId()
 
@@ -117,6 +117,14 @@ class Order(models.Model):
 
         return data_dict
 
+    @classmethod
+    def complete_order(cls, order_id):
+        order = cls.objects.get(order_id=order_id)
+        order.status = 2
+        order.save()
+
+        return order
+
 
 # 单件商品订单
 class SinglePurchaseOrder(models.Model):
@@ -146,6 +154,15 @@ class SinglePurchaseOrder(models.Model):
 
     def __str__(self):
         return self.purchase_id
+
+    @classmethod
+    def save_data(cls, order_data):
+        order_id = GetId.getOrderId()
+        while cls.objects.filter(order_id=order_id):
+            order_id = GetId.getOrderId()
+        info = order_data['info']
+        for item in info:
+            print(item)
 
     @classmethod
     def get_all_single_data(cls, buyer):
