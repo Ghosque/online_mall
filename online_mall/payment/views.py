@@ -230,9 +230,3 @@ class SinglePurchaseOrderViewset(viewsets.ViewSet):
     def create(self, request):
         order_data = request.data.get('order_data')
         SinglePurchaseOrder.save_data(order_data)
-
-    def list(self, request):
-        pass
-
-    def retrieve(self, request, pk):
-        pass
