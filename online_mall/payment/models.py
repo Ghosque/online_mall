@@ -76,7 +76,7 @@ class Order(models.Model):
         for item in data:
             now_timestamp = get_now_timestamp()
             if float(item.expiration) > now_timestamp:
-                data_list.append(cls.serialize_data(item), status)
+                data_list.append(cls.serialize_data(item, status))
 
         return data_list
 
