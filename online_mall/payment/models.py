@@ -55,28 +55,28 @@ class Order(models.Model):
         return order
 
     @classmethod
-    def get_canceled_data(cls, buyer):
+    def get_canceled_data(cls, buyer, status):
         data_list = list()
         data = cls.objects.filter(status__in=[0, 1], buyer=buyer)
         print('===', data)
         for item in data:
-            if item.status == 0:
+            if item.status == status:
                 data_list.append(cls.serialize_data(item))
             else:
                 now_timestamp = get_now_timestamp()
                 if float(item.expiration) <= now_timestamp:
-                    data_list.append(cls.serialize_data(item))
+                    data_list.append(cls.serialize_data(item, status))
 
         return data_list
 
     @classmethod
-    def get_to_be_paid_data(cls, buyer):
+    def get_to_be_paid_data(cls, buyer, status):
         data_list = list()
         data = cls.objects.filter(status=1, buyer=buyer)
         for item in data:
             now_timestamp = get_now_timestamp()
             if float(item.expiration) > now_timestamp:
-                data_list.append(cls.serialize_data(item))
+                data_list.append(cls.serialize_data(item), status)
 
         return data_list
 
@@ -90,18 +90,22 @@ class Order(models.Model):
         return data_list
 
     @classmethod
-    def get_single_data(cls, id):
-        data = cls.objects.get(id=id)
+    def get_single_data(cls, order_id, status):
+        data = cls.serialize_data(cls.objects.get(order_id=order_id), status)
 
-        return cls.serialize_data(data)
+        return data
 
     @staticmethod
-    def serialize_data(data):
-        address = ''.join(eval(data.address.region)) + data.address.detail
+    def serialize_data(data, status, has_address=False):
+        if not has_address:
+            address = ''.join(eval(data.address.region)) + data.address.detail
+        else:
+            address = data.address.address
 
         data_dict = {
             'id': data.id,
             'order_id': data.order_id,
+            'status': status,
             'info': data.info,
             'price': data.price,
             'expiration': data.expiration,
@@ -112,7 +116,8 @@ class Order(models.Model):
                 'phone': data.address.phone,
             },
             'create_time': data.create_time,
-            'update_time': data.update_time
+            'update_time': data.update_time,
+            'is_single': False
         }
 
         return data_dict
@@ -179,6 +184,12 @@ class SinglePurchaseOrder(models.Model):
 
         return to_be_received_data_list, completed_data_list
 
+    @classmethod
+    def get_single_data(cls, purchase_id):
+        data = cls.serialize_data(cls.objects.get(purchase_id=purchase_id))
+
+        return data
+
     @staticmethod
     def serialize_data(data):
         address = ''.join(eval(data.order.address.region)) + data.order.address.detail
@@ -196,7 +207,8 @@ class SinglePurchaseOrder(models.Model):
                 'phone': data.order.address.phone
             },
             'create_time': data.create_time,
-            'update_time': data.update_time
+            'update_time': data.update_time,
+            'is_single': True
         }
 
         return data_dict

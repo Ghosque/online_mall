@@ -150,8 +150,8 @@ class OrderViewset(viewsets.ViewSet):
         buyer_id = get_buyer_id(request.environ.get('HTTP_AUTHORIZATION'))
         buyer = Buyer.objects.get(pk=buyer_id)
 
-        canceled_data = Order.get_canceled_data(buyer)
-        to_be_paid_data = Order.get_to_be_paid_data(buyer)
+        canceled_data = Order.get_canceled_data(buyer, 0)
+        to_be_paid_data = Order.get_to_be_paid_data(buyer, 1)
         to_be_received_data_list, completed_data_list = SinglePurchaseOrder.get_all_single_data(buyer)
 
         all_data_list = canceled_data + to_be_paid_data + to_be_received_data_list + completed_data_list
@@ -175,7 +175,12 @@ class OrderViewset(viewsets.ViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk):
-        order_data = Order.get_single_data(pk)
+        is_single = request.GET.get('isSingle')
+        order_status = request.GET.get('status')
+        if is_single:
+            order_data = Order.get_single_data(pk, order_status)
+        else:
+            order_data = SinglePurchaseOrder.get_single_data(pk)
         order_data = self.serialize_order_data(order_data)
 
         result = {
