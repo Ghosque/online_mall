@@ -36,21 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'common',
-    'merchant',
-    'buyer',
-    'payment',
-    'xadmin',
-    'crispy_forms',
-    'reversion',
-    'import_export',
-    'rest_framework',
-    'corsheaders',
-
-    'werkzeug_debugger_runserver',
-    'django_extensions',
+    'django.contrib.staticfiles'
 ]
 
 MIDDLEWARE = [

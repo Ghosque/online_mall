@@ -1,12 +1,29 @@
-import os
 import re
 import oss2
+from datetime import timedelta
 
 from .base import *
 
 
 ALLOWED_HOSTS = ['*']
 # DEBUG = False
+
+
+INSTALLED_APPS += [
+    'common',
+    'merchant',
+    'buyer',
+    'payment',
+    'xadmin',
+    'crispy_forms',
+    'reversion',
+    'import_export',
+    'rest_framework',
+    'corsheaders',
+
+    'werkzeug_debugger_runserver',
+    'django_extensions',
+]
 
 
 DATABASES = {
@@ -36,7 +53,6 @@ REFRESH_SECONDS = 7 * 24 * 60 * 60
 APPLET_REFRESH_SECONDS = 100 * 365 * 24 * 60 * 60  # 小程序token为无限时
 
 # 自定义token过期时间
-from _datetime import timedelta
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(seconds=EXPIRE_SECONDS),  # 过期时间：两小时
     'JWT_AUTH_HEADER_PREFIX': 'JWT',  # 设置请求头中的前缀
