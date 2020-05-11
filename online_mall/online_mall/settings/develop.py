@@ -1,3 +1,4 @@
+import os
 import re
 import oss2
 
@@ -103,8 +104,8 @@ DISPLAY_IMAGE = 1
 COLOR_IMAGE = 2
 
 # Ali OSS
-ACCESS_KEY_ID = "LTAI4FwfrskcFinuqtNADg8Y"
-ACCESS_KEY_SECRET = "LrI2TbPEl467zC8qSgDpA87qIpDzsA"
+ACCESS_KEY_ID = os.environ.get('ACCESS_KEY_ID')
+ACCESS_KEY_SECRET = os.environ.get('ACCESS_KEY_SECRET')
 END_POINT = "http://oss-cn-shenzhen.aliyuncs.com"
 BUCKET_NAME = "ghosque-online-mall"
 BUCKET_ACL_TYPE = "private"
