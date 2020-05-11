@@ -2,6 +2,7 @@ import json
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.html import format_html
 
 
 # 买家
@@ -24,6 +25,12 @@ class Buyer(models.Model):
     update_time = models.DateTimeField(auto_now=True, editable=False, verbose_name='修改时间')
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User', related_name='buyer')
+
+    def avatar_data(self):
+        return format_html(
+            '<img src="{}" style="width:40px;height:40px;" />'.format(self.avatar)
+        )
+    avatar_data.short_description = '头像'
 
     class Meta:
         verbose_name = verbose_name_plural = '买家'

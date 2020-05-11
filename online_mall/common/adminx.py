@@ -33,7 +33,7 @@ class SecondColorSelectorAdmin:
 
 @xadmin.sites.register(Commodity)
 class CommodityAdmin:
-    list_display = ('id', 'commodity_id', 'name', 'title', 'title_desc', 'cover', 'display_images', 'status', 'inventory', 'price', 'category', 'shop', 'create_time', 'update_time',)
+    list_display = ('id', 'commodity_id', 'name', 'title', 'title_desc', 'cover_data', 'display_images', 'status', 'inventory', 'price', 'category', 'shop', 'create_time', 'update_time',)
     list_filter = ('status',)
     search_fields = ('name', 'category', 'shop',)
     ordering = ('id',)

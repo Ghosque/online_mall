@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils.html import format_html
 from django_mysql.models import ListTextField
 
 from common_function.get_id import GetId
@@ -54,6 +55,12 @@ class Commodity(models.Model):
 
     category = models.ForeignKey(ThirdCategory, on_delete=models.CASCADE, verbose_name='类别')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name='商店')
+
+    def cover_data(self):
+        return format_html(
+            '<img src="{}" style="width:40px;height:40px;" />'.format(self.cover)
+        )
+    cover_data.short_description = '封面'
 
     class Meta:
         verbose_name = verbose_name_plural = '商品'
