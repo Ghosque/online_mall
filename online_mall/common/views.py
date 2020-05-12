@@ -1,8 +1,10 @@
 import os
+import re
 import json
 import base64
 import random
-import re
+import string
+from random import choice
 
 from django.conf import settings
 from django.db import transaction
@@ -11,10 +13,6 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.utils import jwt_decode_handler
-
-from random import choice
-import string
-
 
 from .models import SecondColorSelector, Commodity, CommodityColor, Specification, CardTicket, CommodityComment
 from .serializers import TokenVerifySerializer

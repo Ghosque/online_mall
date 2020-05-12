@@ -55,10 +55,17 @@ class Order(models.Model):
         return order
 
     @classmethod
+    def handle_unpaid_data(cls, now_timestamp):
+        data_list = cls.objects.filter(status=1)
+        for item in data_list:
+            if now_timestamp > float(item.expiration):
+                item.status = 0
+                item.save()
+
+    @classmethod
     def get_canceled_data(cls, buyer, status):
         data_list = list()
         data = cls.objects.filter(status__in=[0, 1], buyer=buyer)
-        print('===', data)
         for item in data:
             if item.status == status:
                 data_list.append(cls.serialize_data(item))

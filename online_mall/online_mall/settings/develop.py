@@ -4,12 +4,13 @@ from datetime import timedelta
 
 from .base import *
 
-
 ALLOWED_HOSTS = ['*']
 # DEBUG = False
 
 
 INSTALLED_APPS += [
+    'django_crontab',
+
     'common',
     'merchant',
     'buyer',
@@ -24,7 +25,6 @@ INSTALLED_APPS += [
     'werkzeug_debugger_runserver',
     'django_extensions',
 ]
-
 
 DATABASES = {
     'default': {
@@ -58,7 +58,6 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',  # 设置请求头中的前缀
     'JWT_ALLOW_REFRESH': True,
 }
-
 
 CACHES = {
     'default': {
@@ -135,3 +134,13 @@ OSS_BUCKET = oss2.Bucket(OSS_AUTH, OSS_ENDPOINT, BUCKET_NAME)
 
 # 用户足迹限制30天
 TRACE_TIME = 60 * 60 * 24 * 30
+
+# 定时任务
+CRONJOBS = (
+    # 每分钟执行一次定时函数
+    ('*/1 * * * *', 'payment.tasks.handle_unpaid_orders'),
+    # 定时函数输出的内容到指定文件（如果该路径或文件不存在将会自动创建）
+    # ('0  0 1 * *', 'app名.定时函数所在文件名.定时函数名', '>输出文件路径和名称'),
+    # 在12点10分执行命令
+    # ('10 12 * * *', 'django.core.management.call_command', ['要执行的命令']),
+)

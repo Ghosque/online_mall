@@ -1,7 +1,7 @@
 from .develop import *
 
 
-log_path = '/home/ghosque/django/online_mall/online_mall/log'
+log_path = os.path.join(os.path.abspath(os.path.dirname(__file__)).rsplit(os.sep, 1)[0], 'log')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
