@@ -31,7 +31,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'online_mall',
         'USER': 'root',
-        'PASSWORD': 'mysql',
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -65,7 +65,7 @@ CACHES = {
         'LOCATION': 'redis://localhost:6379/9',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": "yanggan2580"
+            "PASSWORD": os.environ.get('REDIS_PASSWORD')
         },
     },
 }
